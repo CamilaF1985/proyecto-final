@@ -1,0 +1,244 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Reglas para el contenedor principal */
+.contenedor {
+    background-color: white;
+    border: 2px solid #d9d9d9;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 20px;
+}
+
+/* Reglas para el contenedor del logo */
+.contenedor-logo {
+    text-align: center;
+}
+
+.contenedor-imagen img {
+    max-width: 50%;
+    height: auto;
+}
+
+/* Reglas para las imágenes en general */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Reglas para los textos bajo las imágenes */
+.texto-debajo-imagen {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    font-weight: bold;
+    margin: 20px;
+}
+
+/* Estilos para el contenedor "Quiénes somos" y "Nuestra Ubicación" */
+.quienes-somos-contenedor,
+.google-maps-contenedor {
+    border: 2px solid #d9d9d9;
+    background-color: lemonchiffon;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+/* Estilos para el encabezado "Quiénes somos" y "Nuestra Ubicación" */
+.quienes-somos-titulo,
+.ubicacion-titulo {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Estilos para el párrafo debajo del encabezado */
+.quienes-somos-parrafo {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+}
+
+/* Estilos para el texto de panel de configuración */
+.texto-debajo-imagen-sub {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+}
+
+
+/* Estilos para el mapa de Google */
+.google-maps-iframe {
+    width: 100%;
+    height: 300px;
+    border: 0;
+    border-radius: 8px;
+}
+
+/* Estilos para la fila que envuelve "Quiénes somos" y "Nuestra Ubicación" */
+.fila {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estilos para el encabezado del formulario */
+.form-titulo {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Estilos para las etiquetas del formulario */
+.form-label {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+    text-align: left;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Estilos para los campos de entrada del formulario */
+.form-control {
+    margin-bottom: 5px;
+}
+
+/* Estilos para el botón del formulario */
+.btn-primary {
+    background-color: #76f887 !important;
+    color: black !important;
+    font-family: 'Roboto', sans-serif !important;
+    font-weight: bold !important;
+    border-color: darkgreen !important;
+}
+
+/* Estilos para el overlay del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* Estilos para el contenido dentro del modal */
+.modal-content {
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+}
+
+/* Ajustes específicos para el botón Editar */
+.modal-content .row .col-md-3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Ajustes para el botón Editar Contraseña */
+.modal-content .row .col-md-3 button.btn-secondary {
+    margin-left: auto;
+}
+
+/* Estilos para el contenedor del formulario */
+.form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+}
+
+/* Estilos para los textos de bienvenida y nombre/apellido en HomeAdministrador */
+.bienvenido-texto,
+.nombre-apellido-texto {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+/* Media Querys para pantallas pequeñas (Hasta 740px) */
+@media (max-width: 740px) {
+    .contenedor-logo {
+        max-width: 50%;
+        margin: auto;
+    }
+
+    .quienes-somos-contenedor,
+    .google-maps-contenedor {
+        margin-bottom: 20px;
+    }
+
+    .icono-administracion {
+        margin-top: 10px;
+    }
+}
+
+/* Media Querys para pantallas grandes (desde 740px */
+@media (min-width: 740px) {
+    .fila {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .img-logo {
+        max-width: auto;
+        max-height: 50%;
+    }
+
+    .contenedor-logo {
+        text-align: center;
+        margin-top: 50px;
+        margin-left: 450px;
+    }
+
+    .fila-imagen-personalizada {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .contenedor-imagen-debajo {
+        max-width: 50%;
+        text-align: center;
+        margin: auto;
+    }
+
+    .contenedor-imagen-primera {
+        margin-top: 50px;
+    }
+
+    .bienvenido-texto,
+    .nombre-apellido-texto {
+        font-size: 24px;
+    }
+
+    .apellido-texto {
+        margin-left: 5px;
+    }
+
+    .bienvenido-texto {
+        margin-top: 50px;
+        margin-left: 450px;
+    }
+
+    .nombre-apellido-container {
+        display: flex;
+        flex-direction: row !important;
+        align-items: center;
+        margin-left: 450px;
+    }
+}
