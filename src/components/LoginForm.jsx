@@ -4,21 +4,17 @@ import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 import { loginUser } from '../flux/userActions';
 import { closeModal, closeModalAndRedirect } from '../flux/modalActions';
-import { useNavigate } from 'react-router-dom'; // Agregar importación
-import '../assets/css/App.css';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
-  // Hooks y redux
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Agregar hook de navegación
+  const navigate = useNavigate();
 
-  // Estado para almacenar los datos del formulario (nombre de usuario y contraseña)
   const [formData, setFormData] = useState({
-    username: '',
+    rut: '',
     password: '',
   });
 
-  // Función para manejar los cambios en los campos de entrada
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -26,16 +22,14 @@ const LoginForm = () => {
     });
   };
 
-  // Función para manejar el proceso de inicio de sesión
   const handleLogin = (e) => {
-    e.preventDefault(); // Evita la recarga de la página por defecto del formulario
-    dispatch(loginUser(formData, closeModal, navigate)); // Pasa navigate como argumento
+    e.preventDefault();
+    dispatch(loginUser(formData, closeModal, navigate));
   };
 
-  // Función para cerrar el modal y redirigir al inicio
   const handleCloseModal = () => {
     dispatch(closeModal());
-    dispatch(closeModalAndRedirect('/', navigate)); // Redirigir al inicio al cerrar el modal
+    dispatch(closeModalAndRedirect('/', navigate));
   };
 
   return (
@@ -46,7 +40,6 @@ const LoginForm = () => {
       className="modal-content"
       overlayClassName="modal-overlay"
     >
-      {/* Encabezado del modal con botón para cerrar */}
       <div className="modal-header d-flex justify-content-end mb-2">
         <button className="btn btn-danger" onClick={handleCloseModal}>
           X
@@ -55,27 +48,24 @@ const LoginForm = () => {
 
       <div className="modal-body">
         <div className="form-container">
-          {/* Título del formulario */}
           <h2 className="form-titulo">Ingresa a tu cuenta</h2>
 
-          {/* Formulario con clases de Bootstrap para la responsividad */}
           <form className="row g-3 needs-validation" noValidate onSubmit={handleLogin}>
-            {/* Campo para el nombre de usuario */}
+            {/* Campo para el rut */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="username" className="form-label">
-                Nombre de usuario:
+              <label htmlFor="rut" className="form-label">
+                RUT:
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="username"
-                placeholder="Ingresa tu nombre de usuario"
+                id="rut"
+                placeholder="Ingresa tu RUT"
                 required
                 onChange={handleInputChange}
-                autoComplete="current-password"
+                autoComplete="off"
               />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
-              <div className="invalid-feedback">Por favor, ingresa tu nombre de usuario.</div>
+              <div className="invalid-feedback">Por favor, ingresa tu RUT.</div>
             </div>
 
             {/* Campo para la contraseña */}
@@ -91,7 +81,6 @@ const LoginForm = () => {
                 required
                 onChange={handleInputChange}
               />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
               <div className="invalid-feedback">Por favor, ingresa tu contraseña.</div>
             </div>
 
@@ -109,6 +98,7 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
 
 
 

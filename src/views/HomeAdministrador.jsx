@@ -15,7 +15,7 @@ import Perfil from '../components/Perfil.jsx';
 const HomeAdministrador = () => {
   // Hooks y redux
   const { user, modalIsOpen } = useSelector((state) => state);
-  const username = user.username;
+  const username = user.nombre; //Modificado de username a nombre para que traiga el dato desde la api
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

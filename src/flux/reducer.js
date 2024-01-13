@@ -27,24 +27,13 @@ import {
 // Estado inicial de la aplicación
 const initialState = {
   modalIsOpen: false,
-  users: [
-    {
-      userType: 'Administrador',
-      username: 'Administrador',
-      rut: '12312312-1',
-      email: 'admin@example.com',
-      unitName: 'Unidad Ejemplo',
-      password: 'Admin',
-    },
-    {
-      userType: 'Inquilino',
-      username: 'Inquilino',
-      rut: '12312312-2',
-      email: 'inquilino@example.com',
-      unitName: 'Unidad Ejemplo',
-      password: 'inquilino',
-    },
-  ],
+  user: {
+    userType: null,
+    username: null,
+    rut: null,
+    email: null,
+    unitName: null,
+  },
   tasks: [
     { nombre: 'Tarea de Prueba 1', unidad: 'Unidad A' },
     { nombre: 'Tarea de Prueba 2', unidad: 'Unidad B' },
@@ -64,11 +53,19 @@ const rootReducer = (state = initialState, action) => {
     case SAVE_USER_DATA:
       return {
         ...state,
-        users: [...state.users, action.payload], // Agregar nuevo usuario a la lista
         user: { ...state.user, ...action.payload },
       };
     case CLEAR_USER_DATA:
-      return { ...state, user: { userType: null, username: null, rut: null } };
+      return {
+        ...state,
+        user: {
+          userType: null,
+          username: null,
+          rut: null,
+          email: null,
+          unitName: null,
+        },
+      };
     case SET_MODAL_STATE:
       return { ...state, modalIsOpen: action.payload };
     case ADD_TASK:
@@ -95,6 +92,7 @@ const rootReducer = (state = initialState, action) => {
 };
 
 export default rootReducer;
+
 
 
 

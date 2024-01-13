@@ -14,7 +14,7 @@ import { openModal, closeModal } from '../flux/modalActions';
 const HomeInquilino = () => {
   // Hooks y redux
   const { user, modalIsOpen } = useSelector((state) => state);
-  const username = user.username;
+  const username = user.nombre; //Modificado de username a nombre para que traiga el dato desde la api
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

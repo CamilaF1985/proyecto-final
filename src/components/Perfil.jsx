@@ -60,7 +60,7 @@ const Perfil = () => {
                                 Nombre de usuario:
                             </label>
                             <div className="col-md-9">
-                                <p className="form-text">{user.username}</p>
+                                <p className="form-text">{user.nombre}</p>
                             </div>
                         </div>
 
@@ -68,7 +68,7 @@ const Perfil = () => {
                         <div className="row">
                             <label htmlFor="rut" className="form-label col-md-3">RUT:</label>
                             <div className="col-md-9">
-                                <p className="form-text">123456789</p>
+                                <p className="form-text">{user.rut}</p>
                             </div>
                         </div>
 
@@ -76,7 +76,7 @@ const Perfil = () => {
                         <div className="row">
                             <label htmlFor="email" className="form-label col-md-3">Correo electrónico:</label>
                             <div className="col-md-9 d-flex justify-content-between align-items-center">
-                                <p className="form-text">correo@example.com</p>
+                                <p className="form-text">{user.email}</p>
                                 <button className="btn btn-secondary" type="button">Editar</button>
                             </div>
                         </div>

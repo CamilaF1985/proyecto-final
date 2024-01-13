@@ -3,8 +3,10 @@ from flask_jwt_extended import create_access_token
 from models import Persona
 from werkzeug.security import check_password_hash
 from rut_chile import rut_chile
+from flask_cors import CORS
 
 get_auth_bp = Blueprint('auth', __name__)
+CORS(get_auth_bp, supports_credentials=True) 
 @get_auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -28,6 +30,8 @@ def login():
         return jsonify({
             "id": user.id,
             "email": user.email,
+            "id_perfil": user.id_perfil, # Añadido el id_perfil
+            "rut": user.rut, # Añadido el rut
             "nombre": user.nombre,
             "token": access_token
         }), 200

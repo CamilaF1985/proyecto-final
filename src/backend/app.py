@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from flask_cors import CORS  # Importa el módulo CORS
 from models import db  # Importa la instancia de SQLAlchemy desde el archivo models
 from routes.auth import get_auth_bp
 from routes.perfil import get_all_perfil_bp  # Asegúrate de importar el blueprint de las rutas
@@ -14,6 +15,7 @@ from routes.direccion import create_direccion_bp
 
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True) 
 # Configurar la extensión Flask-JWT-Extended usando la función del archivo de configuración
 app.config["JWT_SECRET_KEY"] = "505f2af45d4a0e161a7dd2d12fdae47f"
 jwt = JWTManager(app)
