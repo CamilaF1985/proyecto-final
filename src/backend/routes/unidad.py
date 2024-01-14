@@ -1,6 +1,6 @@
 from flask import jsonify, Blueprint, request
 from models import Unidad, db
- 
+
 create_unidad_bp = Blueprint('create_unidad', __name__)
 
 # Crea unidad
@@ -43,6 +43,7 @@ def obtener_unidad(unidad_id):
         # En caso de error, devuelve un mensaje de error con detalles
         print(f"Error al obtener la unidad: {str(e)}")
         return jsonify({"error": "Error al obtener la unidad", "details": str(e)}), 500
+
 
 
     

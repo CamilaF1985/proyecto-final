@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify
 from models import Perfil
+from flask_jwt_extended import JWTManager, jwt_required
 
 get_all_perfil_bp = Blueprint('get_all_perfil', __name__)
 
 @get_all_perfil_bp.route('/get_all_perfil', methods=['GET'])
+@jwt_required()
 def get_all_perfil():
     try:
         perfiles = Perfil.query.all()

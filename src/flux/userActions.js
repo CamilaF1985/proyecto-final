@@ -1,66 +1,41 @@
-// userActions.js
 import axios from 'axios';
+import { fetchUnitById } from './unitActions.js';
 
-// Tipos de acciones
+// Tipos de acciones para usuarios
 export const SET_USER_TYPE = 'SET_USER_TYPE';
 export const CLEAR_USER_DATA = 'CLEAR_USER_DATA';
 export const SAVE_USER_DATA = 'SAVE_USER_DATA';
+export const GET_USER_BY_RUT = 'GET_USER_BY_RUT';
+export const SAVE_NEW_USER_DATA = 'SAVE_NEW_USER_DATA'; // Nuevo tipo de acción
 
-// Acción para guardar los datos de una unidad en la base de datos
-export const saveUnitData = (unitData) => {
-  return async () => {
-    try {
-      // Realizar la solicitud POST al endpoint correspondiente
-      const response = await axios.post('http://localhost:5000/create_unidad', unitData);
-
-      if (response.status === 201) {
-        // Si la solicitud es exitosa, devolver el ID de la unidad creada directamente
-        return response.data.id;
-      } else {
-        // Manejar otros casos de respuesta si es necesario
-        console.error('Error al guardar la unidad:', response.data);
-        return null;
-      }
-    } catch (error) {
-      // Manejar errores aquí, puedes despachar otra acción de error si es necesario
-      console.error('Error al guardar la unidad:', error);
-      return null;
-    }
+// Acción para guardar datos de usuario en el estado global
+export const saveUserData = (userData) => {
+  return {
+    type: SAVE_USER_DATA,
+    payload: userData,
   };
 };
 
-// Acción para guardar los datos del usuario en el estado global
-export const saveUserData = (userData) => {
+// Acción para guardar nuevos datos de usuario nuevo
+export const saveNewUserData = (userData) => {
   return async (dispatch) => {
     try {
-      // Realiza una solicitud GET para obtener el ID de la unidad por su ID
-      const unitId = await dispatch(saveUnitData(userData)); // Cambiado de unitData a userData
+      // Realiza una solicitud GET para obtener la unidad por su ID
+      const unitData = await dispatch(fetchUnitById(userData.id_unidad));
 
-      // Verifica si unitId es un número antes de continuar
-      if (typeof unitId === 'number') {
-        const unitResponse = await axios.get(`http://localhost:5000/unidad/${unitId}`);
+      // Verifica si unitData tiene datos antes de continuar
+      if (unitData) {
+        // Actualiza el ID de la unidad en userData
+        userData.id_unidad = unitData.id;
 
-        console.log("Respuesta del servidor:", unitResponse);
-
-        // Verifica si se obtuvo el ID de la unidad correctamente
-        if (unitResponse.status === 200) {
-          // Ahora, agrega el ID de la unidad al objeto userData (esto puede no ser necesario si ya tienes el ID)
-          userData.id_unidad = unitId;
-
-          // Realiza la solicitud POST al endpoint para crear el administrador
-          const response = await axios.post('http://localhost:5000/create_persona_admin', userData);
-
-          console.log(response);
-          // Si la solicitud es exitosa, puedes despachar otra acción si es necesario
-          // Por ejemplo, podrías despachar una acción para actualizar el estado de los usuarios en tu aplicación
-
-          // Puedes realizar otras acciones aquí, si es necesario
-        } else {
-          console.error('Error al obtener el ID de la unidad:', unitId);
-        }
+        // Realiza la solicitud POST al endpoint para crear el administrador
+        const response = await axios.post('http://localhost:5000/create_persona_admin', userData);
+        // Console logs para identificar errores
+        console.log(response);
+      } else {
+        console.error('Error al obtener la unidad:', unitData);
       }
     } catch (error) {
-      // Manejar errores aquí, puedes despachar otra acción de error si es necesario
       console.error('Error al guardar el usuario:', error);
     }
   };
@@ -124,6 +99,46 @@ export const loginUser = (formData, closeModal, navigate) => {
   };
 };
 
+// Acción para buscar al usuario por su RUT
+export const getUserByRut = () => {
+  return async (dispatch) => {
+    try {
+      // Obtiene el RUT almacenado en el localStorage
+      const rut = localStorage.getItem('rut');
+
+      // Verifica si el RUT está presente en el localStorage
+      if (rut) {
+        // Realiza una solicitud GET al endpoint para obtener al usuario por su RUT
+        const response = await axios.get(`http://localhost:5000/get_persona_by_rut/${rut}`);
+
+        // Verifica si la respuesta del servidor es exitosa (código 200)
+        if (response.status === 200) {
+          // Obtiene los datos del usuario desde la respuesta
+          const userData = response.data;
+
+          // Determina el tipo de usuario basado en el id_perfil obtenido
+          const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';
+
+          // Agrega el tipo de usuario a los datos del usuario
+          userData.userType = userType;
+
+          // Guarda los datos del usuario en el estado global
+          dispatch(saveUserData(userData));
+        } else {
+          // En caso de respuesta no exitosa, muestra un mensaje de error
+          const errorData = response.data;
+          console.error(`Error: ${errorData.error}`);
+        }
+      } else {
+        console.error('Error: RUT no encontrado en el localStorage');
+      }
+    } catch (error) {
+      // En caso de error durante la solicitud, muestra un mensaje de error
+      console.error('Error al obtener el usuario por su RUT:', error);
+    }
+  };
+};
+
 // Acción para limpiar los datos del usuario almacenados localmente
 export const clearUserData = () => {
   localStorage.removeItem('userType');
@@ -133,6 +148,7 @@ export const clearUserData = () => {
     type: CLEAR_USER_DATA,
   };
 };
+
 
 
 

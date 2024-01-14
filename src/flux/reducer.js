@@ -3,7 +3,15 @@ import {
   SET_USER_TYPE,
   SAVE_USER_DATA,
   CLEAR_USER_DATA,
+  GET_USER_BY_RUT,
+  SAVE_NEW_USER_DATA, // Agregado el nuevo tipo de acción
 } from './userActions.js';
+
+// Importar acciones relacionadas con unidades desde unitActions.js
+import {
+  SAVE_UNIT_DATA,
+  FETCH_UNIT_BY_ID,
+} from './unitActions.js';
 
 // Importar acciones relacionadas con modales desde modalActions.js
 import {
@@ -32,12 +40,9 @@ const initialState = {
     username: null,
     rut: null,
     email: null,
-    unitName: null,
+    id_unidad: null,
   },
-  tasks: [
-    { nombre: 'Tarea de Prueba 1', unidad: 'Unidad A' },
-    { nombre: 'Tarea de Prueba 2', unidad: 'Unidad B' },
-  ],
+  tasks: [],
   expenses: [],
 };
 
@@ -51,6 +56,12 @@ const rootReducer = (state = initialState, action) => {
     case SET_USER_TYPE:
       return { ...state, user: { ...state.user, userType: action.payload } };
     case SAVE_USER_DATA:
+      // No realiza ningún cambio en el estado global, simplemente devuelve el estado actual
+      return { ...state, user: { ...state.user, ...action.payload } };
+
+    case SAVE_NEW_USER_DATA: // Agregado el nuevo caso
+      return { ...state, user: { ...state.user, ...action.payload } };
+    case GET_USER_BY_RUT: // Agregada la acción para obtener el usuario por su RUT
       return {
         ...state,
         user: { ...state.user, ...action.payload },
@@ -63,7 +74,7 @@ const rootReducer = (state = initialState, action) => {
           username: null,
           rut: null,
           email: null,
-          unitName: null,
+          id_unidad: null,
         },
       };
     case SET_MODAL_STATE:
@@ -86,12 +97,21 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         expenses: state.expenses.filter((expense) => expense.id !== action.payload),
       };
+    case SAVE_UNIT_DATA:
+      return state;
+
+    case FETCH_UNIT_BY_ID:
+      return state;
+
     default:
       return state;
   }
 };
 
 export default rootReducer;
+
+
+
 
 
 

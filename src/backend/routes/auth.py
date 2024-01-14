@@ -6,7 +6,8 @@ from rut_chile import rut_chile
 from flask_cors import CORS
 
 get_auth_bp = Blueprint('auth', __name__)
-CORS(get_auth_bp, supports_credentials=True) 
+CORS(get_auth_bp, supports_credentials=True)
+
 @get_auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -16,7 +17,7 @@ def login():
     if not rut or not password:
         return jsonify({"msg": "Falta el rut o la contraseña"}), 400
 
-    #validar rut https://pypi.org/project/rut-chile/
+    # Validar rut https://pypi.org/project/rut-chile/
     if not(rut_chile.is_valid_rut(rut)):
        return jsonify({"error": "rut no valido"}), 400
 
@@ -26,14 +27,15 @@ def login():
     if user and check_password_hash(user.contrasena, password):
         # El usuario existe y la contraseña coincide, crear un token JWT
         access_token = create_access_token(identity=user.id)
-        # Devolver los campos email, nombre y token en la respuesta
+        # Devolver los campos email, nombre, id_perfil, rut y token en la respuesta
         return jsonify({
             "id": user.id,
             "email": user.email,
-            "id_perfil": user.id_perfil, # Añadido el id_perfil
-            "rut": user.rut, # Añadido el rut
+            "id_perfil": user.id_perfil,  # Añadido el id_perfil
+            "rut": user.rut,  # Añadido el rut
             "nombre": user.nombre,
             "token": access_token
         }), 200
     else:
         return jsonify({"msg": "Credenciales inválidas"}), 401
+

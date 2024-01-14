@@ -2,8 +2,10 @@ from flask import jsonify, Blueprint, request
 from models import Persona, db
 from rut_chile import rut_chile
 from werkzeug.security import generate_password_hash, check_password_hash  # Import check_password_hash as well
+from flask_cors import CORS
 
 create_persona_admin_bp = Blueprint('create_persona_admin', __name__)
+CORS(create_persona_admin_bp, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 @create_persona_admin_bp.route('/create_persona_admin', methods=['POST'])
 def create_persona_admin(): 
@@ -55,5 +57,7 @@ def create_persona_admin():
    except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al crear la persona", "details": str(e)}), 500
+   
+   
 
 

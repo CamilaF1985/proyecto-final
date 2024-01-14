@@ -12,6 +12,7 @@ from routes.tarea import create_tarea_bp
 from routes.gasto import create_gasto_bp ,get_gasto_por_unidad_bp
 from routes.gasto_persona import create_gasto_persona_bp, get_gasto_por_persona_bp
 from routes.direccion import create_direccion_bp  
+from routes.persona import persona_bp 
 
 
 app = Flask(__name__)
@@ -35,6 +36,7 @@ app.register_blueprint(get_gasto_por_unidad_bp)
 app.register_blueprint(create_gasto_persona_bp)
 app.register_blueprint(get_gasto_por_persona_bp)
 app.register_blueprint(create_direccion_bp)  # Utiliza el mismo nombre del blueprint que has definido en el archivo de rutas
+app.register_blueprint(persona_bp) 
 
 if __name__ == '__main__':
     app.run(debug=True)
