@@ -22,6 +22,29 @@ def create_unidad():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al crear la unidad", "details": str(e)}), 500   
+
+@create_unidad_bp.route('/unidad/<int:unidad_id>', methods=['GET'])
+def obtener_unidad(unidad_id):
+    try:
+        unidad = Unidad.query.get(unidad_id)
+        if unidad:
+            # Si se encuentra la unidad, devuelve sus datos
+            print(f"Unidad encontrada - ID: {unidad.id}, Nombre: {unidad.nombre}")
+            return jsonify({
+                "id": unidad.id,
+                "nombre": unidad.nombre,
+                # Agrega más campos según sea necesario
+            })
+        else:
+            # Si no se encuentra la unidad, devuelve un mensaje de error
+            print("Unidad no encontrada")
+            return jsonify({"error": "Unidad no encontrada"}), 404
+    except Exception as e:
+        # En caso de error, devuelve un mensaje de error con detalles
+        print(f"Error al obtener la unidad: {str(e)}")
+        return jsonify({"error": "Error al obtener la unidad", "details": str(e)}), 500
+
+
     
 
 

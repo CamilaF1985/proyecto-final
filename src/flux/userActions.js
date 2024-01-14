@@ -6,43 +6,70 @@ export const SET_USER_TYPE = 'SET_USER_TYPE';
 export const CLEAR_USER_DATA = 'CLEAR_USER_DATA';
 export const SAVE_USER_DATA = 'SAVE_USER_DATA';
 
-// Función auxiliar para guardar datos del usuario en el almacenamiento local
-const saveToLocalStorage = (userData) => {
-  localStorage.setItem('userType', userData.userType);
-  localStorage.setItem('rut', userData.rut);  
-};
+// Acción para guardar los datos de una unidad en la base de datos
+export const saveUnitData = (unitData) => {
+  return async () => {
+    try {
+      // Realizar la solicitud POST al endpoint correspondiente
+      const response = await axios.post('http://localhost:5000/create_unidad', unitData);
 
-// Acción para establecer el tipo de usuario basado en los datos almacenados localmente
-export const setUserType = () => {
-  const storedUserType = localStorage.getItem('userType');
-  const storedRut = localStorage.getItem('rut');
-
-  return {
-    type: SET_USER_TYPE,
-    payload: { userType: storedUserType, rut: storedRut }, 
+      if (response.status === 201) {
+        // Si la solicitud es exitosa, devolver el ID de la unidad creada directamente
+        return response.data.id;
+      } else {
+        // Manejar otros casos de respuesta si es necesario
+        console.error('Error al guardar la unidad:', response.data);
+        return null;
+      }
+    } catch (error) {
+      // Manejar errores aquí, puedes despachar otra acción de error si es necesario
+      console.error('Error al guardar la unidad:', error);
+      return null;
+    }
   };
 };
 
-// Acción para limpiar los datos del usuario almacenados localmente
-export const clearUserData = () => {
-  localStorage.removeItem('userType');
-  localStorage.removeItem('rut');  
-
-  return {
-    type: CLEAR_USER_DATA,
-  };
-};
-
-// Acción para guardar los datos del usuario en el estado global y en el almacenamiento local
+// Acción para guardar los datos del usuario en el estado global
 export const saveUserData = (userData) => {
-  // Llama a la función auxiliar para almacenar en el localStorage
-  saveToLocalStorage(userData);
+  return async (dispatch) => {
+    try {
+      // Realiza una solicitud GET para obtener el ID de la unidad por su ID
+      const unitId = await dispatch(saveUnitData(userData)); // Cambiado de unitData a userData
 
-  // Retorna la acción con los datos del usuario
-  return {
-    type: SAVE_USER_DATA,
-    payload: userData,
+      // Verifica si unitId es un número antes de continuar
+      if (typeof unitId === 'number') {
+        const unitResponse = await axios.get(`http://localhost:5000/unidad/${unitId}`);
+
+        console.log("Respuesta del servidor:", unitResponse);
+
+        // Verifica si se obtuvo el ID de la unidad correctamente
+        if (unitResponse.status === 200) {
+          // Ahora, agrega el ID de la unidad al objeto userData (esto puede no ser necesario si ya tienes el ID)
+          userData.id_unidad = unitId;
+
+          // Realiza la solicitud POST al endpoint para crear el administrador
+          const response = await axios.post('http://localhost:5000/create_persona_admin', userData);
+
+          console.log(response);
+          // Si la solicitud es exitosa, puedes despachar otra acción si es necesario
+          // Por ejemplo, podrías despachar una acción para actualizar el estado de los usuarios en tu aplicación
+
+          // Puedes realizar otras acciones aquí, si es necesario
+        } else {
+          console.error('Error al obtener el ID de la unidad:', unitId);
+        }
+      }
+    } catch (error) {
+      // Manejar errores aquí, puedes despachar otra acción de error si es necesario
+      console.error('Error al guardar el usuario:', error);
+    }
   };
+};
+
+// Función auxiliar para guardar datos del usuario en el almacenamiento local
+export const saveToLocalStorage = (userData) => {
+  localStorage.setItem('userType', userData.userType);
+  localStorage.setItem('rut', userData.rut);
 };
 
 // Acción para realizar el inicio de sesión del usuario
@@ -67,8 +94,11 @@ export const loginUser = (formData, closeModal, navigate) => {
         // Agrega el tipo de usuario a los datos del usuario
         userData.userType = userType;
 
-        // Guarda los datos del usuario en el estado global y en el localStorage
+        // Guarda los datos del usuario en el estado global
         dispatch(saveUserData(userData));
+
+        // Guarda los datos del usuario en el localStorage
+        saveToLocalStorage(userData);
 
         // Cierra el modal de inicio de sesión
         closeModal();
@@ -93,6 +123,18 @@ export const loginUser = (formData, closeModal, navigate) => {
     }
   };
 };
+
+// Acción para limpiar los datos del usuario almacenados localmente
+export const clearUserData = () => {
+  localStorage.removeItem('userType');
+  localStorage.removeItem('rut');
+
+  return {
+    type: CLEAR_USER_DATA,
+  };
+};
+
+
 
 
 

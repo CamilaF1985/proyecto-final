@@ -55,7 +55,7 @@ class Persona(db.Model):
     perfil = relationship('Perfil', back_populates='personas')
     contrasena = Column(String(250), nullable=False)
     tareas = relationship('TareaPersona', back_populates='persona')
-    gastos = relationship('GastoPersona', back_populates='persona')
+    gastos = relationship('GastoPersona', back_populates='persona', overlaps='gastos')
 
 class Tarea(db.Model):
     __tablename__ = 'tarea'

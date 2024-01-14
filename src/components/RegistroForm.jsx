@@ -1,27 +1,25 @@
+// RegistroForm.js
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveUserData } from '../flux/userActions';
+import { saveUserData, saveUnitData } from '../flux/userActions';
 import { closeModal, closeModalAndRedirect } from '../flux/modalActions';
 import { useNavigate } from 'react-router-dom';
-import '../assets/css/App.css';  
+import '../assets/css/App.css';
 
-// Componente funcional para el formulario de registro
 const RegistroForm = () => {
-  // Kooks y redux
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const modalIsOpen = useSelector((state) => state.modalIsOpen);
 
-  // Estado local para manejar los datos del formulario
   const [formData, setFormData] = useState({
     rut: '',
     email: '',
     nombre: '',
     contrasena: '',
+    nombreUnidad: '',
   });
 
-  // Función para manejar cambios en los campos del formulario
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -29,32 +27,43 @@ const RegistroForm = () => {
     });
   };
 
-  // Función para manejar el envío del formulario
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Guardar los datos del usuario en el estado global
-    const userData = {
-      userType: 'Administrador', 
-      username: formData.nombre,
-      rut: formData.rut,
-      email: formData.email,
-      contrasena: formData.contrasena,
-      nombreUnidad: formData.nombreUnidad,  
-    };
-    dispatch(saveUserData(userData));
-
-    // Cierra el modal después de enviar la solicitud
-    handleCloseModal();
-  };
-
-  // Función para cerrar la ventana modal y redirigir
   const handleCloseModal = () => {
     dispatch(closeModal());
     dispatch(closeModalAndRedirect('/', navigate));
   };
 
-  // Estructura JSX del componente del formulario de registro
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Guarda los datos de la unidad en el estado global
+      const unitData = {
+        nombre: formData.nombreUnidad,
+      };
+      const unitId = dispatch(saveUnitData(unitData));
+
+      if (unitId) {
+        // Si la creación de la unidad es exitosa, procede a guardar el usuario
+        const userData = {
+          rut: formData.rut,
+          email: formData.email,
+          nombre: formData.nombre,
+          contrasena: formData.contrasena,
+          id_unidad: unitId, // Asigna el ID de la unidad recién creada
+        };
+
+        dispatch(saveUserData(userData));
+
+        // Cierra el modal después de enviar la solicitud
+        handleCloseModal();
+      } else {
+        console.error('Error al guardar la unidad:', unitId);
+      }
+    } catch (error) {
+      console.error('Error en el registro:', error);
+    }
+  };
+
   return (
     <Modal
       isOpen={modalIsOpen}
@@ -63,20 +72,10 @@ const RegistroForm = () => {
       className="modal-content"
       overlayClassName="modal-overlay"
     >
-      {/* Encabezado de la ventana modal */}
-      <div className="modal-header d-flex justify-content-end mb-2">
-        <button className="btn btn-danger" onClick={handleCloseModal}>
-          X
-        </button>
-      </div>
-
-      {/* Cuerpo de la ventana modal */}
       <div className="modal-body">
         <div className="form-container">
           <h2 className="form-titulo">Registro</h2>
-          {/* Formulario de registro */}
           <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
-            {/* Campo de RUT */}
             <div className="col-md-12 mb-3">
               <label htmlFor="rut" className="form-label">
                 RUT:
@@ -94,7 +93,6 @@ const RegistroForm = () => {
               <div className="invalid-feedback">Por favor, ingresa tu RUT.</div>
             </div>
 
-            {/* Campo de Nombre de la Unidad */}
             <div className="col-md-12 mb-3">
               <label htmlFor="nombreUnidad" className="form-label">
                 Nombre de la Unidad:
@@ -103,8 +101,8 @@ const RegistroForm = () => {
                 type="text"
                 className="form-control"
                 id="nombreUnidad"
-                name="nombre"
-                value={formData.nombre}
+                name="nombreUnidad"
+                value={formData.nombreUnidad}
                 onChange={handleChange}
                 placeholder="Ingresa el nombre de la Unidad"
                 required
@@ -114,7 +112,6 @@ const RegistroForm = () => {
               </div>
             </div>
 
-            {/* Campo de Correo Electrónico */}
             <div className="col-md-12 mb-3">
               <label htmlFor="email" className="form-label">
                 Correo Electrónico:
@@ -134,7 +131,6 @@ const RegistroForm = () => {
               </div>
             </div>
 
-            {/* Campo de Nombre */}
             <div className="col-md-12 mb-3">
               <label htmlFor="nombre" className="form-label">
                 Nombre:
@@ -152,7 +148,6 @@ const RegistroForm = () => {
               <div className="invalid-feedback">Por favor, ingresa tu nombre.</div>
             </div>
 
-            {/* Campo de Contraseña */}
             <div className="col-md-12 mb-3">
               <label htmlFor="contrasena" className="form-label">
                 Contraseña:
@@ -170,7 +165,6 @@ const RegistroForm = () => {
               <div className="invalid-feedback">Por favor, ingresa tu contraseña.</div>
             </div>
 
-            {/* Botón de registro */}
             <div className="col-md-12 d-flex justify-content-end">
               <button className="btn btn-primary" type="submit">
                 Registrarse
@@ -183,7 +177,11 @@ const RegistroForm = () => {
   );
 };
 
-// Exporta el componente RegistroForm para su uso en la aplicación
 export default RegistroForm;
+
+
+
+
+
 
 
