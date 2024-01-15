@@ -17,7 +17,8 @@ def get_persona_by_rut(rut):
                 "rut": persona.rut,
                 "email": persona.email,
                 "estado": persona.estado,
-                "id_perfil": persona.id_perfil
+                "id_perfil": persona.id_perfil,
+                "id_unidad": persona.id_unidad
                 # Agrega más campos según sea necesario
             })
         else:

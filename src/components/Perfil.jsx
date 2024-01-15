@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
 import { clearUserData, getUserByRut } from '../flux/userActions';
+import { fetchUnitById } from '../flux/unitActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
 import perfilImage from '../assets/img/perfil.png';
@@ -18,8 +19,27 @@ const Perfil = () => {
 
     // Acción para obtener los datos del usuario por su RUT al montar el componente
     useEffect(() => {
-        dispatch(getUserByRut());
-    }, []);
+        const fetchData = async () => {
+            await dispatch(getUserByRut());
+
+            if (userData.id_unidad) {
+                try {
+                    const unitData = await dispatch(fetchUnitById(userData.id_unidad));
+
+                    if (unitData) {
+                        // Si unitData tiene datos, puedes hacer algo con ellos aquí
+                        console.log('Unidad encontrada - ID:', unitData.id, 'Nombre:', unitData.nombre);
+                    } else {
+                        console.log('No se encontraron datos de unidad');
+                    }
+                } catch (error) {
+                    console.error('Error al obtener la unidad:', error);
+                }
+            }
+        };
+
+        fetchData();
+    }, [dispatch, userData.id_unidad]);
 
     const handleCloseModal = () => {
         const path = user.userType === 'Administrador' ? '/home-administrador' : '/home-inquilino';
@@ -66,7 +86,7 @@ const Perfil = () => {
                                 Unidad:
                             </label>
                             <div className="col-md-9">
-                                <p className="form-text">{unit && unit.nombre}</p>
+                                <p className="form-text">{unit && unit.nombre ? unit.nombre : 'No asignada'}</p>
                             </div>
                         </div>
 
@@ -103,6 +123,7 @@ const Perfil = () => {
 };
 
 export default Perfil;
+
 
 
 

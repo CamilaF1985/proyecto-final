@@ -1,56 +1,54 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { openModal, closeModal } from '../flux/modalActions';  
-import Modal from 'react-modal';  
-import ReactDOM from 'react-dom';  
-import logo from '../assets/img/logo.png';  
-import perfilImage from '../assets/img/perfil.png';  
-import gastosImage from '../assets/img/gastos.png';  
-import tareasImage from '../assets/img/tareas.png';  
-import configuracionImage from '../assets/img/configuracion.png';  
-import Perfil from '../components/Perfil.jsx'; 
+import { getUserByRut } from '../flux/userActions';  // Importa la acción getUserByRut
+import { openModal, closeModal } from '../flux/modalActions';
+import Modal from 'react-modal';
+import ReactDOM from 'react-dom';
+import logo from '../assets/img/logo.png';
+import perfilImage from '../assets/img/perfil.png';
+import gastosImage from '../assets/img/gastos.png';
+import tareasImage from '../assets/img/tareas.png';
+import configuracionImage from '../assets/img/configuracion.png';
+import Perfil from '../components/Perfil.jsx';
 
-// Componente funcional para la vista del usuario Administrador
 const HomeAdministrador = () => {
-  // Hooks y redux
   const { user, modalIsOpen } = useSelector((state) => state);
-  const username = user.nombre; //Modificado de username a nombre para que traiga el dato desde la api
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Función para abrir el modal y redirigir a la ruta especificada
+  // Obtener el nombre del usuario al cargar el componente
+  useEffect(() => {
+    dispatch(getUserByRut());
+  }, [dispatch]);
+
+  const username = user.nombre;
+
   const openModalAndRedirect = (path) => {
-    // Abre el modal antes de la navegación
     dispatch(openModal());
     navigate(path);
   };
 
-  // Función para abrir el modal de perfil
   const handleOpenPerfilModal = () => {
     openModalAndRedirect('/perfil');
   };
 
-  // Función para navegar al panel de administración
   const handleNavigateToAdminPanel = () => {
     navigate('/administrar-panel');
   };
 
-  // Función para cerrar el modal
   const handleCloseModal = () => {
     dispatch(closeModal());
   };
 
-  // Cerrar el modal en la primera renderización
-  useEffect(() => {
-    dispatch(closeModal());
-  }, [dispatch]);
+    // Cerrar el modal en la primera renderización
+    useEffect(() => {
+      dispatch(closeModal());
+    }, [dispatch]);
 
-  // Estructura JSX para la vista del usuario Administrador
   return (
     <div className="contenedor mt-4 mb-4 p-4">
       <div className="row">
-        {/* Sección del logo y nombre de usuario */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">
           <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo" />
           <div className="d-md-flex flex-column align-items-center ms-md-3">

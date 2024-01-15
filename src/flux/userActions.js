@@ -7,6 +7,7 @@ export const CLEAR_USER_DATA = 'CLEAR_USER_DATA';
 export const SAVE_USER_DATA = 'SAVE_USER_DATA';
 export const GET_USER_BY_RUT = 'GET_USER_BY_RUT';
 export const SAVE_NEW_USER_DATA = 'SAVE_NEW_USER_DATA'; // Nuevo tipo de acción
+export const SAVE_NEW_INQUILINO_DATA = 'SAVE_NEW_INQUILINO_DATA'; // Nuevo tipo de acción
 
 // Acción para guardar datos de usuario en el estado global
 export const saveUserData = (userData) => {
@@ -16,7 +17,7 @@ export const saveUserData = (userData) => {
   };
 };
 
-// Acción para guardar nuevos datos de usuario nuevo
+// Acción para guardar nuevos datos de administrador nuevo
 export const saveNewUserData = (userData) => {
   return async (dispatch) => {
     try {
@@ -41,8 +42,40 @@ export const saveNewUserData = (userData) => {
   };
 };
 
+// Acción para guardar nuevos datos de inquilino
+export const saveNewInquilinoData = (userData) => {
+  return async (dispatch) => { // Incluye nuevamente el parámetro dispatch
+    try {
+      // Obtiene el id_unidad desde el localStorage
+      const idUnidad = localStorage.getItem('id_unidad');
+
+      // Verifica si id_unidad tiene un valor antes de continuar
+      if (idUnidad) {
+        // Actualiza el ID de la unidad en userData
+        userData.id_unidad = idUnidad;
+        console.log('ID de unidad desde localStorage:', idUnidad);
+
+        // Verifica que userData tenga todos los campos necesarios y esté bien formado
+        console.log('Datos del inquilino a enviar:', userData);
+
+        // Realiza la solicitud POST al endpoint para crear el inquilino
+        const response = await axios.post('http://localhost:5000/create_persona_inquilino', userData);
+        console.log('Respuesta del servidor:', response);
+
+        // Despacha la acción para guardar los nuevos datos del inquilino en el estado global
+        dispatch(saveUserData(response.data));
+      } else {
+        console.error('Error: id_unidad no encontrado en el localStorage');
+      }
+    } catch (error) {
+      console.error('Error al guardar el inquilino:', error);
+    }
+  };
+};
+
 // Función auxiliar para guardar datos del usuario en el almacenamiento local
 export const saveToLocalStorage = (userData) => {
+  localStorage.setItem('id_unidad', userData.id_unidad);
   localStorage.setItem('userType', userData.userType);
   localStorage.setItem('rut', userData.rut);
 };
@@ -51,17 +84,17 @@ export const saveToLocalStorage = (userData) => {
 export const loginUser = (formData, closeModal, navigate) => {
   return async (dispatch) => {
     try {
-      // Realiza una solicitud POST al servidor de autenticación
       const response = await axios.post('http://localhost:5000/auth/login', {
-        rut: formData.rut,                  // Envia el rut desde el formulario
-        contrasena: formData.password,      // Envia la contraseña desde el formulario
+        rut: formData.rut,
+        contrasena: formData.password,
       });
 
-      // Verifica si la respuesta del servidor es exitosa (código 200)
       if (response.status === 200) {
-        // Obtiene los datos del usuario desde la respuesta
         const userData = response.data;
-        console.log('Valor de id_perfil:', userData.id_perfil);
+
+        // Accede a id_unidad directamente desde userData
+        const idUnidad = userData.id_unidad;
+        console.log('Valor de id_unidad:', idUnidad);
 
         // Determina el tipo de usuario basado en el id_perfil obtenido
         const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';
@@ -99,33 +132,34 @@ export const loginUser = (formData, closeModal, navigate) => {
   };
 };
 
-// Acción para buscar al usuario por su RUT
 export const getUserByRut = () => {
   return async (dispatch) => {
     try {
-      // Obtiene el RUT almacenado en el localStorage
       const rut = localStorage.getItem('rut');
 
-      // Verifica si el RUT está presente en el localStorage
       if (rut) {
-        // Realiza una solicitud GET al endpoint para obtener al usuario por su RUT
         const response = await axios.get(`http://localhost:5000/get_persona_by_rut/${rut}`);
 
-        // Verifica si la respuesta del servidor es exitosa (código 200)
         if (response.status === 200) {
-          // Obtiene los datos del usuario desde la respuesta
           const userData = response.data;
-
-          // Determina el tipo de usuario basado en el id_perfil obtenido
           const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';
-
-          // Agrega el tipo de usuario a los datos del usuario
           userData.userType = userType;
-
-          // Guarda los datos del usuario en el estado global
           dispatch(saveUserData(userData));
+
+          // Llama a fetchUnitById para obtener los datos de la unidad
+          if (userData.id_unidad) {
+            try {
+              const unitData = await dispatch(fetchUnitById(userData.id_unidad));
+              if (unitData) {
+                console.log('Unidad encontrada - ID:', unitData.id, 'Nombre:', unitData.nombre);
+              } else {
+                console.log('No se encontraron datos de unidad');
+              }
+            } catch (error) {
+              console.error('Error al obtener la unidad:', error);
+            }
+          }
         } else {
-          // En caso de respuesta no exitosa, muestra un mensaje de error
           const errorData = response.data;
           console.error(`Error: ${errorData.error}`);
         }
@@ -133,16 +167,17 @@ export const getUserByRut = () => {
         console.error('Error: RUT no encontrado en el localStorage');
       }
     } catch (error) {
-      // En caso de error durante la solicitud, muestra un mensaje de error
       console.error('Error al obtener el usuario por su RUT:', error);
     }
   };
 };
 
+
 // Acción para limpiar los datos del usuario almacenados localmente
 export const clearUserData = () => {
   localStorage.removeItem('userType');
   localStorage.removeItem('rut');
+  localStorage.removeItem('id_unidad');
 
   return {
     type: CLEAR_USER_DATA,

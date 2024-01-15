@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { saveNewUserData } from '../flux/userActions'; // Actualiza la importación
-import { saveUnitData } from '../flux/unitActions';
+import { saveNewUnitData } from '../flux/unitActions';
 import { closeModal, closeModalAndRedirect } from '../flux/modalActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
@@ -41,7 +41,7 @@ const RegistroForm = () => {
       const unitData = {
         nombre: formData.nombreUnidad,
       };
-      const unitId = dispatch(saveUnitData(unitData));
+      const unitId = dispatch(saveNewUnitData(unitData));
 
       if (unitId) {
         // Si la creación de la unidad es exitosa, procede a guardar el usuario

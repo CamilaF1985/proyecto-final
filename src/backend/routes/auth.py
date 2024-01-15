@@ -32,6 +32,7 @@ def login():
             "id": user.id,
             "email": user.email,
             "id_perfil": user.id_perfil,  # Añadido el id_perfil
+            "id_unidad":user.id_unidad,
             "rut": user.rut,  # Añadido el rut
             "nombre": user.nombre,
             "token": access_token

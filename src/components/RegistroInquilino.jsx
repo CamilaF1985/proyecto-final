@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { saveUserData } from '../flux/userActions';
+import { saveNewInquilinoData } from '../flux/userActions'; // Cambiado el import
 import { useNavigate } from 'react-router-dom';
-import '../assets/css/App.css';  
+import '../assets/css/App.css';
 
 // Componente funcional para el formulario de registro de inquilinos
 const RegistroInquilino = () => {
@@ -17,11 +17,14 @@ const RegistroInquilino = () => {
   // Estado local para manejar los datos del formulario
   const [formData, setFormData] = useState({
     rut: '',
-    nombreUnidad: '',
     email: '',
     nombre: '',
     contrasena: '',
+    id_unidad: ''
   });
+
+  // Obtener el id_unidad desde el localStorage
+  const idUnidad = localStorage.getItem('id_unidad');
 
   // Función para manejar cambios en los campos del formulario
   const handleChange = (e) => {
@@ -37,15 +40,12 @@ const RegistroInquilino = () => {
 
     // Guardar todos los datos del inquilino en el estado global
     const inquilinoData = {
-      userType: 'Inquilino',  
-      username: formData.nombre,
-      rut: formData.rut,
-      nombreUnidad: formData.nombreUnidad,
-      email: formData.email,
-      contrasena: formData.contrasena,
+      ...formData,  // Incluye todos los campos del formulario
+      id_unidad: idUnidad,
     };
 
-    dispatch(saveUserData(inquilinoData));
+    // Usar la nueva acción saveNewInquilinoData
+    dispatch(saveNewInquilinoData(inquilinoData));
 
     // Cierra el modal después de enviar la solicitud
     handleCloseModal();
@@ -53,7 +53,7 @@ const RegistroInquilino = () => {
 
   // Función para cerrar la ventana modal y redirigir
   const handleCloseModal = () => {
-    const path = '/administrar-panel';  
+    const path = '/administrar-panel';
     dispatch(closeModalAndRedirect(path, navigate));
   };
 
@@ -94,24 +94,6 @@ const RegistroInquilino = () => {
               />
               <div className="invalid-feedback">
                 Por favor, ingresa tu RUT.
-              </div>
-            </div>
-
-            {/* Campo de Nombre de la Unidad */}
-            <div className="col-md-12 mb-3">
-              <label htmlFor="nombreUnidad" className="form-label">Nombre de la Unidad:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="nombreUnidad"
-                name="nombreUnidad"
-                value={formData.nombreUnidad}
-                onChange={handleChange}
-                placeholder="Ingresa el nombre de la Unidad"
-                required
-              />
-              <div className="invalid-feedback">
-                Por favor, ingresa el nombre de la Unidad.
               </div>
             </div>
 
@@ -182,5 +164,7 @@ const RegistroInquilino = () => {
 
 // Exporta el componente RegistroInquilino para su uso en la aplicación
 export default RegistroInquilino;
+
+
 
 

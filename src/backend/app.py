@@ -16,7 +16,8 @@ from routes.persona import persona_bp
 
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True) 
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+ 
 # Configurar la extensión Flask-JWT-Extended usando la función del archivo de configuración
 app.config["JWT_SECRET_KEY"] = "505f2af45d4a0e161a7dd2d12fdae47f"
 jwt = JWTManager(app)

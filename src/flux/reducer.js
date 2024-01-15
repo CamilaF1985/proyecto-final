@@ -5,12 +5,14 @@ import {
   CLEAR_USER_DATA,
   GET_USER_BY_RUT,
   SAVE_NEW_USER_DATA, // Agregado el nuevo tipo de acción
+  SAVE_NEW_INQUILINO_DATA,
 } from './userActions.js';
 
 // Importar acciones relacionadas con unidades desde unitActions.js
 import {
   SAVE_UNIT_DATA,
   FETCH_UNIT_BY_ID,
+  SAVE_NEW_UNIT_DATA, // Agregado el nuevo tipo de acción
 } from './unitActions.js';
 
 // Importar acciones relacionadas con modales desde modalActions.js
@@ -41,6 +43,7 @@ const initialState = {
     rut: null,
     email: null,
     id_unidad: null,
+    nombre_unidad: null
   },
   tasks: [],
   expenses: [],
@@ -60,6 +63,8 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, user: { ...state.user, ...action.payload } };
 
     case SAVE_NEW_USER_DATA: // Agregado el nuevo caso
+      return { ...state, user: { ...state.user, ...action.payload } };
+    case SAVE_NEW_INQUILINO_DATA: // Agregado el nuevo caso
       return { ...state, user: { ...state.user, ...action.payload } };
     case GET_USER_BY_RUT: // Agregada la acción para obtener el usuario por su RUT
       return {
@@ -98,7 +103,10 @@ const rootReducer = (state = initialState, action) => {
         expenses: state.expenses.filter((expense) => expense.id !== action.payload),
       };
     case SAVE_UNIT_DATA:
-      return state;
+      return { ...state, unit: { ...state.unit, ...action.payload } };
+
+    case SAVE_NEW_UNIT_DATA: // Agregado el nuevo caso
+      return { ...state, unit: { ...state.unit, ...action.payload } };
 
     case FETCH_UNIT_BY_ID:
       return state;
