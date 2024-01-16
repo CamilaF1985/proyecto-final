@@ -23,3 +23,7 @@ def create_tarea():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al crear la unidad", "details": str(e)}), 500   
+
+
+
+ 
