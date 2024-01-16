@@ -28,3 +28,27 @@ def get_persona_by_rut(rut):
         # En caso de error, devuelve un mensaje de error con detalles
         return jsonify({"error": "Error al obtener la persona", "details": str(e)}), 500
 
+
+
+get_person_by_unidad_bp = Blueprint('get_person_by_unidad_bp', __name__)
+CORS(get_person_by_unidad_bp)
+
+@get_person_by_unidad_bp.route('/get_person_by_unidad/<string:id>', methods=['GET'])
+def get_person_by_unidad(id):
+    personas =  Persona.query.filter_by(id_unidad=id).all()
+    if personas:
+        resultados = []
+        for persona in personas:
+            resultados.append({
+                "id": persona.id,
+                "nombre": persona.nombre,
+                "rut": persona.rut,
+                "email": persona.email,
+                "estado": persona.estado,
+                "id_perfil": persona.id_perfil,
+                "id_unidad": persona.id_unidad
+                # Agrega más campos según sea necesario
+            })
+        return jsonify(resultados)
+    else:
+        return jsonify({"error": "No se encontraron personas para el ID de unidad especificado"}), 404

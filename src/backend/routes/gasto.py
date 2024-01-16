@@ -53,6 +53,7 @@ def get_gasto_por_unidad(id_unidad):
             }
             gastos_data.append(gasto_info)
 
+
         return jsonify({"gastos": gastos_data}), 200
 
     except Exception as e:
