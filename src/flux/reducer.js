@@ -26,12 +26,14 @@ import {
 import {
   ADD_TASK,
   DELETE_TASK,
+  SAVE_NEW_TASK_DATA,
 } from './taskActions.js';
 
 // Importar acciones relacionadas con gastos desde expenseActions.js
 import {
   ADD_EXPENSE,
   DELETE_EXPENSE,
+  SAVE_NEW_EXPENSE_DATA,
 } from './expenseActions.js';
 
 // Estado inicial de la aplicación
@@ -59,14 +61,13 @@ const rootReducer = (state = initialState, action) => {
     case SET_USER_TYPE:
       return { ...state, user: { ...state.user, userType: action.payload } };
     case SAVE_USER_DATA:
-      // No realiza ningún cambio en el estado global, simplemente devuelve el estado actual
       return { ...state, user: { ...state.user, ...action.payload } };
 
-    case SAVE_NEW_USER_DATA: // Agregado el nuevo caso
+    case SAVE_NEW_USER_DATA:
       return { ...state, user: { ...state.user, ...action.payload } };
-    case SAVE_NEW_INQUILINO_DATA: // Agregado el nuevo caso
+    case SAVE_NEW_INQUILINO_DATA:
       return { ...state, user: { ...state.user, ...action.payload } };
-    case GET_USER_BY_RUT: // Agregada la acción para obtener el usuario por su RUT
+    case GET_USER_BY_RUT:
       return {
         ...state,
         user: { ...state.user, ...action.payload },
@@ -85,27 +86,39 @@ const rootReducer = (state = initialState, action) => {
     case SET_MODAL_STATE:
       return { ...state, modalIsOpen: action.payload };
     case ADD_TASK:
-      const assignedUser = action.payload.assignedUser;
       return {
         ...state,
-        tasks: [...state.tasks, { ...action.payload, assignedUser }],
+        tasks: [...state.tasks, action.payload],
       };
     case DELETE_TASK:
       return {
         ...state,
         tasks: state.tasks.filter((task) => task.id !== action.payload),
       };
+    case SAVE_NEW_TASK_DATA:
+      return {
+        ...state,
+        tasks: [...state.tasks, action.payload],
+      };
     case ADD_EXPENSE:
-      return { ...state, expenses: [...state.expenses, action.payload] };
+      return {
+        ...state,
+        expenses: [...state.expenses, action.payload],
+      };
     case DELETE_EXPENSE:
       return {
         ...state,
         expenses: state.expenses.filter((expense) => expense.id !== action.payload),
       };
+    case SAVE_NEW_EXPENSE_DATA:
+      return {
+        ...state,
+        expenses: [...state.expenses, action.payload],
+      };
     case SAVE_UNIT_DATA:
       return { ...state, unit: { ...state.unit, ...action.payload } };
 
-    case SAVE_NEW_UNIT_DATA: // Agregado el nuevo caso
+    case SAVE_NEW_UNIT_DATA:
       return { ...state, unit: { ...state.unit, ...action.payload } };
 
     case FETCH_UNIT_BY_ID:
@@ -117,6 +130,7 @@ const rootReducer = (state = initialState, action) => {
 };
 
 export default rootReducer;
+
 
 
 

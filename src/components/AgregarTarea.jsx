@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { addTask } from '../flux/taskActions';
+import { saveNewTaskData } from '../flux/taskActions';
 import { useNavigate } from 'react-router-dom';
 
 // Componente funcional para agregar una tarea
@@ -11,7 +11,6 @@ const AgregarTarea = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [nombreTarea, setNombreTarea] = useState('');
-    const [nombreUnidad, setNombreUnidad] = useState('');
 
     // Función para cerrar el modal y redirigir a la ruta principal
     const handleCloseModal = () => {
@@ -21,19 +20,21 @@ const AgregarTarea = () => {
 
     // Función para agregar una nueva tarea
     const handleAgregarTarea = () => {
-        // Validar que se hayan ingresado ambos valores
-        if (nombreTarea && nombreUnidad) {
-            // Dispatch de la acción para agregar tarea
-            dispatch(addTask({ nombre: nombreTarea, unidad: nombreUnidad }));
+        // Validar que se haya ingresado el valor de la tarea
+        if (nombreTarea) {
+            // Obtener id_unidad del localStorage
+            const idUnidad = localStorage.getItem('id_unidad');
+
+            // Dispatch de la acción para agregar tarea con id_unidad
+            dispatch(saveNewTaskData({ nombre: nombreTarea, id_unidad: idUnidad }));
 
             // Cerrar el modal y redirigir
             handleCloseModal();
         } else {
-            // Manejar caso donde no se ingresaron ambos valores
-            alert('Por favor, ingrese el nombre de la tarea y el nombre de la unidad.');
+            // Manejar caso donde no se ingresó el valor de la tarea
+            alert('Por favor, ingrese el nombre de la tarea.');
         }
     };
-
 
     return (
         <Modal
@@ -71,24 +72,6 @@ const AgregarTarea = () => {
                             </div>
                         </div>
 
-                        <div className="col-md-12 mb-3">
-                            <label htmlFor="nombreUnidad" className="form-label">
-                                Nombre de la Unidad:
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="nombreUnidad"
-                                placeholder="Ingrese el nombre de la unidad"
-                                value={nombreUnidad}
-                                onChange={(e) => setNombreUnidad(e.target.value)}
-                                required
-                            />
-                            <div className="invalid-feedback">
-                                Por favor, ingrese el nombre de la unidad.
-                            </div>
-                        </div>
-
                         <div className="col-md-12 d-flex justify-content-end">
                             <button className="btn btn-primary" type="button" onClick={handleAgregarTarea}>
                                 Agregar Tarea
@@ -102,3 +85,4 @@ const AgregarTarea = () => {
 };
 
 export default AgregarTarea;
+
