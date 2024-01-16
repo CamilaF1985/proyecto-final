@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy 
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Boolean, UniqueConstraint
 
 
 db = SQLAlchemy()
@@ -76,6 +76,11 @@ class TareaPersona(db.Model):
     tarea = relationship('Tarea', back_populates='personas')
     fecha_inicio = Column(Date, nullable=False)
     fecha_termino = Column(Date, nullable=False)
+
+      # Definir la combinación única de los campos id_unidad, id_persona e id_tarea
+    __table_args__ = (
+        UniqueConstraint('id_unidad', 'id_persona', 'id_tarea', name='uq_id_unidad_id_persona_id_tarea'),
+    )
 
 class Gasto(db.Model):
     __tablename__ = 'gasto'
