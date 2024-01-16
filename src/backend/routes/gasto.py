@@ -5,32 +5,32 @@ create_gasto_bp = Blueprint('create_gasto', __name__)
 
 @create_gasto_bp.route('/create_gasto', methods=['POST'])
 def create_gasto():
-            
-    data = request.json
-    id_unidad = data.get('id_unidad')
-    factura= data.get('factura')
-    monto_original= data.get('monto')
-    descripcion = data.get('descripcion')
-
-
-    if not(id_unidad and factura and monto_original and descripcion):
-       return jsonify({"error": "El id de la unidad, numero de factura, monto y descripcion es requerido"}), 400     
-
-    nuevo_gasto = Gasto(id_unidad = id_unidad,
-                        factura = factura,
-                        monto= monto_original,
-                        descripcion = descripcion
-                    )
     try:
+        data = request.json
+        print("Data recibida:", data)  # Agrega esta línea para imprimir los datos recibidos
+        id_unidad = data.get('id_unidad')
+        factura = data.get('factura')
+        monto_original = data.get('monto_original')
+        descripcion = data.get('descripcion')
+
+        if not (id_unidad and factura and monto_original and descripcion):
+            return jsonify({"error": "El id de la unidad, numero de factura, monto y descripcion es requerido"}), 400     
+
+        nuevo_gasto = Gasto(
+            id_unidad=id_unidad,
+            factura=factura,
+            monto_original=monto_original,
+            descripcion=descripcion
+        )
+
         db.session.add(nuevo_gasto)
         db.session.commit()
         return jsonify({"message": "Gasto creado exitosamente", "id": nuevo_gasto.factura}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": "Error al crear Gasto", "details": str(e)}), 500   
-    
+        return jsonify({"error": "Error al crear Gasto", "details": str(e)}), 500
 
-
+  
 get_gasto_por_unidad_bp = Blueprint('get_gasto_por_unidad', __name__)
 @get_gasto_por_unidad_bp.route('/get_gasto_por_unidad/<int:id_unidad>', methods=['GET'])
 

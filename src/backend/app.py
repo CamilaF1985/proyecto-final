@@ -22,7 +22,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_cred
 # Configurar la extensión Flask-JWT-Extended usando la función del archivo de configuración
 app.config["JWT_SECRET_KEY"] = "505f2af45d4a0e161a7dd2d12fdae47f"
 jwt = JWTManager(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:10644@localhost:5434/cuentas_claras_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:12345@localhost:5434/cuentas_claras_db'
 db.init_app(app)  # Inicializa el objeto db con la aplicación Flask
 migrate = Migrate(app, db)
 

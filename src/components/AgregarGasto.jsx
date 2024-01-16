@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { addExpense } from '../flux/expenseActions';
+import { saveNewExpenseData } from '../flux/expenseActions';
 import { useNavigate } from 'react-router-dom';
 
 const AgregarGasto = () => {
@@ -11,7 +11,6 @@ const AgregarGasto = () => {
   const navigate = useNavigate();
   // Estados locales para almacenar valores del formulario
   const [factura, setFactura] = useState('');
-  const [nombreUnidad, setNombreUnidad] = useState('');
   const [monto, setMonto] = useState('');
   const [descripcion, setDescripcion] = useState('');
 
@@ -23,10 +22,19 @@ const AgregarGasto = () => {
 
   // Función para agregar un nuevo gasto
   const handleAgregarGasto = () => {
+
     // Validar que se hayan ingresado todos los valores
-    if (factura && nombreUnidad && monto && descripcion) {
+    if (factura && monto && descripcion) {
+      const idUnidad = localStorage.getItem('id_unidad');
       // Dispatch de la acción para agregar gasto
-      dispatch(addExpense({ factura, unidad: nombreUnidad, monto, descripcion }));
+      dispatch(
+        saveNewExpenseData({
+          factura: factura,
+          monto_original: monto,
+          descripcion: descripcion,
+          id_unidad: idUnidad,
+        })
+      );
 
       // Cerrar el modal y redirigir
       handleCloseModal();
@@ -35,6 +43,7 @@ const AgregarGasto = () => {
       alert('Por favor, ingrese todos los detalles del gasto.');
     }
   };
+
 
   return (
     // Modal para agregar gasto
@@ -76,27 +85,6 @@ const AgregarGasto = () => {
               {/* Mensaje de retroalimentación en caso de entrada no válida */}
               <div className="invalid-feedback">
                 Por favor, ingrese el número de factura.
-              </div>
-            </div>
-
-            {/* Campo para el nombre de la unidad */}
-            <div className="col-md-12 mb-3">
-              <label htmlFor="nombreUnidad" className="form-label">
-                Nombre de la Unidad:
-              </label>
-              {/* Entrada para el nombre de la unidad */}
-              <input
-                type="text"
-                className="form-control"
-                id="nombreUnidad"
-                placeholder="Ingrese el nombre de la unidad"
-                value={nombreUnidad}
-                onChange={(e) => setNombreUnidad(e.target.value)}
-                required
-              />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
-              <div className="invalid-feedback">
-                Por favor, ingrese el nombre de la unidad.
               </div>
             </div>
 
