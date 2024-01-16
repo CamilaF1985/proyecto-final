@@ -6,6 +6,7 @@ from models import db  # Importa la instancia de SQLAlchemy desde el archivo mod
 from routes.auth import get_auth_bp
 from routes.perfil import get_all_perfil_bp  # Asegúrate de importar el blueprint de las rutas
 from routes.region import get_all_region_bp
+from routes.comuna import get_all_comuna_bp
 from routes.persona_admin import create_persona_admin_bp
 from routes.persona_inquilino import create_persona_inquilino_bp
 from routes.unidad import create_unidad_bp
@@ -13,7 +14,7 @@ from routes.tarea import create_tarea_bp
 from routes.gasto import create_gasto_bp ,get_gasto_por_unidad_bp
 from routes.gasto_persona import create_gasto_persona_bp, get_gasto_por_persona_bp
 from routes.direccion import create_direccion_bp  
-from routes.persona import persona_bp 
+from routes.persona import persona_bp, get_person_by_unidad_bp
 
 
 app = Flask(__name__)
@@ -30,6 +31,7 @@ migrate = Migrate(app, db)
 app.register_blueprint(get_auth_bp, url_prefix='/auth')
 app.register_blueprint(get_all_perfil_bp)
 app.register_blueprint(get_all_region_bp)
+app.register_blueprint(get_all_comuna_bp)
 app.register_blueprint(create_unidad_bp)
 app.register_blueprint(create_persona_admin_bp)
 app.register_blueprint(create_persona_inquilino_bp)
@@ -40,6 +42,7 @@ app.register_blueprint(create_gasto_persona_bp)
 app.register_blueprint(get_gasto_por_persona_bp)
 app.register_blueprint(create_direccion_bp)  # Utiliza el mismo nombre del blueprint que has definido en el archivo de rutas
 app.register_blueprint(persona_bp) 
+app.register_blueprint(get_person_by_unidad_bp) 
 
 if __name__ == '__main__':
     app.run(debug=True)
