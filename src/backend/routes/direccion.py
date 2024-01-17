@@ -1,11 +1,10 @@
 from flask import jsonify, Blueprint, request
 from models import Direccion, db
- 
+
 create_direccion_bp = Blueprint('create_direccion', __name__)
 
 @create_direccion_bp.route('/create_direccion', methods=['POST'])
 def create_direccion():
-    
     data = request.json 
 
     required_fields = ["id_pais", "id_region", "id_comuna", "calle", "numero", "depto_casa", "id_unidad"]
@@ -31,4 +30,5 @@ def create_direccion():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al crear la dirección", "details": str(e)}), 500
+
 

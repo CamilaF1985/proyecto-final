@@ -7,6 +7,7 @@ import HomeInquilino from '../views/HomeInquilino.jsx';
 import Perfil from '../components/Perfil.jsx';  
 import PanelAdministracion from '../views/PanelAdministracion.jsx';  
 import RegistroInquilino from '../components/RegistroInquilino.jsx';  
+import RegistroForm from '../components/RegistroForm.jsx';  
 import EliminarInquilino from '../components/EliminarInquilino.jsx';  
 import AgregarTarea from '../components/AgregarTarea.jsx';
 import EliminarTarea from '../components/EliminarTarea.jsx'; 
@@ -61,7 +62,7 @@ const AppRoutes = () => {
       <Route path="/" element={<App showModal={true} loginModal={true} />} />
       <Route path="/login" element={<App showModal={true} loginModal={true} />} />
       <Route path="/contacto" element={<App showModal={true} contactModal={true} />} />
-      <Route path="/registro" element={<App showModal={true} registroModal={true} />} />
+      <Route path="/registro" element={<RegistroForm />} />
 
       {/* Rutas para vistas y componentes específicos */}
       <Route path="/home-administrador" element={<HomeAdministrador />} />
