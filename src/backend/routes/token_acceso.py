@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import jsonify
 from flask_jwt_extended import create_access_token
 from models import Persona
@@ -20,7 +21,7 @@ def create_token():
         return jsonify({"msg": "Bad usuario o contraseña"}), 401
     
     # Crear un token de acceso utilizando la identidad del usuario (en este caso, el ID del usuario)
-    access_token = create_access_token(identity=usuario.id)
+    access_token = create_access_token(identity=usuario.id )
 
     # Retornar el token de acceso y el ID del usuario en formato JSON
     return jsonify({ "token": access_token, "usuario": usuario.id })

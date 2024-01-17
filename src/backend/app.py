@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -21,10 +22,17 @@ from routes.tarea_persona import create_tarea_persona_bp
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
+#12345
+#10644
+
 # Configurar la extensión Flask-JWT-Extended usando la función del archivo de configuración
 app.config["JWT_SECRET_KEY"] = "505f2af45d4a0e161a7dd2d12fdae47f"
+
+# Configurar el tiempo de expiración predeterminado para los tokens (opcional)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=10)
+
 jwt = JWTManager(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:12345@localhost:5434/cuentas_claras_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:10644@localhost:5434/cuentas_claras_db'
 db.init_app(app)  # Inicializa el objeto db con la aplicación Flask
 migrate = Migrate(app, db)
 
