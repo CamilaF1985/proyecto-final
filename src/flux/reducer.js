@@ -36,6 +36,9 @@ import {
   SAVE_NEW_EXPENSE_DATA,
 } from './expenseActions.js';
 
+// Importar acciones relacionadas con direcciones desde addressActions.js
+import { SAVE_COMUNAS_DATA } from '../actions/addressActions';
+
 // Estado inicial de la aplicación
 const initialState = {
   modalIsOpen: false,
@@ -49,6 +52,7 @@ const initialState = {
   },
   tasks: [],
   expenses: [],
+  comunas: [],
 };
 
 // Reducer que maneja las acciones y actualiza el estado global de la aplicación
@@ -124,6 +128,11 @@ const rootReducer = (state = initialState, action) => {
     case FETCH_UNIT_BY_ID:
       return state;
 
+    case SAVE_COMUNAS_DATA:
+      return {
+        ...state,
+        comunas: action.payload,
+      };
     default:
       return state;
   }

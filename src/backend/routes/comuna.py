@@ -17,3 +17,16 @@ def get_all_comuna():
         return jsonify(response_body), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@get_all_comuna_bp.route('/get_comunas_by_region/<int:id_region>', methods=['GET'])
+def get_comunas_by_region(id_region):
+    try:
+        comunas = Comuna.query.filter_by(id_region=id_region).order_by(Comuna.id).all()
+        comunas_list = [{"id": comuna.id, "nombre": comuna.nombre} for comuna in comunas]
+        response_body = {
+            "msg": f"Listado de comunas para la región {id_region}",
+            "comunas": comunas_list
+        }
+        return jsonify(response_body), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
