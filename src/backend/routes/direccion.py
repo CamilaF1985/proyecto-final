@@ -32,3 +32,5 @@ def create_direccion():
         return jsonify({"error": "Error al crear la dirección", "details": str(e)}), 500
 
 
+
+# endpoint para actualizar direccion PUT

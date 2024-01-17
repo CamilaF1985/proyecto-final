@@ -34,8 +34,8 @@ class Direccion(db.Model):
     id_comuna  = Column(Integer, ForeignKey('comuna.id'), nullable=False)
     comuna = relationship('Comuna', back_populates='direcciones')  # Relación con la tabla Comuna
     calle = Column(String(100), nullable=False)
-    numero = Column(String(10), nullable=False)
-    depto_casa = Column(String(10), nullable=False)
+    numero = Column(String(10), nullable=True)
+    depto_casa = Column(String(10), nullable=True)
     id_unidad = Column(Integer, ForeignKey('unidad.id'), nullable=False)
     unidad = relationship('Unidad', back_populates='direcciones')
 
