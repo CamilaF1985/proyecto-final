@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, Blueprint
+from flask import Flask, jsonify, Blueprint, request
 from flask_cors import CORS
 from models import Persona, db
 
@@ -52,3 +52,28 @@ def get_person_by_unidad(id):
         return jsonify(resultados)
     else:
         return jsonify({"error": "No se encontraron personas para el ID de unidad especificado"}), 404
+
+
+
+update_email_persona_bp = Blueprint('update_email_persona', __name__)
+CORS(update_email_persona_bp)
+
+@update_email_persona_bp.route('/update_email_persona/<int:id>', methods=['PUT'])
+def update_email_persona(id):
+    data = request.json
+    new_email = data.get('email')
+
+    if not new_email:
+        return jsonify({"error": "El nuevo correo es requerido"}), 400
+
+    persona = Persona.query.get(id)
+    if persona:
+        persona.email = new_email
+        try:
+            db.session.commit()
+            return jsonify({"message": "Correo de la persona actualizado exitosamente"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": "Error al actualizar el correo de la persona", "details": str(e)}), 500
+    else:
+        return jsonify({"error": "No se encontró la persona con el ID especificado"}), 404
