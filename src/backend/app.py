@@ -14,9 +14,12 @@ from routes.unidad import create_unidad_bp
 from routes.tarea import create_tarea_bp
 from routes.gasto import create_gasto_bp, get_gasto_por_unidad_bp
 from routes.gasto_persona import create_gasto_persona_bp, get_gasto_por_persona_bp
-from routes.direccion import create_direccion_bp
-from routes.persona import persona_bp, get_person_by_unidad_bp
+from routes.direccion import create_direccion_bp  
+from routes.persona import persona_bp, get_person_by_unidad_bp, update_email_persona_bp 
 from routes.tarea_persona import create_tarea_persona_bp
+
+#12345
+#10644
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
@@ -45,6 +48,8 @@ app.register_blueprint(create_direccion_bp)
 app.register_blueprint(persona_bp)
 app.register_blueprint(get_person_by_unidad_bp)
 app.register_blueprint(create_tarea_persona_bp)
+app.register_blueprint(update_email_persona_bp)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
