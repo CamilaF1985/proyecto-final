@@ -18,6 +18,7 @@ from routes.gasto_persona import create_gasto_persona_bp, get_gasto_por_persona_
 from routes.direccion import create_direccion_bp  
 from routes.persona import persona_bp, get_person_by_unidad_bp, update_email_persona_bp 
 from routes.tarea_persona import create_tarea_persona_bp
+from routes.send_mail import send_mail_bp
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000", "methods": ["OPTIONS", "GET", "POST", "PUT", "DELETE"], "allow_headers": ["Content-Type"]}}, supports_credentials=True)
@@ -54,7 +55,7 @@ app.register_blueprint(persona_bp)
 app.register_blueprint(get_person_by_unidad_bp)
 app.register_blueprint(create_tarea_persona_bp)
 app.register_blueprint(update_email_persona_bp)
-
+app.register_blueprint(send_mail_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)

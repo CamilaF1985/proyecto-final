@@ -2,11 +2,12 @@ from flask import jsonify, Blueprint, request
 from models import Persona, db
 from rut_chile import rut_chile
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import JWTManager, jwt_required
 from flask_cors import CORS
 
 create_persona_admin_bp = Blueprint('create_persona_admin', __name__)
 CORS(create_persona_admin_bp, resources={r"/*": {"origins": "http://localhost:3000"}})
-
+@jwt_required()
 @create_persona_admin_bp.route('/create_persona_admin', methods=['POST', 'OPTIONS'])
 def create_persona_admin():
     if request.method == 'OPTIONS':

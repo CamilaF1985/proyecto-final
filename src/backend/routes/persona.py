@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, Blueprint, request
+from flask_jwt_extended import JWTManager, jwt_required
 from flask_cors import CORS
 from models import Persona, db
 
