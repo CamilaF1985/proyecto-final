@@ -18,9 +18,6 @@ from routes.direccion import create_direccion_bp
 from routes.persona import persona_bp, get_person_by_unidad_bp, update_email_persona_bp 
 from routes.tarea_persona import create_tarea_persona_bp
 
-#12345
-#10644
-
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
