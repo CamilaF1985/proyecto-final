@@ -63,7 +63,7 @@ const App = () => {
           <div className="col-6 col-md-4 mb-md-3">
             <div
               className="contenedor-imagen contenedor-imagen-debajo"
-              onClick={() => navigate('/contacto')}
+              onClick={() => openModalAndRedirect('/contacto')}
               style={{ cursor: 'pointer' }}
             >
               <img src={contactoImage} alt="Contacto" className="img-fluid" />

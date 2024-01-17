@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { getUserByRut } from '../flux/userActions';  // Importa la acción getUserByRut
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getUserByRut } from '../flux/userActions';
 import { openModal, closeModal } from '../flux/modalActions';
 import Modal from 'react-modal';
 import ReactDOM from 'react-dom';
@@ -12,43 +12,61 @@ import tareasImage from '../assets/img/tareas.png';
 import configuracionImage from '../assets/img/configuracion.png';
 import Perfil from '../components/Perfil.jsx';
 
+// Importar los selectores desde el archivo selectors.js
+import {
+  selectUser,
+  selectModalIsOpen,
+} from '../flux/selectors';
+
 const HomeAdministrador = () => {
-  const { user, modalIsOpen } = useSelector((state) => state);
+  // Utilizar los selectores para obtener datos del estado global
+  const user = useSelector(selectUser);
+  const modalIsOpen = useSelector(selectModalIsOpen);
+
+  // Obtener el despachador y funciones de navegación desde React Redux y React Router
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Obtener el nombre del usuario al cargar el componente
+  // Obtener datos del usuario por su Rut al cargar el componente
   useEffect(() => {
     dispatch(getUserByRut());
   }, [dispatch]);
 
+  // Extraer el nombre de usuario del estado
   const username = user.nombre;
 
+  // Función para abrir el modal y redirigir a una ruta específica
   const openModalAndRedirect = (path) => {
     dispatch(openModal());
     navigate(path);
   };
 
+  // Función para abrir el modal de perfil
   const handleOpenPerfilModal = () => {
     openModalAndRedirect('/perfil');
   };
 
+  // Función para navegar a la página de administración
   const handleNavigateToAdminPanel = () => {
     navigate('/administrar-panel');
   };
 
+  // Función para cerrar el modal
   const handleCloseModal = () => {
     dispatch(closeModal());
   };
 
-    // Cerrar el modal en la primera renderización
-    useEffect(() => {
-      dispatch(closeModal());
-    }, [dispatch]);
+  // Cerrar el modal en la primera renderización
+  useEffect(() => {
+    dispatch(closeModal());
+  }, [dispatch]);
 
+  // Estructura JSX para la vista del administrador
   return (
     <div className="contenedor mt-4 mb-4 p-4">
       <div className="row">
+        {/* Sección del logo y nombre de usuario */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">
           <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo" />
           <div className="d-md-flex flex-column align-items-center ms-md-3">
@@ -95,7 +113,7 @@ const HomeAdministrador = () => {
         </div>
       </div>
 
-      {/* Modal de perfil utilizando ReactDOM.createPortal */}
+      {/* Modal de perfil */}
       {ReactDOM.createPortal(
         <Modal
           isOpen={modalIsOpen}
@@ -104,7 +122,7 @@ const HomeAdministrador = () => {
           className="modal-content"
           overlayClassName="modal-overlay"
         >
-          {/* Contenido del modal de perfil */}
+          {/* Contenido del modal (Perfil en lugar de PerfilForm) */}
           {location.pathname === '/perfil' ? (
             <Perfil />
           ) : null}
@@ -115,8 +133,9 @@ const HomeAdministrador = () => {
   );
 };
 
-// Exporta el componente HomeAdministrador para su uso en la aplicación
 export default HomeAdministrador;
+
+
 
 
 

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 import ReactDOM from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/img/logo.png';
 import perfilImage from '../assets/img/perfil.png';
 import gastosImage from '../assets/img/gastos.png';
@@ -10,41 +10,47 @@ import tareasImage from '../assets/img/tareas.png';
 import Perfil from '../components/Perfil.jsx';
 import { openModal, closeModal } from '../flux/modalActions';
 
-// Componente funcional para la vista del usuario Inquilino
-const HomeInquilino = () => {
-  // Hooks y redux
-  const { user, modalIsOpen } = useSelector((state) => state);
-  const username = user.nombre; //Modificado de username a nombre para que traiga el dato desde la api
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+// Importar los selectores desde el archivo selectors.js
+import {
+  selectUser,
+  selectModalIsOpen,
+} from '../flux/selectors';
 
+const HomeInquilino = () => {
+  // Utilizar selectores para obtener datos del estado
+  const user = useSelector(selectUser);
+  const modalIsOpen = useSelector(selectModalIsOpen);
+  const username = user.nombre; // Obtener el nombre del usuario desde el estado
+  const dispatch = useDispatch(); // Obtener la función de despacho de acciones
+  const navigate = useNavigate(); // Obtener la función de navegación
+  const location = useLocation(); // Obtener la ubicación actual de la ruta
+
+  // Función para abrir el modal y redirigir a una ruta específica
   const openModalAndRedirect = (path) => {
-    // Abre el modal antes de la navegación
-    dispatch(openModal());
-    navigate(path);
+    dispatch(openModal()); // Despachar la acción para abrir el modal
+    navigate(path); // Navegar a la ruta especificada
   };
 
-  // Función para abrir el modal de perfil
+  // Función para abrir el modal del perfil
   const handleOpenPerfilModal = () => {
     openModalAndRedirect('/perfil');
   };
 
-    // Definir handleCloseModal
-    const handleCloseModal = () => {
-      dispatch(closeModal());
-      // Lógica adicional si es necesario
-    };
-  
-    // Cerrar el modal en la primera renderización
-    useEffect(() => {
-      dispatch(closeModal());
-    }, [dispatch]);
+  // Función para cerrar el modal
+  const handleCloseModal = () => {
+    dispatch(closeModal()); // Despachar la acción para cerrar el modal
+  };
 
-  // Estructura JSX para la vista del usuario Administrador
+  // Efecto para cerrar el modal en la primera renderización
+  useEffect(() => {
+    dispatch(closeModal()); // Despachar la acción para cerrar el modal
+  }, [dispatch]);
+
+  // Estructura JSX para la vista del usuario Inquilino
   return (
     <div className="contenedor mt-4 mb-4 p-4">
       <div className="row">
-      {/* Sección del logo y nombre de usuario */}
+        {/* Sección del logo y nombre de usuario */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">
           <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo" />
           <div className="d-md-flex flex-column align-items-center ms-md-3">
@@ -55,6 +61,7 @@ const HomeInquilino = () => {
           </div>
         </div>
 
+        {/* Sección de iconos y acciones */}
         <div className="col-12 col-md-8 text-center fila-imagen-personalizada d-flex flex-wrap">
           {/* Icono "Mi perfil" */}
           <div className="col-6 col-md-6 mb-3" style={{ cursor: 'pointer' }}>
@@ -82,7 +89,7 @@ const HomeInquilino = () => {
         </div>
       </div>
 
-      {/* Modal de perfil */}
+      {/* Modal de perfil utilizando ReactDOM.createPortal */}
       {ReactDOM.createPortal(
         <Modal
           isOpen={modalIsOpen}
@@ -91,7 +98,7 @@ const HomeInquilino = () => {
           className="modal-content"
           overlayClassName="modal-overlay"
         >
-          {/* Contenido del modal (Perfil en lugar de PerfilForm) */}
+          {/* Contenido del modal de perfil */}
           {location.pathname === '/perfil' ? (
             <Perfil />
           ) : null}
@@ -103,6 +110,8 @@ const HomeInquilino = () => {
 };
 
 export default HomeInquilino;
+
+
 
 
 

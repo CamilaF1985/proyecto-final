@@ -13,44 +13,45 @@ import gastosIcon from '../assets/img/administracion-gastos.png';
 import tareasIcon from '../assets/img/administracion-tareas.png';
 import perfilImage from '../assets/img/perfil.png';
 
-// Componente funcional para la vista del panel de administración
+// Importar el selector desde el archivo selectors.js
+import {
+  selectModalIsOpen,
+} from '../flux/selectors';
+
 const PanelAdministracion = () => {
-  // Hooks y redux
+  // Obtener el despachador y las funciones de selección del estado desde Redux
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { modalIsOpen } = useSelector((state) => state);
 
-  // Función para abrir el modal y navegar a la ruta de RegistroInquilino
+  // Utilizar el selector para obtener el estado del modal desde el estado global
+  const modalIsOpen = useSelector(selectModalIsOpen);
+
+  // Funciones para abrir los modales y navegar a las rutas correspondientes
   const handleOpenRegistroInquilinoModal = () => {
     dispatch(openModal());
     navigate('/registro-inquilino');
   };
 
-  // Función para abrir el modal y navegar a la ruta de EliminarInquilino
   const handleOpenEliminarInquilinoModal = () => {
     dispatch(openModal());
     navigate('/eliminar-inquilino');
   };
 
-  // Función para abrir el modal y navegar a la ruta de AgregarTarea
   const handleOpenAgregarTareaModal = () => {
     dispatch(openModal());
     navigate('/agregar-tarea');
   };
 
-  // Función para abrir el modal y navegar a la ruta de EliminarTarea
   const handleOpenEliminarTareaModal = () => {
     dispatch(openModal());
     navigate('/eliminar-tarea');
   };
 
-  // Función para abrir el modal y navegar a la ruta de AgregarGasto
   const handleOpenAgregarGastoModal = () => {
     dispatch(openModal());
     navigate('/agregar-gasto');
   };
 
-  // Función para abrir el modal y navegar a la ruta de EliminarGasto
   const handleOpenEliminarGastoModal = () => {
     dispatch(openModal());
     navigate('/eliminar-gasto');
@@ -66,7 +67,7 @@ const PanelAdministracion = () => {
     navigate('/home-inquilino');
   };
 
-  // Función para determinar qué componente de modal Inquilino renderizar según la ruta actual
+  // Funciones para renderizar los modales según la ruta actual
   const renderInquilinoModal = () => {
     const currentPath = window.location.pathname;
 
@@ -79,7 +80,6 @@ const PanelAdministracion = () => {
     }
   };
 
-  // Función para determinar qué componente de modal Tarea renderizar según la ruta actual
   const renderTareaModal = () => {
     const currentPath = window.location.pathname;
 
@@ -92,7 +92,6 @@ const PanelAdministracion = () => {
     }
   };
 
-  // Función para determinar qué componente de modal Gasto renderizar según la ruta actual
   const renderGastoModal = () => {
     const currentPath = window.location.pathname;
 
@@ -104,7 +103,6 @@ const PanelAdministracion = () => {
       return null;
     }
   };
-
 
   // Estructura JSX para la vista del panel de administración
   return (
@@ -159,14 +157,14 @@ const PanelAdministracion = () => {
         </div>
       </div>
 
-      {/* Botón "Volver al Home" */}
+      {/* Botón para volver al Home del inquilino */}
       <div className="d-flex justify-content-end mt-3">
         <button className="btn btn-primary" onClick={handleVolverAlHome}>
           Volver al Home
         </button>
       </div>
 
-      {/* Renderizar el componente de modal según la ruta */}
+      {/* Renderizar los modales según la ruta actual */}
       {renderInquilinoModal()}
       {renderTareaModal()}
       {renderGastoModal()}
@@ -174,6 +172,7 @@ const PanelAdministracion = () => {
   );
 };
 
-// Exportar el componente PanelAdministracion
 export default PanelAdministracion;
+
+
 
