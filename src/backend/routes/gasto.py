@@ -1,6 +1,7 @@
 from flask import jsonify, Blueprint, request
 from models import Gasto, db
- 
+from flask_cors import CORS
+
 create_gasto_bp = Blueprint('create_gasto', __name__)
 
 @create_gasto_bp.route('/create_gasto', methods=['POST'])
@@ -58,3 +59,20 @@ def get_gasto_por_unidad(id_unidad):
 
     except Exception as e:
         return jsonify({"error": "Error al obtener los gastos", "details": str(e)}), 500    
+
+
+
+delete_gasto_por_unidad_bp = Blueprint('delete_gasto_por_unidad', __name__)
+CORS(delete_gasto_por_unidad_bp)
+@delete_gasto_por_unidad_bp.route('/delete_gasto_por_unidad/<int:id_gasto>', methods=['DELETE'])
+def delete_persona_by_rut(id_gasto):
+    try:
+        gasto = Gasto.query.filter_by(id=id_gasto).first()
+        if gasto:
+             db.session.delete(gasto)
+             db.session.commit()
+             return jsonify({"message": "Gasto eliminado correctamente"})
+        else:
+            return jsonify({"error": "Gasto no encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": "Error al eliminar gasto", "details": str(e)}), 500

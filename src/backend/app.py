@@ -14,8 +14,8 @@ from routes.comuna import get_comunas_by_region
 from routes.persona_admin import create_persona_admin_bp
 from routes.persona_inquilino import create_persona_inquilino_bp
 from routes.unidad import create_unidad_bp
-from routes.tarea import create_tarea_bp
-from routes.gasto import create_gasto_bp, get_gasto_por_unidad_bp
+from routes.tarea import create_tarea_bp, delete_tarea_por_unidad_bp
+from routes.gasto import create_gasto_bp, get_gasto_por_unidad_bp, delete_gasto_por_unidad_bp
 from routes.gasto_persona import create_gasto_persona_bp, get_gasto_por_persona_bp
 from routes.direccion import create_direccion_bp  
 from routes.persona import persona_bp, get_person_by_unidad_bp, update_email_persona_bp ,delete_persona_by_rut_bp
@@ -37,7 +37,7 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=10)
 
 jwt = JWTManager(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:10644@localhost:5434/cuentas_claras_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:12345@localhost:5434/cuentas_claras_db'
 db.init_app(app)
   
 
@@ -63,21 +63,35 @@ app.register_blueprint(get_auth_bp, url_prefix='/auth')
 app.register_blueprint(get_all_perfil_bp)
 app.register_blueprint(get_all_region_bp)
 app.register_blueprint(get_all_comuna_bp) 
+
 app.register_blueprint(create_unidad_bp)
+
 app.register_blueprint(create_persona_admin_bp)
 app.register_blueprint(create_persona_inquilino_bp)
+
 app.register_blueprint(create_tarea_bp)
+app.register_blueprint(delete_tarea_por_unidad_bp)
+app.register_blueprint(create_tarea_persona_bp)
+
 app.register_blueprint(create_gasto_bp)
+app.register_blueprint(delete_gasto_por_unidad_bp)
 app.register_blueprint(get_gasto_por_unidad_bp)
+
 app.register_blueprint(create_gasto_persona_bp)
 app.register_blueprint(get_gasto_por_persona_bp)
+
 app.register_blueprint(create_direccion_bp)
+app.register_blueprint(update_email_persona_bp)
+
 app.register_blueprint(persona_bp)
 app.register_blueprint(delete_persona_by_rut_bp)
 app.register_blueprint(get_person_by_unidad_bp)
-app.register_blueprint(create_tarea_persona_bp)
-app.register_blueprint(update_email_persona_bp)
+
+
+
 app.register_blueprint(send_mail_bp)
+
+
 
 
 if __name__ == '__main__':
