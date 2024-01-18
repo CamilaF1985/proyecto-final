@@ -6,32 +6,42 @@ import { getUsersByUnit } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
 
+// Importa el selector de datos de usuarios
+import { selectUsersDataSelector } from '../flux/selectors';
+
 const EliminarInquilino = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isOpen = useSelector((state) => state.modalIsOpen);
 
+  // Utiliza el selector para obtener los datos de usuarios
+  const localUsersData = useSelector(selectUsersDataSelector);
+  const [loading, setLoading] = useState(true);
+
   // Obtener el id de la unidad desde el localStorage
   const unidadId = localStorage.getItem('id_unidad');
 
-  // Estado local para almacenar datos de usuarios
-  const [localUsersData, setLocalUsersData] = useState([]);
-  const [loading, setLoading] = useState(true); // Agrega el estado de carga
-
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       try {
         if (unidadId) {
-          const response = await dispatch(getUsersByUnit(unidadId));
+          // Obtener directamente la Promesa del dispatch
+          const responsePromise = dispatch(getUsersByUnit(unidadId));
 
-          if (response && response.data) {
-            setLocalUsersData(response.data);
-            console.log('Datos de usuarios actualizados:', response.data);
-            setLoading(false);
-          } else {
-            console.error('Respuesta de getUsersByUnit sin datos válidos:', response);
-            setLoading(false);
-          }
+          // Esperar a que la Promesa se resuelva
+          responsePromise.then((responseData) => {
+            // Verificar si responseData es un array (los datos reales)
+            if (Array.isArray(responseData)) {
+              console.log('Datos de usuarios actualizados:', responseData);
+              setLoading(false);
+            } else if (responseData && responseData.error) {
+              console.error('Error al obtener usuarios por unidad:', responseData.error);
+              setLoading(false);
+            } else {
+              console.error('Respuesta de getUsersByUnit sin datos válidos:', responseData);
+              setLoading(false);
+            }
+          });
         }
       } catch (error) {
         console.error('Error al obtener usuarios por unidad:', error.message);
@@ -101,6 +111,8 @@ const EliminarInquilino = () => {
 };
 
 export default EliminarInquilino;
+
+
 
 
 

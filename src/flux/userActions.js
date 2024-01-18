@@ -213,23 +213,29 @@ export const updateEmail = (userId, newEmail) => {
   };
 };
 
+// En la acción getUsersByUnit, devuelve la propiedad 'payload' y envuelve en una Promesa
 export const getUsersByUnit = (unitId) => {
-  return async (dispatch) => {
-    try {
-      const response = await axios.get(`http://localhost:5000/get_person_by_unidad/${unitId}`);
+  return (dispatch) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await axios.get(`http://localhost:5000/get_person_by_unidad/${unitId}`);
 
-      if (response.status === 200) {
-        dispatch(saveUsersData(response.data));
-        console.log('Usuarios obtenidos con éxito:', response.data); // Agrega este log
-        return response.data;
-      } else {
-        console.error('Error en la respuesta del servidor:', response);
-        return { error: `Error: ${response.data.error}` };
+        if (response.status === 200) {
+          // Guardar los usuarios en el estado global antes de devolver la respuesta
+          dispatch(saveUsersData(response.data));
+          // Resolver la Promesa con los datos
+          resolve(response.data);
+        } else {
+          console.error('Error en la respuesta del servidor:', response);
+          // Rechazar la Promesa con el error
+          reject({ error: `Error: ${response.data.error}` });
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+        // Rechazar la Promesa con el error
+        reject({ error: `Error al obtener usuarios por unidad: ${error.message}` });
       }
-    } catch (error) {
-      console.error('Error en la solicitud:', error);
-      return { error: `Error al obtener usuarios por unidad: ${error.message}` };
-    }
+    });
   };
 };
 

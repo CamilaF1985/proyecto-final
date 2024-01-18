@@ -2,10 +2,10 @@
 import { createSelector } from 'reselect';
 
 // Seleccionar partes del estado desde rootReducer
-const selectModalIsOpenFromState = (state) => state.modalIsOpen;  // Cambié el nombre aquí
 const selectUser = (state) => state.user;
 const selectTasks = (state) => state.tasks;
 const selectExpenses = (state) => state.expenses;
+const selectUsersData = (state) => state.usersData;
 
 // Ejemplo de un selector que deriva algún valor del estado
 export const selectUserType = createSelector(
@@ -25,9 +25,15 @@ export const selectTotalExpenses = createSelector(
   (expenses) => expenses.reduce((total, expense) => total + expense.amount, 0)
 );
 
-export const selectModalIsOpen = createSelector(
-  selectModalIsOpenFromState,  // Cambié el nombre aquí
-  (modalIsOpen) => modalIsOpen
+// Versión simplificada del selector para modalIsOpen
+export const selectModalIsOpen = (state) => state.modalIsOpen;
+
+export const selectUsersDataSelector = createSelector(
+  selectUsersData,
+  (usersData) => {
+    // Realiza alguna lógica de transformación si es necesario
+    return usersData.map((user) => ({ ...user, transformedField: user.field * 2 }));
+  }
 );
 
 // Exportar todos los selectores en un solo objeto
@@ -36,9 +42,11 @@ const selectors = {
   selectUser,
   selectTasks,
   selectExpenses,
+  selectUsersDataSelector,
 };
 
 export default selectors;
+
 
 
 
