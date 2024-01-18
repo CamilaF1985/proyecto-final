@@ -213,7 +213,7 @@ export const updateEmail = (userId, newEmail) => {
   };
 };
 
-// En la acción getUsersByUnit, devuelve la propiedad 'payload' y envuelve en una Promesa
+// Acción para obtener usuarios pertenecientes a una unidad
 export const getUsersByUnit = (unitId) => {
   return (dispatch) => {
     return new Promise(async (resolve, reject) => {
@@ -236,6 +236,38 @@ export const getUsersByUnit = (unitId) => {
         reject({ error: `Error al obtener usuarios por unidad: ${error.message}` });
       }
     });
+  };
+};
+
+// Acción para borrar a una persona por su RUT
+export const deletePersonaByRut = (rut, id_unidad) => {
+  return async (dispatch) => {
+    try {
+      // Realiza la solicitud DELETE al endpoint para eliminar la persona por su RUT
+      const response = await axios.delete(`http://localhost:5000/delete_persona_by_rut/${rut}/${id_unidad}`);
+
+      if (response.status === 200) {
+        // Muestra un mensaje de éxito si la persona fue eliminada correctamente
+        console.log('Persona eliminada exitosamente');
+
+        // Despacha la acción para obtener y guardar los datos actualizados de usuarios
+        const updatedUsers = await dispatch(getUsersByUnit(id_unidad));
+        dispatch(saveUsersData(updatedUsers));
+
+        // Devolvemos los datos actualizados de usuarios después de la eliminación
+        return updatedUsers;
+      } else {
+        // Muestra un mensaje de error si la solicitud no fue exitosa
+        console.error('Error al eliminar la persona:', response.data.error);
+        // Devolvemos null o algún valor que indique que la eliminación falló
+        return null;
+      }
+    } catch (error) {
+      // Muestra un mensaje de error si ocurre un error durante la eliminación de la persona
+      console.error('Error durante la eliminación de la persona:', error);
+      // Devolvemos null o algún valor que indique que la eliminación falló
+      return null;
+    }
   };
 };
 

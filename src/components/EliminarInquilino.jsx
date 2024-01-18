@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { getUsersByUnit } from '../flux/userActions';
+import { deletePersonaByRut, getUsersByUnit } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
 
@@ -14,7 +14,7 @@ const EliminarInquilino = () => {
   const navigate = useNavigate();
   const isOpen = useSelector((state) => state.modalIsOpen);
 
-  // Utiliza el selector para obtener los datos de usuarios
+  // Uso del selector para obtener los datos de usuarios
   const localUsersData = useSelector(selectUsersDataSelector);
   const [loading, setLoading] = useState(true);
 
@@ -58,8 +58,19 @@ const EliminarInquilino = () => {
   };
 
   const handleEliminarInquilino = (rut) => {
-    // Implementa la lógica de eliminación aquí
-    console.log(`Eliminar inquilino con RUT: ${rut}`);
+    // Lógica de eliminación llamando a deletePersonaByRut
+    dispatch(deletePersonaByRut(rut, unidadId))
+      .then((updatedUsers) => {
+        if (updatedUsers !== null) {
+          // Consola logs para exito y error
+          console.log('Inquilino eliminado correctamente');
+        } else {
+          console.error('Error al eliminar el inquilino');
+        }
+      })
+      .catch((error) => {
+        console.error('Error al eliminar el inquilino:', error);
+      });
   };
 
   return (
@@ -84,7 +95,7 @@ const EliminarInquilino = () => {
           ) : (
             <div className="row g-3">
               {/* Filtra y muestra solo a los inquilinos */}
-              {localUsersData && localUsersData.length > 0 ? (
+              {localUsersData && localUsersData.length > 0 && localUsersData.some(user => user.id_perfil === 2) ? (
                 localUsersData
                   .filter((user) => user.id_perfil === 2)
                   .map((inquilino) => (
