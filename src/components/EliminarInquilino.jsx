@@ -1,45 +1,76 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import { useDispatch, useSelector  } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
+import { getUsersByUnit } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
 
+// Importa el selector de datos de usuarios
+import { selectUsersDataSelector } from '../flux/selectors';
+
 const EliminarInquilino = () => {
-  // Hooks y Redux
   const dispatch = useDispatch();
-  const isOpen = useSelector((state) => state.modalIsOpen);
   const navigate = useNavigate();
+  const isOpen = useSelector((state) => state.modalIsOpen);
 
-  // Estado para almacenar el rut del inquilino a eliminar
-  const [rut, setRut] = useState('');
+  // Utiliza el selector para obtener los datos de usuarios
+  const localUsersData = useSelector(selectUsersDataSelector);
+  const [loading, setLoading] = useState(true);
 
-  // Función para cerrar el modal y redirigir a la ruta principal
+  // Obtener el id de la unidad desde el localStorage
+  const unidadId = localStorage.getItem('id_unidad');
+
+  useEffect(() => {
+    const fetchData = () => {
+      try {
+        if (unidadId) {
+          // Obtener directamente la Promesa del dispatch
+          const responsePromise = dispatch(getUsersByUnit(unidadId));
+
+          // Esperar a que la Promesa se resuelva
+          responsePromise.then((responseData) => {
+            // Verificar si responseData es un array (los datos reales)
+            if (Array.isArray(responseData)) {
+              console.log('Datos de usuarios actualizados:', responseData);
+              setLoading(false);
+            } else if (responseData && responseData.error) {
+              console.error('Error al obtener usuarios por unidad:', responseData.error);
+              setLoading(false);
+            } else {
+              console.error('Respuesta de getUsersByUnit sin datos válidos:', responseData);
+              setLoading(false);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error al obtener usuarios por unidad:', error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, unidadId]);
+
   const handleCloseModal = () => {
-    // Configuración de la ruta
     const path = '/administrar-panel';
     dispatch(closeModalAndRedirect(path, navigate));
   };
 
-  // Función para manejar el envío del formulario
-  const handleEliminarInquilino = (e) => {
-    e.preventDefault();
-
-    // Luego de eliminar, cierra el modal y redirige a la ruta principal
-    handleCloseModal();
+  const handleEliminarInquilino = (rut) => {
+    // Implementa la lógica de eliminación aquí
+    console.log(`Eliminar inquilino con RUT: ${rut}`);
   };
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={isOpen ?? false}
       onRequestClose={handleCloseModal}
       contentLabel="EliminarInquilino Modal"
       className="modal-content"
       overlayClassName="modal-overlay"
     >
-      {/* Contenido del modal */}
       <div className="modal-header d-flex justify-content-end mb-2">
-        {/* Botón para cerrar el modal */}
         <button className="btn btn-danger" onClick={handleCloseModal}>
           X
         </button>
@@ -47,39 +78,32 @@ const EliminarInquilino = () => {
 
       <div className="modal-body">
         <div className="form-container">
-          {/* Título del formulario */}
           <h2 className="form-titulo">Eliminar Inquilino</h2>
-          {/* Formulario con clases de Bootstrap para la responsividad */}
-          <form onSubmit={handleEliminarInquilino} className="row g-3 needs-validation" noValidate>
-            {/* Fila para el campo de rut */}
-            <div className="col-md-12 mb-3">
-              <label htmlFor="rut" className="form-label">RUT del Inquilino:</label>
-              {/* Campo de entrada para el rut */}
-              <input
-                type="text"
-                className="form-control"
-                id="rut"
-                placeholder="Ingresa el RUT del Inquilino"
-                value={rut}
-                onChange={(e) => setRut(e.target.value)}
-                required
-              />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
-              <div className="invalid-feedback">
-                Por favor, ingresa el RUT del Inquilino.
-              </div>
+          {loading ? (
+            <p>Cargando...</p>
+          ) : (
+            <div className="row g-3">
+              {/* Filtra y muestra solo a los inquilinos */}
+              {localUsersData && localUsersData.length > 0 ? (
+                localUsersData
+                  .filter((user) => user.id_perfil === 2)
+                  .map((inquilino) => (
+                    <div key={inquilino.id} className="col-md-12 mb-3">
+                      <p>{`Nombre: ${inquilino.nombre}, Rut: ${inquilino.rut}`}</p>
+                      <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={() => handleEliminarInquilino(inquilino.rut)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  ))
+              ) : (
+                <p>No hay inquilinos disponibles.</p>
+              )}
             </div>
-
-            {/* Mensaje de verificación antes de eliminar */}
-            <div className="col-md-12 mb-3">
-              <p>¿Estás seguro de querer eliminar al inquilino con RUT: {rut}?</p>
-            </div>
-
-            {/* Botón "Eliminar" */}
-            <div className="col-md-12 d-flex justify-content-end">
-              <button className="btn btn-danger" type="submit">Eliminar</button>
-            </div>
-          </form>
+          )}
         </div>
       </div>
     </Modal>
@@ -87,3 +111,15 @@ const EliminarInquilino = () => {
 };
 
 export default EliminarInquilino;
+
+
+
+
+
+
+
+
+
+
+
+

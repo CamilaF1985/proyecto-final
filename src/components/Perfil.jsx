@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { clearUserData, getUserByRut } from '../flux/userActions';
+import { clearUserData, getUserByRut, updateEmail } from '../flux/userActions';
 import { fetchUnitById } from '../flux/unitActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
@@ -17,6 +17,10 @@ const Perfil = () => {
     const userData = user || {};
     const unit = useSelector((state) => state.unit);
 
+    // Estado local para controlar la visibilidad del input y el botón
+    const [isEditing, setIsEditing] = useState(false);
+    const [newEmail, setNewEmail] = useState('');
+
     // Acción para obtener los datos del usuario por su RUT al montar el componente
     useEffect(() => {
         const fetchData = async () => {
@@ -27,7 +31,6 @@ const Perfil = () => {
                     const unitData = await dispatch(fetchUnitById(userData.id_unidad));
 
                     if (unitData) {
-                        // Si unitData tiene datos, puedes hacer algo con ellos aquí
                         console.log('Unidad encontrada - ID:', unitData.id, 'Nombre:', unitData.nombre);
                     } else {
                         console.log('No se encontraron datos de unidad');
@@ -49,6 +52,33 @@ const Perfil = () => {
     const handleLogout = () => {
         dispatch(clearUserData());
         navigate('/logout');
+    };
+
+    const handleEditEmail = () => {
+        setIsEditing(true);
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setNewEmail('');
+    };
+
+    const handleUpdateEmail = async () => {
+        try {
+            // Dispatch de la acción para actualizar el email
+            await dispatch(updateEmail(userData.id, newEmail));
+
+            // Actualizar el estado local con el nuevo valor de correo electrónico
+            setNewEmail('');
+
+            // Refrescar los datos del usuario para obtener el nuevo valor
+            await dispatch(getUserByRut());
+        } catch (error) {
+            console.error('Error durante la actualización del correo electrónico:', error);
+        } finally {
+            // Salir del modo de edición
+            setIsEditing(false);
+        }
     };
 
     return (
@@ -98,10 +128,35 @@ const Perfil = () => {
                         </div>
 
                         <div className="row">
-                            <label htmlFor="email" className="form-label col-md-3">Correo electrónico:</label>
+                            <label htmlFor="email" className="form-label col-md-3">
+                                Correo electrónico:
+                            </label>
                             <div className="col-md-9 d-flex justify-content-between align-items-center">
-                                <p className="form-text">{userData.email}</p>
-                                <button className="btn btn-secondary" type="button">Editar</button>
+                                {!isEditing ? (
+                                    <>
+                                        <p className="form-text">{userData.email}</p>
+                                        <button className="btn btn-secondary" type="button" onClick={handleEditEmail}>
+                                            Editar
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={newEmail}
+                                            onChange={(e) => setNewEmail(e.target.value)}
+                                        />
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <button className="btn btn-success" type="button" onClick={handleUpdateEmail}>
+                                                Guardar
+                                            </button>
+                                            <button className="btn btn-danger" type="button" onClick={handleCancelEdit}>
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 

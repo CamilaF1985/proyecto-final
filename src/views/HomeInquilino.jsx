@@ -11,15 +11,12 @@ import Perfil from '../components/Perfil.jsx';
 import { openModal, closeModal } from '../flux/modalActions';
 
 // Importar los selectores desde el archivo selectors.js
-import {
-  selectUser,
-  selectModalIsOpen,
-} from '../flux/selectors';
+import selectors from '../flux/selectors';
 
 const HomeInquilino = () => {
   // Utilizar selectores para obtener datos del estado
-  const user = useSelector(selectUser);
-  const modalIsOpen = useSelector(selectModalIsOpen);
+  const user = useSelector(selectors.selectUser);
+  const modalIsOpen = useSelector(selectors.selectModalIsOpen);
   const username = user.nombre; // Obtener el nombre del usuario desde el estado
   const dispatch = useDispatch(); // Obtener la función de despacho de acciones
   const navigate = useNavigate(); // Obtener la función de navegación

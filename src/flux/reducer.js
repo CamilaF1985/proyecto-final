@@ -4,15 +4,17 @@ import {
   SAVE_USER_DATA,
   CLEAR_USER_DATA,
   GET_USER_BY_RUT,
-  SAVE_NEW_USER_DATA, // Agregado el nuevo tipo de acción
+  SAVE_NEW_USER_DATA,
   SAVE_NEW_INQUILINO_DATA,
+  UPDATE_USER_EMAIL,
+  SAVE_USERS_DATA,
 } from './userActions.js';
 
 // Importar acciones relacionadas con unidades desde unitActions.js
 import {
   SAVE_UNIT_DATA,
   FETCH_UNIT_BY_ID,
-  SAVE_NEW_UNIT_DATA, // Agregado el nuevo tipo de acción
+  SAVE_NEW_UNIT_DATA, 
 } from './unitActions.js';
 
 // Importar acciones relacionadas con modales desde modalActions.js
@@ -54,6 +56,15 @@ const initialState = {
     id_unidad: null,
     nombre_unidad: null
   },
+
+  usersData: [{
+    userType: null,
+    username: null,
+    rut: null,
+    email: null,
+    id_unidad: null,
+}],
+
   tasks: [],
   expenses: [],
   comunas: [],
@@ -150,6 +161,21 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         direcciones: [...state.direcciones, action.payload],
+      };
+
+    case UPDATE_USER_EMAIL:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          email: action.payload.email,
+        },
+      };
+
+    case SAVE_USERS_DATA:
+      return {
+        ...state,
+        usersData: action.payload,
       };
 
     default:

@@ -13,15 +13,12 @@ import configuracionImage from '../assets/img/configuracion.png';
 import Perfil from '../components/Perfil.jsx';
 
 // Importar los selectores desde el archivo selectors.js
-import {
-  selectUser,
-  selectModalIsOpen,
-} from '../flux/selectors';
+import selectors from '../flux/selectors';
 
 const HomeAdministrador = () => {
   // Utilizar los selectores para obtener datos del estado global
-  const user = useSelector(selectUser);
-  const modalIsOpen = useSelector(selectModalIsOpen);
+  const user = useSelector(selectors.selectUser);
+  const modalIsOpen = useSelector(selectors.selectModalIsOpen);
 
   // Obtener el despachador y funciones de navegación desde React Redux y React Router
   const dispatch = useDispatch();
