@@ -78,3 +78,21 @@ def update_email_persona(id):
             return jsonify({"error": "Error al actualizar el correo de la persona", "details": str(e)}), 500
     else:
         return jsonify({"error": "No se encontró la persona con el ID especificado"}), 404
+
+
+
+delete_persona_by_rut_bp = Blueprint('delete_persona_by_rut_bp', __name__)
+CORS(delete_persona_by_rut_bp)
+@delete_persona_by_rut_bp.route('/delete_persona_by_rut/<string:rut>/<int:id_unidad>', methods=['DELETE'])
+def delete_persona_by_rut(rut, id_unidad):
+    try:
+        persona = Persona.query.filter_by(rut=rut, id_unidad=id_unidad).first()
+        if persona:
+             db.session.delete(persona)
+             db.session.commit()
+             return jsonify({"message": "Persona eliminada correctamente"})
+        else:
+            return jsonify({"error": "Persona no encontrada"}), 404
+    except Exception as e:
+        return jsonify({"error": "Error al eliminar la persona", "details": str(e)}), 500
+

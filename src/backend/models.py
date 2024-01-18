@@ -54,8 +54,8 @@ class Persona(db.Model):
     id_perfil = Column(Integer, ForeignKey('perfil.id'), nullable=False)
     perfil = relationship('Perfil', back_populates='personas')
     contrasena = Column(String(250), nullable=False)
-    tareas = relationship('TareaPersona', back_populates='persona')
-    gastos = relationship('GastoPersona', back_populates='persona', overlaps='gastos')
+    tareas = relationship('TareaPersona', back_populates='persona',cascade="all, delete-orphan" )
+    gastos = relationship('GastoPersona', back_populates='persona', overlaps='gastos' ,cascade="all, delete-orphan")
 
 class Tarea(db.Model):
     __tablename__ = 'tarea'
@@ -75,7 +75,7 @@ class TareaPersona(db.Model):
     id_tarea = Column(Integer, ForeignKey('tarea.id'), nullable=False)
     tarea = relationship('Tarea', back_populates='personas')
     fecha_inicio = Column(Date, nullable=False)
-    fecha_termino = Column(Date, nullable=False)
+    fecha_termino = Column(Date, nullable=True)
 
       # Definir la combinación única de los campos id_unidad, id_persona e id_tarea
     __table_args__ = (

@@ -7,7 +7,7 @@ create_direccion_bp = Blueprint('create_direccion', __name__)
 def create_direccion():
     data = request.json 
 
-    required_fields = ["id_pais", "id_region", "id_comuna", "calle", "numero", "depto_casa", "id_unidad"]
+    required_fields = ["id_pais", "id_region", "id_comuna", "calle", "id_unidad"]
 
     for field in required_fields:
         if not data.get(field):

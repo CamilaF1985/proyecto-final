@@ -1,10 +1,13 @@
 from flask import jsonify, Blueprint, request
 from models import Comuna, db
 from flask_jwt_extended import JWTManager, jwt_required
- 
+
+
 get_all_comuna_bp = Blueprint('get_all_comuna', __name__)
 
+
 @get_all_comuna_bp.route('/get_all_comuna_bp', methods=['GET'])
+
 ##@jwt_required()
 def get_all_comuna():
     try:
