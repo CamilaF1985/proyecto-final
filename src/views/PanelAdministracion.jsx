@@ -13,18 +13,15 @@ import gastosIcon from '../assets/img/administracion-gastos.png';
 import tareasIcon from '../assets/img/administracion-tareas.png';
 import perfilImage from '../assets/img/perfil.png';
 
-// Importar el selector desde el archivo selectors.js
-import {
-  selectModalIsOpen,
-} from '../flux/selectors';
+// Importar los selectores desde el archivo selectors.js
+import selectors from '../flux/selectors';
 
 const PanelAdministracion = () => {
   // Obtener el despachador y las funciones de selección del estado desde Redux
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Utilizar el selector para obtener el estado del modal desde el estado global
-  const modalIsOpen = useSelector(selectModalIsOpen);
+  const modalIsOpen = useSelector(selectors.selectModalIsOpen);
 
   // Funciones para abrir los modales y navegar a las rutas correspondientes
   const handleOpenRegistroInquilinoModal = () => {
