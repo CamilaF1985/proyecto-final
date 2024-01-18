@@ -14,7 +14,7 @@ from routes.comuna import get_comunas_by_region
 from routes.persona_admin import create_persona_admin_bp
 from routes.persona_inquilino import create_persona_inquilino_bp
 from routes.unidad import create_unidad_bp
-from routes.tarea import create_tarea_bp, delete_tarea_por_unidad_bp
+from routes.tarea import create_tarea_bp, delete_tarea_por_unidad_bp, get_tarea_by_unidad_bp
 from routes.gasto import create_gasto_bp, get_gasto_por_unidad_bp, delete_gasto_por_unidad_bp
 from routes.gasto_persona import create_gasto_persona_bp, get_gasto_por_persona_bp
 from routes.direccion import create_direccion_bp  
@@ -72,6 +72,7 @@ app.register_blueprint(create_persona_inquilino_bp)
 app.register_blueprint(create_tarea_bp)
 app.register_blueprint(delete_tarea_por_unidad_bp)
 app.register_blueprint(create_tarea_persona_bp)
+app.register_blueprint(get_tarea_by_unidad_bp)
 
 app.register_blueprint(create_gasto_bp)
 app.register_blueprint(delete_gasto_por_unidad_bp)

@@ -1,34 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { deleteTask } from '../flux/taskActions';
+import { deleteTaskFromDatabase, getTasksByUnit, saveTasksData } from '../flux/taskActions';
 import { useNavigate } from 'react-router-dom';
 
 const EliminarTarea = () => {
-  // Hooks y Redux
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.modalIsOpen);
   const navigate = useNavigate();
 
-  // Estado para almacenar el nombre de la tarea a eliminar
   const [taskName, setTaskName] = useState('');
+  const [tasksList, setTasksList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Función para cerrar el modal y redirigir a la ruta principal
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Obtener la lista de tareas por unidad
+        const unitId = localStorage.getItem('id_unidad');
+        if (unitId) {
+          const tasks = await dispatch(getTasksByUnit(unitId));
+          setTasksList(tasks);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error al obtener la lista de tareas:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+
   const handleCloseModal = () => {
     const path = '/administrar-panel';
     dispatch(closeModalAndRedirect(path, navigate));
   };
 
-  // Función para eliminar la tarea
   const handleEliminarTarea = (e) => {
     e.preventDefault();
 
-    // Dispatch de la acción para eliminar tarea
-    dispatch(deleteTask(taskName));
+    // Obtener el ID de la tarea
+    const taskId = tasksList.find(task => task.nombre === taskName)?.id;
 
-    // Cerrar el modal y redirigir
-    handleCloseModal();
+    if (taskId) {
+      // Eliminar la tarea utilizando la acción correspondiente
+      dispatch(deleteTaskFromDatabase(taskId))
+        .then((updatedTasks) => {
+          if (updatedTasks !== null) {
+            // Actualizar la lista de tareas en el estado global
+            dispatch(saveTasksData(updatedTasks));
+            console.log('Tarea eliminada correctamente');
+          } else {
+            console.error('Error al eliminar la tarea');
+          }
+        })
+        .catch((error) => {
+          console.error('Error al eliminar la tarea:', error);
+        });
+      
+      // Cerrar el modal y redirigir
+      handleCloseModal();
+    } else {
+      console.error('Error al obtener el ID de la tarea');
+    }
   };
 
   return (
@@ -39,22 +75,17 @@ const EliminarTarea = () => {
       className="modal-content"
       overlayClassName="modal-overlay"
     >
-      {/* Encabezado del modal */}
       <div className="modal-header d-flex justify-content-end mb-2">
         <button className="btn btn-danger" onClick={handleCloseModal}>
           X
         </button>
       </div>
 
-      {/* Cuerpo del modal */}
       <div className="modal-body">
         <div className="form-container">
-          {/* Título del formulario */}
           <h2 className="form-titulo">Eliminar Tarea</h2>
           
-          {/* Formulario con clases de Bootstrap para la responsividad */}
           <form onSubmit={handleEliminarTarea} className="row g-3 needs-validation" noValidate>
-            {/* Campo para ingresar el nombre de la tarea */}
             <div className="col-md-12 mb-3">
               <label htmlFor="taskName" className="form-label">Nombre de la Tarea:</label>
               <input
@@ -66,22 +97,31 @@ const EliminarTarea = () => {
                 onChange={(e) => setTaskName(e.target.value)}
                 required
               />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
               <div className="invalid-feedback">
                 Por favor, ingresa el nombre de la tarea.
               </div>
             </div>
 
-            {/* Mensaje de verificación antes de eliminar */}
             <div className="col-md-12 mb-3">
               <p>¿Estás seguro de querer eliminar la tarea con nombre: {taskName}?</p>
             </div>
 
-            {/* Botón para enviar el formulario de eliminación */}
             <div className="col-md-12 d-flex justify-content-end">
               <button className="btn btn-danger" type="submit">Eliminar</button>
             </div>
           </form>
+
+          {/* Mostrar la lista de tareas por unidad */}
+          {!loading && tasksList.length > 0 && (
+            <div className="mt-4">
+              <h3>Lista de Tareas por Unidad:</h3>
+              <ul>
+                {tasksList.map((task) => (
+                  <li key={task.id}>{task.nombre}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </Modal>
@@ -89,4 +129,5 @@ const EliminarTarea = () => {
 };
 
 export default EliminarTarea;
+
 

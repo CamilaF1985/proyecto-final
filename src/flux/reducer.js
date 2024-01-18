@@ -14,7 +14,7 @@ import {
 import {
   SAVE_UNIT_DATA,
   FETCH_UNIT_BY_ID,
-  SAVE_NEW_UNIT_DATA, 
+  SAVE_NEW_UNIT_DATA,
 } from './unitActions.js';
 
 // Importar acciones relacionadas con modales desde modalActions.js
@@ -63,9 +63,14 @@ const initialState = {
     rut: null,
     email: null,
     id_unidad: null,
-}],
+  }],
 
-  tasks: [],
+  tasks: [{
+    id: null,
+    id_unidad: null,
+    nombre: null,
+  }],
+  
   expenses: [],
   comunas: [],
   regiones: [],
