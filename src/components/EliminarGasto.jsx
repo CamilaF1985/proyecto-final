@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { deleteExpenseFromDatabase, getExpensesByUnit, saveFetchedExpensesData } from '../flux/expenseActions';
+import { deleteExpenseFromDatabase, getExpensesByUnit } from '../flux/expenseActions';
 import { useNavigate } from 'react-router-dom';
 
 const EliminarGasto = () => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.modalIsOpen);
-  const [factura, setFactura] = useState('');
   const [expensesList, setExpensesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
