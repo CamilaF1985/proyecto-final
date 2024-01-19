@@ -14,6 +14,16 @@ export const addExpense = (expenseData) => {
     };
 };
 
+// Acción para guardar nuevos gastos obtenidos por unidad
+export const saveFetchedExpensesData = (updatedExpenses) => {
+    console.log('SAVE_NEW_EXPENSE_DATA action triggered with data:', updatedExpenses); // Agregado aquí
+  
+    return {
+      type: SAVE_NEW_EXPENSE_DATA,
+      payload: updatedExpenses.gastos, // Accede al array dentro del objeto
+    };
+  };
+
 // Acción para guardar nuevos gastos
 export const saveNewExpenseData = (expenseData) => {
     return async (dispatch) => {
@@ -58,6 +68,34 @@ export const saveNewExpenseData = (expenseData) => {
     };
 };
 
+// Acción para obtener gastos por unidad
+export const getExpensesByUnit = (unitId) => {
+    return (dispatch) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await axios.get(`http://localhost:5000/get_gasto_por_unidad/${unitId}`);
+
+                console.log('Respuesta de getExpensesByUnit:', response.data); // Agregado aquí
+
+                if (response.status === 200) {
+                    // Guardar los gastos en el estado global antes de devolver la respuesta
+                    dispatch(saveFetchedExpensesData(response.data));
+                    // Resolver la Promesa con los datos
+                    resolve(response.data);
+                } else {
+                    console.error('Error en la respuesta del servidor:', response);
+                    // Rechazar la Promesa con el error
+                    reject({ error: `Error: ${response.data.error}` });
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+                // Rechazar la Promesa con el error
+                reject({ error: `Error al obtener gastos por unidad: ${error.message}` });
+            }
+        });
+    };
+};
+  
 // Acción para eliminar un gasto del estado global
 export const deleteExpense = (expenseId) => {
     return {
@@ -65,3 +103,36 @@ export const deleteExpense = (expenseId) => {
         payload: expenseId,
     };
 };
+
+// Acción para eliminar un gasto de la base de datos
+export const deleteExpenseFromDatabase = (expenseId) => {
+    return async (dispatch) => {
+        try {
+            // Realiza la solicitud DELETE al endpoint para eliminar el gasto por su ID
+            const response = await axios.delete(`http://localhost:5000/delete_gasto_por_unidad/${expenseId}`);
+
+            if (response.status === 200) {
+                // Despacha la acción para eliminar el gasto del estado global
+                dispatch(deleteExpense(expenseId));
+
+                // Obtiene y guarda los datos actualizados de gastos utilizando la acción correspondiente
+                const updatedExpenses = await dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')));
+                dispatch(saveFetchedExpensesData(updatedExpenses));
+
+                // Devuelve los datos actualizados de gastos después de la eliminación
+                return updatedExpenses;
+            } else {
+                // Maneja el caso en que la respuesta del servidor no sea exitosa
+                console.error('Error al eliminar el gasto:', response.data.error);
+                // Devuelve null o algún valor que indique que la eliminación falló
+                return null;
+            }
+        } catch (error) {
+            // Muestra un mensaje de error si ocurre un error durante la eliminación del gasto
+            console.error('Error durante la eliminación del gasto:', error);
+            // Devuelve null o algún valor que indique que la eliminación falló
+            return null;
+        }
+    };
+};
+
