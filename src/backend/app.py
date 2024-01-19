@@ -37,25 +37,27 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=10)
 
 jwt = JWTManager(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:12345@localhost:5434/cuentas_claras_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:10644@localhost:5434/cuentas_claras_db'
 db.init_app(app)
   
 
 migrate = Migrate(app, db)
 
-def verifica_conexion_db(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        try:
-            # Intenta realizar una operación que requiera la conexión a la base de datos
-            db.engine.execute("SELECT 1")
-            # Si se llega a este punto, la conexión se ha establecido con éxito
-            return f(*args, **kwargs)
-        except OperationalError as e:
-            # En caso de que ocurra un error de conexión a la base de datos, maneja la excepción aquí
-            mensaje_error = 'Error de conexión a la base de datos: {}'.format(e)
-            return jsonify({'error': mensaje_error}), 500
-    return decorated_function
+
+
+# def verifica_conexion_db(f):
+#     @wraps(f)
+#     def decorated_function(*args, **kwargs):
+#         try:
+#             # Intenta realizar una operación que requiera la conexión a la base de datos
+#             db.engine.execute("SELECT 1")
+#             # Si se llega a este punto, la conexión se ha establecido con éxito
+#             return f(*args, **kwargs)
+#         except OperationalError as e:
+#             # En caso de que ocurra un error de conexión a la base de datos, maneja la excepción aquí
+#             mensaje_error = 'Error de conexión a la base de datos: {}'.format(e)
+#             return jsonify({'error': mensaje_error}), 500
+#     return decorated_function
 
 # Registra las rutas después de haber importado el blueprint
 
