@@ -70,8 +70,14 @@ const initialState = {
     id_unidad: null,
     nombre: null,
   }],
-  
-  expenses: [],
+
+  expenses: [{
+    id_unidad: null,
+    factura: null,
+    monto_original: null,
+    descripcion: null,
+  }],
+
   comunas: [],
   regiones: [],
   direcciones: [],
@@ -136,11 +142,13 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         expenses: state.expenses.filter((expense) => expense.id !== action.payload),
       };
+
     case SAVE_NEW_EXPENSE_DATA:
       return {
         ...state,
-        expenses: [...state.expenses, action.payload],
+        expenses: action.payload,
       };
+
     case SAVE_UNIT_DATA:
       return { ...state, unit: { ...state.unit, ...action.payload } };
 

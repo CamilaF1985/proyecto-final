@@ -33,8 +33,8 @@ def create_gasto():
 
   
 get_gasto_por_unidad_bp = Blueprint('get_gasto_por_unidad', __name__)
+CORS(get_gasto_por_unidad_bp)
 @get_gasto_por_unidad_bp.route('/get_gasto_por_unidad/<int:id_unidad>', methods=['GET'])
-
 def get_gasto_por_unidad(id_unidad):
     try:
         gastos = Gasto.query.filter_by(id_unidad=id_unidad).all()
@@ -48,7 +48,7 @@ def get_gasto_por_unidad(id_unidad):
             gasto_info = {
                 'id': gasto.id,
                 'factura': gasto.factura,
-                'monto': gasto.monto,
+                'monto': gasto.monto_original,
                 'descripcion': gasto.descripcion,
                 # 'unidad_nombre': unidad_nombre  # Puedes agregar más detalles de la unidad si es necesario
             }
