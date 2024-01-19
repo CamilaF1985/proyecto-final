@@ -19,7 +19,7 @@ const EliminarGasto = () => {
         const unitId = localStorage.getItem('id_unidad');
         if (unitId) {
           const { gastos } = await dispatch(getExpensesByUnit(unitId));
-          setExpensesList(gastos);          
+          setExpensesList(gastos);
           setLoading(false);
         }
       } catch (error) {
@@ -38,11 +38,15 @@ const EliminarGasto = () => {
         if (deletedGastoId) {
           console.log('Gasto eliminado con éxito:', deletedGastoId);
   
-          // Actualizar el estado local eliminando el gasto de la lista
-          setExpensesList((prevExpenses) => prevExpenses.filter((expense) => expense.id !== deletedGastoId));
-  
-          // Otra opción: puedes también utilizar la acción saveFetchedExpensesData
-          // dispatch(saveFetchedExpensesData(updatedExpenses));
+          // Después de eliminar, obtener la lista actualizada
+          dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')))
+            .then((updatedExpenses) => {
+              // Actualizar el estado local con la lista actualizada
+              setExpensesList(updatedExpenses);
+            })
+            .catch((error) => {
+              console.error('Error al obtener la lista actualizada de gastos:', error);
+            });
         } else {
           console.error('Error al eliminar el gasto:', id);
         }
@@ -51,7 +55,7 @@ const EliminarGasto = () => {
         console.error('Error al procesar la eliminación del gasto:', error);
       });
   };
-      
+  
   const handleCloseModal = () => {
     const path = '/administrar-panel';
     dispatch(closeModalAndRedirect(path, navigate));
