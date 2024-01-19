@@ -12,7 +12,7 @@ CORS(create_persona_admin_bp, resources={r"/*": {"origins": "http://localhost:30
 def create_persona_admin():
     if request.method == 'OPTIONS':
         response = jsonify({"message": "Preflight request received"})
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS") 
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
         response.headers.add("Access-Control-Allow-Credentials", "true")
@@ -50,14 +50,7 @@ def create_persona_admin():
             contrasena=generate_password_hash(contrasena, method='pbkdf2:sha256')
         )
 
-        if tareas:
-            # Asignar las tareas a la persona
-            nuevo_admin.tareas = tareas
-
-        if gastos:
-            # Asignar los gastos a la persona
-            nuevo_admin.gastos = gastos
-
+        
         try:
             db.session.add(nuevo_admin)
             db.session.commit()

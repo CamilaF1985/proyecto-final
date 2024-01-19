@@ -21,6 +21,7 @@ from routes.direccion import create_direccion_bp
 from routes.persona import persona_bp, get_person_by_unidad_bp, update_email_persona_bp ,delete_persona_by_rut_bp
 from routes.tarea_persona import create_tarea_persona_bp
 from routes.send_mail import send_mail_bp
+from routes.invalida_token import elimina_token_bp
 
 
 app = Flask(__name__)
@@ -90,10 +91,9 @@ app.register_blueprint(persona_bp)
 app.register_blueprint(delete_persona_by_rut_bp)
 app.register_blueprint(get_person_by_unidad_bp)
 
-
-
 app.register_blueprint(send_mail_bp)
 
+app.register_blueprint(elimina_token_bp)
 
 
 
