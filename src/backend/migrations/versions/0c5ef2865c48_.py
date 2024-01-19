@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 2d6f9caf985b
+Revision ID: 0c5ef2865c48
 Revises: 
-Create Date: 2024-01-17 19:30:27.290561
+Create Date: 2024-01-19 19:00:19.589163
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2d6f9caf985b'
+revision = '0c5ef2865c48'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -85,6 +85,7 @@ def upgrade():
     sa.Column('id_persona', sa.Integer(), nullable=False),
     sa.Column('id_gasto', sa.Integer(), nullable=False),
     sa.Column('monto_prorrateado', sa.Integer(), nullable=False),
+    sa.Column('estado', sa.Boolean(), server_default='f', nullable=False),
     sa.ForeignKeyConstraint(['id_gasto'], ['gasto.id'], ),
     sa.ForeignKeyConstraint(['id_persona'], ['persona.id'], ),
     sa.PrimaryKeyConstraint('id_persona', 'id_gasto')
@@ -94,8 +95,8 @@ def upgrade():
     sa.Column('id_persona', sa.Integer(), nullable=False),
     sa.Column('id_unidad', sa.Integer(), nullable=False),
     sa.Column('id_tarea', sa.Integer(), nullable=False),
-    sa.Column('fecha_inicio', sa.Date(), nullable=False),
-    sa.Column('fecha_termino', sa.Date(), nullable=False),
+    sa.Column('fecha_inicio', sa.Date(), nullable=True),
+    sa.Column('fecha_termino', sa.Date(), nullable=True),
     sa.ForeignKeyConstraint(['id_persona'], ['persona.id'], ),
     sa.ForeignKeyConstraint(['id_tarea'], ['tarea.id'], ),
     sa.ForeignKeyConstraint(['id_unidad'], ['unidad.id'], ),

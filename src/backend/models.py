@@ -74,7 +74,7 @@ class TareaPersona(db.Model):
     unidad = relationship('Unidad', back_populates='tareas_personas')
     id_tarea = Column(Integer, ForeignKey('tarea.id'), nullable=False)
     tarea = relationship('Tarea', back_populates='personas')
-    fecha_inicio = Column(Date, nullable=False)
+    fecha_inicio = Column(Date, nullable=True)
     fecha_termino = Column(Date, nullable=True)
 
       # Definir la combinación única de los campos id_unidad, id_persona e id_tarea
@@ -100,6 +100,7 @@ class GastoPersona(db.Model):
     id_gasto = Column(Integer, ForeignKey('gasto.id'), nullable=False, primary_key=True)
     gasto = relationship('Gasto', back_populates='gastos_relacionados')
     monto_prorrateado = Column(Integer, nullable=False)
+    estado = Column(Boolean, nullable=False, server_default='f', default=False)
 
   
 

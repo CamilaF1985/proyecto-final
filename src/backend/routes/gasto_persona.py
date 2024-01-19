@@ -8,7 +8,7 @@ def create_gasto_persona():
                 
     data = request.json
     id_persona = data.get('id_persona')
-    id_gasto = data.get('id_gasto')
+    id_gasto = data.get('id_gasto') 
     monto_prorrateado = data.get('monto_prorrateado')
 
 
@@ -38,7 +38,7 @@ def get_gasto_por_persona(id_persona):
     try:
         gastos = GastoPersona.query.filter_by(id_persona=id_persona).all()
       
-        # Por ejemplo, se puedes incluir el nombre de la unidad en la respuesta
+        # Por ejemplo, se puede incluir el nombre de la unidad en la respuesta
         # unidad = Unidad.query.get(id_unidad)
         # unidad_nombre = unidad.nombre if unidad else None
 

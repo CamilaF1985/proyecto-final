@@ -4,23 +4,18 @@ from rut_chile import rut_chile
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required
 from flask_cors import CORS
+from decorador import handle_preflight
 
 create_persona_admin_bp = Blueprint('create_persona_admin', __name__)
 CORS(create_persona_admin_bp, resources={r"/*": {"origins": "http://localhost:3000"}})
 @jwt_required()
 @create_persona_admin_bp.route('/create_persona_admin', methods=['POST', 'OPTIONS'])
-def create_persona_admin():
-    if request.method == 'OPTIONS':
-        response = jsonify({"message": "Preflight request received"})
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS") 
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
-        response.headers.add("Access-Control-Allow-Credentials", "true")
-        return response
-    elif request.method == 'POST':
+@handle_preflight
+def create_persona_admin(): 
+
         data = request.json  # Se espera que los datos lleguen en formato JSON desde el front-end
 
-        rut = data.get('rut')
+        rut = data.get('rut').strip().replace(".","")
         id_unidad = data.get('id_unidad')
         estado = data.get('estado', True)  # no requerido en el front
         email = data.get('email')
