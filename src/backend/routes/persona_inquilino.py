@@ -3,18 +3,15 @@ from models import Persona, db
 from rut_chile import rut_chile
 from werkzeug.security import generate_password_hash
 from flask_cors import CORS
+from decorador import handle_preflight
 
 create_persona_inquilino_bp = Blueprint('create_persona_inquilino', __name__)
 CORS(create_persona_inquilino_bp, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 @create_persona_inquilino_bp.route('/create_persona_inquilino', methods=['POST', 'OPTIONS'])
+@handle_preflight
 def create_persona_inquilino():
-    if request.method == 'OPTIONS':
-        response = jsonify({"message": "Preflight request received"})
-        response.headers.add("Access-Control-Allow-Methods", "POST")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        return response
-
+    
     data = request.json  # Se espera que los datos lleguen en formato JSON desde el front-end
 
     rut = data.get('rut')  #
