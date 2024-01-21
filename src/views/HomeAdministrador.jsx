@@ -45,7 +45,7 @@ const HomeAdministrador = () => {
     openModalAndRedirect('/perfil');
   };
 
-  // Función para abrir el modal de perfil
+  // Función para abrir el modal de tareas
   const handleOpenTareasModal = () => {
     openModalAndRedirect('/tareas-pendientes');
   };

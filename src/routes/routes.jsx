@@ -1,19 +1,19 @@
 // Importaciones de módulos y componentes
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import App from '../App.jsx';  
-import HomeAdministrador from '../views/HomeAdministrador.jsx';  
-import HomeInquilino from '../views/HomeInquilino.jsx';  
-import Perfil from '../components/Perfil.jsx';  
-import PanelAdministracion from '../views/PanelAdministracion.jsx';  
-import RegistroInquilino from '../components/RegistroInquilino.jsx';  
-import RegistroForm from '../components/RegistroForm.jsx';  
-import EliminarInquilino from '../components/EliminarInquilino.jsx';  
+import App from '../App.jsx';
+import HomeAdministrador from '../views/HomeAdministrador.jsx';
+import HomeInquilino from '../views/HomeInquilino.jsx';
+import Perfil from '../components/Perfil.jsx';
+import PanelAdministracion from '../views/PanelAdministracion.jsx';
+import RegistroInquilino from '../components/RegistroInquilino.jsx';
+import RegistroForm from '../components/RegistroForm.jsx';
+import EliminarInquilino from '../components/EliminarInquilino.jsx';
 import AgregarTarea from '../components/AgregarTarea.jsx';
-import EliminarTarea from '../components/EliminarTarea.jsx'; 
-import TareasPendientes from '../components/TareasPendientes.jsx'; 
-import AgregarGasto from '../components/AgregarGasto.jsx'; 
-import EliminarGasto from '../components/EliminarGasto.jsx'; 
+import EliminarTarea from '../components/EliminarTarea.jsx';
+import TareasPendientes from '../components/TareasPendientes.jsx';
+import AgregarGasto from '../components/AgregarGasto.jsx';
+import EliminarGasto from '../components/EliminarGasto.jsx';
 
 // Componente funcional para manejar las rutas de la aplicación
 const AppRoutes = () => {
@@ -40,6 +40,12 @@ const AppRoutes = () => {
         '/perfil'
       ];
 
+      // Define las rutas permitidas para el usuario inquilino
+      const allowedPathsForInquilino = [
+        '/tareas-pendientes',
+        '/perfil'
+      ];
+
       // Verifica el tipo de usuario y redirige según las rutas permitidas
       if (storedUserType.toLowerCase() === 'administrador') {
         // Permite el acceso a /registro-inquilino para usuarios administradores
@@ -48,8 +54,8 @@ const AppRoutes = () => {
         }
         navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
       } else if (storedUserType.toLowerCase() === 'inquilino') {
-        // Permite el acceso a /perfil para usuarios inquilinos
-        if (window.location.pathname.includes('/perfil')) {
+        // Permite el acceso a /tareas-pendientes y /perfil para usuarios inquilinos
+        if (allowedPathsForInquilino.some(path => window.location.pathname.includes(path))) {
           return;
         }
         navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
