@@ -11,6 +11,7 @@ import gastosImage from '../assets/img/gastos.png';
 import tareasImage from '../assets/img/tareas.png';
 import configuracionImage from '../assets/img/configuracion.png';
 import Perfil from '../components/Perfil.jsx';
+import TareasPendientes from '../components/TareasPendientes.jsx';
 
 // Importar los selectores desde el archivo selectors.js
 import selectors from '../flux/selectors';
@@ -42,6 +43,11 @@ const HomeAdministrador = () => {
   // Función para abrir el modal de perfil
   const handleOpenPerfilModal = () => {
     openModalAndRedirect('/perfil');
+  };
+
+  // Función para abrir el modal de perfil
+  const handleOpenTareasModal = () => {
+    openModalAndRedirect('/tareas-pendientes');
   };
 
   // Función para navegar a la página de administración
@@ -94,7 +100,7 @@ const HomeAdministrador = () => {
 
           {/* Icono "Tareas pendientes" */}
           <div className="col-6 col-md-6 mb-3">
-            <div className="contenedor-imagen contenedor-imagen-debajo">
+            <div className="contenedor-imagen contenedor-imagen-debajo" onClick={handleOpenTareasModal}>
               <img src={tareasImage} alt="Tareas pendientes" className="img-fluid" />
             </div>
             <p className="texto-debajo-imagen">Tareas pendientes</p>
@@ -110,18 +116,20 @@ const HomeAdministrador = () => {
         </div>
       </div>
 
-      {/* Modal de perfil */}
+      {/* Modal de perfil o tareas pendientes */}
       {ReactDOM.createPortal(
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={handleCloseModal}
-          contentLabel="Perfil Modal"
+          contentLabel={location.pathname === '/perfil' ? 'Perfil Modal' : 'Tareas Pendientes Modal'}
           className="modal-content"
           overlayClassName="modal-overlay"
         >
-          {/* Contenido del modal (Perfil en lugar de PerfilForm) */}
+          {/* Contenido del modal (Perfil o TareasPendientes en lugar de PerfilForm) */}
           {location.pathname === '/perfil' ? (
             <Perfil />
+          ) : location.pathname === '/tareas-pendientes' ? (
+            <TareasPendientes />
           ) : null}
         </Modal>,
         document.body

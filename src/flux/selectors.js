@@ -36,6 +36,11 @@ export const selectUsersDataSelector = createSelector(
   }
 );
 
+export const selectUserId = createSelector(
+  selectUser,
+  (user) => user.id_persona
+);
+
 // Exportar todos los selectores en un solo objeto
 const selectors = {
   selectModalIsOpen,
@@ -43,6 +48,7 @@ const selectors = {
   selectTasks,
   selectExpenses,
   selectUsersDataSelector,
+  selectUserId,
 };
 
 export default selectors;

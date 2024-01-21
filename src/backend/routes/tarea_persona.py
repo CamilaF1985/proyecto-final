@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, Blueprint, request
 from flask_cors import CORS
-from models import TareaPersona, db
+from models import TareaPersona, db, Tarea
 
 create_tarea_persona_bp = Blueprint('create_tarea_persona', __name__)
 CORS(create_tarea_persona_bp)
@@ -61,18 +61,27 @@ def update_tarea_persona(tarea_persona_id):
     
 @create_tarea_persona_bp.route('/tarea_persona_by_id_persona/<int:id_persona>', methods=['GET'])
 def get_tarea_persona_by_id_persona(id_persona):
-    tarea_persona_list = TareaPersona.query.filter_by(id_persona=id_persona).all()
+    tarea_persona_list = db.session.query(
+        TareaPersona.id.label('id_tarea_persona'),
+        TareaPersona.id_tarea,
+        TareaPersona.id_unidad,
+        TareaPersona.id_persona,
+        TareaPersona.fecha_inicio,
+        TareaPersona.fecha_termino,
+        Tarea.nombre.label('nombre_tarea')
+    ).join(Tarea, Tarea.id == TareaPersona.id_tarea).filter(TareaPersona.id_persona == id_persona).all()
 
     tarea_persona_data = []
 
     for tarea_persona in tarea_persona_list:
         tarea_persona_data.append({
-            "id_tarea_persona": tarea_persona.id,
+            "id_tarea_persona": tarea_persona.id_tarea_persona,
             "id_tarea": tarea_persona.id_tarea,
             "id_unidad": tarea_persona.id_unidad,
             "id_persona": tarea_persona.id_persona,
             "fecha_inicio": tarea_persona.fecha_inicio,
-            "fecha_termino": tarea_persona.fecha_termino
+            "fecha_termino": tarea_persona.fecha_termino,
+            "nombre_tarea": tarea_persona.nombre_tarea if tarea_persona.nombre_tarea else None,
         })
 
     # Devuelve un array vacío si no hay tareas asignadas para este usuario

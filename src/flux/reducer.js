@@ -46,6 +46,11 @@ import {
   CREATE_DIRECCION,
 } from './addressActions.js';
 
+import {
+  // otras importaciones
+  SAVE_TAREAS_ASIGNADAS,
+} from './personTaskActions.js';
+
 // Estado inicial de la aplicación
 const initialState = {
   modalIsOpen: false,
@@ -57,7 +62,6 @@ const initialState = {
     id_unidad: null,
     nombre_unidad: null
   },
-
   usersData: [{
     userType: null,
     username: null,
@@ -65,23 +69,22 @@ const initialState = {
     email: null,
     id_unidad: null,
   }],
-
   tasks: [{
     id: null,
     id_unidad: null,
     nombre: null,
   }],
-
   expenses: [{
     id_unidad: null,
     factura: null,
     monto_original: null,
     descripcion: null,
   }],
-
   comunas: [],
   regiones: [],
   direcciones: [],
+  unit: {}, // Agrega un objeto vacío para inicializar el campo 'unit'
+  tareasAsignadas: [],
 };
 
 // Reducer que maneja las acciones y actualiza el estado global de la aplicación
@@ -134,33 +137,42 @@ const rootReducer = (state = initialState, action) => {
         tasks: [...state.tasks, action.payload],
       };
 
-      case GET_TASK_BY_NAME:
-        const { data, status, statusText } = action.payload;
-      
-        // Verifica si la tarea ya existe en el estado
-        const existingTask = state.tasks.find(task => task.id === data.id);
-      
-        if (existingTask) {
-          // Si la tarea existe, actualiza solo los campos necesarios
-          const updatedTasks = state.tasks.map(task => {
-            if (task.id === data.id) {
-              return { ...task, ...data };
-            }
-            return task;
-          });
-      
-          return {
-            ...state,
-            tasks: updatedTasks,
-          };
-        } else {
-          // Si la tarea no existe, agrégala al estado
-          return {
-            ...state,
-            tasks: [...state.tasks, data],
-          };
-        }
-        
+    case GET_TASK_BY_NAME:
+      const { data, status, statusText } = action.payload;
+
+      // Verifica si la tarea ya existe en el estado
+      const existingTask = state.tasks.find(task => task.id === data.id);
+
+      if (existingTask) {
+        // Si la tarea existe, actualiza solo los campos necesarios
+        const updatedTasks = state.tasks.map(task => {
+          if (task.id === data.id) {
+            return { ...task, ...data };
+          }
+          return task;
+        });
+
+        return {
+          ...state,
+          tasks: updatedTasks,
+        };
+      } else {
+        // Si la tarea no existe, agrégala al estado
+        return {
+          ...state,
+          tasks: [...state.tasks, data],
+        };
+      }
+
+    case SAVE_TAREAS_ASIGNADAS:
+      return {
+        ...state,
+        tareasAsignadas: action.payload,
+      };
+
+    case FETCH_UNIT_BY_ID:
+      // Actualiza el estado basado en la acción FETCH_UNIT_BY_ID si es necesario
+      return state;
     case ADD_EXPENSE:
       return {
         ...state,

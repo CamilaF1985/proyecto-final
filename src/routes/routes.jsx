@@ -11,6 +11,7 @@ import RegistroForm from '../components/RegistroForm.jsx';
 import EliminarInquilino from '../components/EliminarInquilino.jsx';  
 import AgregarTarea from '../components/AgregarTarea.jsx';
 import EliminarTarea from '../components/EliminarTarea.jsx'; 
+import TareasPendientes from '../components/TareasPendientes.jsx'; 
 import AgregarGasto from '../components/AgregarGasto.jsx'; 
 import EliminarGasto from '../components/EliminarGasto.jsx'; 
 
@@ -33,6 +34,7 @@ const AppRoutes = () => {
         '/eliminar-inquilino',
         '/agregar-tarea',
         '/eliminar-tarea',
+        '/tareas-pendientes',
         '/agregar-gasto',
         '/eliminar-gasto',
         '/perfil'
@@ -73,6 +75,7 @@ const AppRoutes = () => {
       <Route path="/eliminar-inquilino" element={<EliminarInquilino />} />
       <Route path="/agregar-tarea" element={<AgregarTarea />} />
       <Route path="/eliminar-tarea" element={<EliminarTarea />} />
+      <Route path="/tareas-pendientes" element={<TareasPendientes />} />
       <Route path="/agregar-gasto" element={<AgregarGasto />} />
       <Route path="/eliminar-gasto" element={<EliminarGasto />} />
 

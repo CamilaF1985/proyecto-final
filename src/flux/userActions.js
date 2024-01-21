@@ -147,44 +147,29 @@ export const loginUser = (formData, closeModal, navigate) => {
 export const getUserByRut = () => {
   return async (dispatch) => {
     try {
-      // Obtiene el RUT almacenado localmente
       const rut = localStorage.getItem('rut');
 
       if (rut) {
-        // Realiza una solicitud al servidor para obtener los datos del usuario por su RUT
         const response = await axios.get(`http://localhost:5000/get_persona_by_rut/${rut}`);
 
         if (response.status === 200) {
-          // Procesa los datos del usuario obtenidos y actualiza el tipo de usuario
           const userData = response.data;
           const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';
           userData.userType = userType;
-          dispatch(saveUserData(userData));
 
-          // Llama a fetchUnitById para obtener los datos de la unidad asociada al usuario
-          if (userData.id_unidad) {
-            try {
-              const unitData = await dispatch(fetchUnitById(userData.id_unidad));
-              if (unitData) {
-                console.log('Unidad encontrada - ID:', unitData.id, 'Nombre:', unitData.nombre);
-              } else {
-                console.log('No se encontraron datos de unidad');
-              }
-            } catch (error) {
-              console.error('Error al obtener la unidad:', error);
-            }
-          }
+          // Utiliza una promesa para esperar a que el estado se actualice antes de resolver
+          return new Promise((resolve) => {
+            dispatch(saveUserData(userData));
+            resolve();
+          });
         } else {
-          // Muestra un mensaje de error si la solicitud no fue exitosa
           const errorData = response.data;
           console.error(`Error: ${errorData.error}`);
         }
       } else {
-        // Muestra un mensaje de error si el RUT no se encuentra en el localStorage
         console.error('Error: RUT no encontrado en el localStorage');
       }
     } catch (error) {
-      // Muestra un mensaje de error si ocurre un error durante la obtención de datos del usuario
       console.error('Error al obtener el usuario por su RUT:', error);
     }
   };
