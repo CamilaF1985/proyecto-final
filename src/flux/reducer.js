@@ -29,6 +29,7 @@ import {
   ADD_TASK,
   DELETE_TASK,
   SAVE_NEW_TASK_DATA,
+  GET_TASK_BY_NAME, // Agrega la importación del tipo de acción GET_TASK_BY_ID
 } from './taskActions.js';
 
 // Importar acciones relacionadas con gastos desde expenseActions.js
@@ -132,6 +133,34 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         tasks: [...state.tasks, action.payload],
       };
+
+      case GET_TASK_BY_NAME:
+        const { data, status, statusText } = action.payload;
+      
+        // Verifica si la tarea ya existe en el estado
+        const existingTask = state.tasks.find(task => task.id === data.id);
+      
+        if (existingTask) {
+          // Si la tarea existe, actualiza solo los campos necesarios
+          const updatedTasks = state.tasks.map(task => {
+            if (task.id === data.id) {
+              return { ...task, ...data };
+            }
+            return task;
+          });
+      
+          return {
+            ...state,
+            tasks: updatedTasks,
+          };
+        } else {
+          // Si la tarea no existe, agrégala al estado
+          return {
+            ...state,
+            tasks: [...state.tasks, data],
+          };
+        }
+        
     case ADD_EXPENSE:
       return {
         ...state,

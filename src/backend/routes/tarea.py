@@ -57,6 +57,26 @@ def get_tarea_by_unidad(id):
         return jsonify(resultados)
     else:
         return jsonify({"error": "No se encontraron tareas para el ID de unidad especificado"}), 404
+    
+# Blueprint para traer detalles de una tarea por su nombre
+get_tarea_by_name_bp = Blueprint('get_tarea_by_name', __name__)
+CORS(get_tarea_by_name_bp)
+
+@get_tarea_by_name_bp.route('/get_tarea_by_name/<string:nombre>', methods=['GET'])
+def get_tarea_by_name(nombre):
+    tarea = Tarea.query.filter_by(nombre=nombre).first()
+
+    if tarea:
+        return jsonify({
+            "id": tarea.id,
+            "id_unidad": tarea.id_unidad,
+            "nombre": tarea.nombre,
+            # Agrega más campos según sea necesario
+        })
+    else:
+        return jsonify({"error": "No se encontró la tarea con el nombre especificado"}), 404
+  
+    
 
 
  
