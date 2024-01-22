@@ -90,9 +90,8 @@ class Gasto(db.Model):
     unidad = relationship('Unidad', back_populates='gastos')
     monto_original = Column(Integer, nullable=False)
     descripcion = Column(String(100), nullable=False)
-    gastos_relacionados = relationship('GastoPersona', back_populates='gasto')
-    
-
+    gastos_relacionados = relationship('GastoPersona', back_populates='gasto', cascade="all, delete-orphan")
+     
 class GastoPersona(db.Model):
     __tablename__ = 'gasto_persona'
     id_persona = Column(Integer, ForeignKey('persona.id'), nullable=False, primary_key=True)
