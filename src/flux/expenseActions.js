@@ -1,10 +1,14 @@
 // En tu archivo taskActions.js
 import axios from 'axios';
+import { assignGastoPersona, deleteGastoPersonaByGasto } from './personExpenseActions.js';  // Importa la acción de personExpenseActions
 
 // tipos de acciones
 export const ADD_EXPENSE = 'ADD_EXPENSE';
 export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 export const SAVE_NEW_EXPENSE_DATA = 'SAVE_NEW_EXPENSE_DATA';
+export const GET_GASTO_DETAILS_SUCCESS = 'GET_GASTO_DETAILS_SUCCESS';
+export const GET_GASTO_DETAILS_ERROR = 'GET_GASTO_DETAILS_ERROR';
+export const SAVE_GASTO_DETAILS = 'SAVE_GASTO_DETAILS';
 
 // Acción para agregar un nuevo gasto al estado global
 export const addExpense = (expenseData) => {
@@ -14,44 +18,29 @@ export const addExpense = (expenseData) => {
     };
 };
 
-// Acción para guardar nuevos gastos obtenidos por unidad
-export const saveFetchedExpensesData = (updatedExpenses) => {
-    console.log('SAVE_NEW_EXPENSE_DATA action triggered with data:', updatedExpenses); // Agregado aquí
-  
-    return {
-      type: SAVE_NEW_EXPENSE_DATA,
-      payload: updatedExpenses.gastos, // Accede al array dentro del objeto
-    };
-  };
-
 // Acción para guardar nuevos gastos
 export const saveNewExpenseData = (expenseData) => {
     return async (dispatch) => {
         try {
-            // Obtiene el id_unidad desde el localStorage
-            const idUnidad = localStorage.getItem('id_unidad');
+            // Realiza la solicitud POST al endpoint para crear el gasto usando axios
+            const response = await axios.post('http://localhost:5000/create_gasto', expenseData);
 
-            // Verifica si id_unidad tiene un valor antes de continuar
-            if (idUnidad) {
-                // Actualiza el ID de la unidad en expenseData
-                expenseData.id_unidad = idUnidad;
+            // Verifica si la respuesta es exitosa
+            if (response.status === 201) {
+                // Despacha la acción para agregar el gasto al estado global
+                dispatch(addExpense(response.data));
 
-                // Realiza la solicitud POST al endpoint para crear el gasto usando axios
-                const response = await axios.post('http://localhost:5000/create_gasto', expenseData);
+                // Obtener el id del gasto desde la respuesta
+                const gastoId = response.data.id;
 
-                // Verifica si la respuesta es exitosa
-                if (response.status === 201) {
-                    // Despacha la acción para agregar el gasto al estado global
-                    dispatch(addExpense(response.data));
-                } else {
-                    // Maneja el caso en que la respuesta del servidor no sea exitosa
-                    console.error('Error al crear el gasto en el servidor:', response);
-                }
+                // Llama a la acción para obtener los detalles del gasto
+                await dispatch(getGastoDetails(gastoId)); // Espera a que se completen los detalles del gasto
 
-                // Imprime la data de la respuesta
-                console.log('Data de la respuesta:', response.data);
+                // Llama a la acción para asignar gasto_persona directamente con el ID del gasto
+                dispatch(assignGastoPersona());
             } else {
-                console.error('Error: id_unidad no encontrado en el localStorage');
+                // Maneja el caso en que la respuesta del servidor no sea exitosa
+                console.error('Error al crear el gasto en el servidor:', response);
             }
         } catch (error) {
             // Maneja los errores de la solicitud
@@ -79,7 +68,7 @@ export const getExpensesByUnit = (unitId) => {
 
                 if (response.status === 200) {
                     // Guardar los gastos en el estado global antes de devolver la respuesta
-                    dispatch(saveFetchedExpensesData(response.data));
+                    dispatch(addExpense(response.data));
                     // Resolver la Promesa con los datos
                     resolve(response.data);
                 } else {
@@ -95,7 +84,7 @@ export const getExpensesByUnit = (unitId) => {
         });
     };
 };
-  
+
 // Acción para eliminar un gasto del estado global
 export const deleteExpense = (expenseId) => {
     return {
@@ -108,31 +97,90 @@ export const deleteExpense = (expenseId) => {
 export const deleteExpenseFromDatabase = (expenseId) => {
     return async (dispatch) => {
         try {
-            // Realiza la solicitud DELETE al endpoint para eliminar el gasto por su ID
+            // Llama a la acción para obtener los datos actualizados de gastos
+            const updatedExpenses = await dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')));
+
+            // Busca el gasto correspondiente en los datos actualizados
+            const targetExpense = updatedExpenses.gastos.find(expense => expense.id === expenseId);
+
+            if (!targetExpense) {
+                console.error('Gasto no encontrado en los datos actualizados.');
+                return null;
+            }
+
+            // Llama a la acción para obtener los detalles del gasto usando la factura
+            await dispatch(getGastoDetails(targetExpense.factura));
+
+            // Llama a la acción para eliminar gastos persona por el ID del gasto asociado
+            await dispatch(deleteGastoPersonaByGasto(targetExpense.factura));
+
+            // Obtiene y guarda los datos actualizados de gastos utilizando la acción correspondiente
+            const updatedExpensesAfterDelete = await dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')));
+
+            // Despacha la acción para eliminar el gasto del estado global después de obtener los datos actualizados
+            dispatch(deleteExpense(expenseId));
+
+            // Realiza la solicitud DELETE al endpoint para eliminar el gasto por su ID al final
             const response = await axios.delete(`http://localhost:5000/delete_gasto_por_unidad/${expenseId}`);
 
-            if (response.status === 200) {
-                // Despacha la acción para eliminar el gasto del estado global
-                dispatch(deleteExpense(expenseId));
-
-                // Obtiene y guarda los datos actualizados de gastos utilizando la acción correspondiente
-                const updatedExpenses = await dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')));
-                dispatch(saveFetchedExpensesData(updatedExpenses));
-
-                // Devuelve los datos actualizados de gastos después de la eliminación
-                return updatedExpenses;
-            } else {
+            if (response.status !== 200) {
                 // Maneja el caso en que la respuesta del servidor no sea exitosa
                 console.error('Error al eliminar el gasto:', response.data.error);
                 // Devuelve null o algún valor que indique que la eliminación falló
                 return null;
             }
+
+            // Devuelve los datos actualizados de gastos después de la eliminación
+            return updatedExpensesAfterDelete;
         } catch (error) {
-            // Muestra un mensaje de error si ocurre un error durante la eliminación del gasto
+            // Maneja los errores según sea necesario
             console.error('Error durante la eliminación del gasto:', error);
             // Devuelve null o algún valor que indique que la eliminación falló
             return null;
         }
     };
 };
+
+
+// Acción para obtener detalles del gasto
+export const getGastoDetails = (factura) => async (dispatch) => {
+    try {
+        const response = await axios.get(`http://localhost:5000/get_detalle_gasto/${factura}`);
+
+        if (response.status === 200) {
+            const gastoDetails = response.data.gasto;
+
+            // Asegúrate de extraer correctamente el ID y el número de factura del objeto gastoDetails
+            const gastoId = gastoDetails ? gastoDetails.id : null;
+            const gastoFactura = gastoDetails ? gastoDetails.factura : null;
+
+            if (gastoId && gastoFactura) {
+                console.log('Detalles del gasto obtenidos con éxito:', gastoDetails);
+                dispatch({ type: GET_GASTO_DETAILS_SUCCESS, payload: gastoDetails });
+
+                // Agrega un console.log para la data que se está enviando al estado
+                console.log('Data enviada al estado:', gastoDetails);
+            } else {
+                console.error('Error: No se pudo obtener el ID o el número de factura del gasto desde los detalles:', gastoDetails);
+                dispatch({ type: GET_GASTO_DETAILS_ERROR, payload: 'Error al obtener detalles del gasto' });
+            }
+
+            // Mover la línea dentro del bloque try
+            dispatch({ type: SAVE_GASTO_DETAILS, payload: gastoDetails });
+        } else {
+            console.error('Error en getGastoDetails. Estado de la respuesta:', response.status);
+            dispatch({ type: GET_GASTO_DETAILS_ERROR, payload: 'Error al obtener detalles del gasto' });
+        }
+    } catch (error) {
+        console.error('Error en getGastoDetails:', error);
+        dispatch({ type: GET_GASTO_DETAILS_ERROR, payload: 'Error al obtener detalles del gasto' });
+    }
+};
+
+
+
+
+
+
+
 

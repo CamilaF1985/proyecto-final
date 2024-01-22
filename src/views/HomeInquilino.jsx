@@ -33,6 +33,11 @@ const HomeInquilino = () => {
     openModalAndRedirect('/perfil');
   };
 
+  // Función para abrir el modal de tareas
+  const handleOpenTareasModal = () => {
+    openModalAndRedirect('/tareas-pendientes');
+  };
+
   // Función para cerrar el modal
   const handleCloseModal = () => {
     dispatch(closeModal()); // Despachar la acción para cerrar el modal
@@ -78,7 +83,7 @@ const HomeInquilino = () => {
 
           {/* Icono "Tareas pendientes" */}
           <div className="col-6 col-md-6 mb-3">
-            <div className="contenedor-imagen contenedor-imagen-debajo">
+            <div className="contenedor-imagen contenedor-imagen-debajo" onClick={handleOpenTareasModal}>
               <img src={tareasImage} alt="Tareas pendientes" className="img-fluid" />
             </div>
             <p className="texto-debajo-imagen">Tareas pendientes</p>
@@ -86,18 +91,20 @@ const HomeInquilino = () => {
         </div>
       </div>
 
-      {/* Modal de perfil utilizando ReactDOM.createPortal */}
+      {/* Modal de perfil o tareas pendientes */}
       {ReactDOM.createPortal(
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={handleCloseModal}
-          contentLabel="Perfil Modal"
+          contentLabel={location.pathname === '/perfil' ? 'Perfil Modal' : 'Tareas Pendientes Modal'}
           className="modal-content"
           overlayClassName="modal-overlay"
         >
-          {/* Contenido del modal de perfil */}
+          {/* Contenido del modal (Perfil o TareasPendientes en lugar de PerfilForm) */}
           {location.pathname === '/perfil' ? (
             <Perfil />
+          ) : location.pathname === '/tareas-pendientes' ? (
+            <TareasPendientes />
           ) : null}
         </Modal>,
         document.body

@@ -1,18 +1,19 @@
 // Importaciones de módulos y componentes
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import App from '../App.jsx';  
-import HomeAdministrador from '../views/HomeAdministrador.jsx';  
-import HomeInquilino from '../views/HomeInquilino.jsx';  
-import Perfil from '../components/Perfil.jsx';  
-import PanelAdministracion from '../views/PanelAdministracion.jsx';  
-import RegistroInquilino from '../components/RegistroInquilino.jsx';  
-import RegistroForm from '../components/RegistroForm.jsx';  
-import EliminarInquilino from '../components/EliminarInquilino.jsx';  
+import App from '../App.jsx';
+import HomeAdministrador from '../views/HomeAdministrador.jsx';
+import HomeInquilino from '../views/HomeInquilino.jsx';
+import Perfil from '../components/Perfil.jsx';
+import PanelAdministracion from '../views/PanelAdministracion.jsx';
+import RegistroInquilino from '../components/RegistroInquilino.jsx';
+import RegistroForm from '../components/RegistroForm.jsx';
+import EliminarInquilino from '../components/EliminarInquilino.jsx';
 import AgregarTarea from '../components/AgregarTarea.jsx';
-import EliminarTarea from '../components/EliminarTarea.jsx'; 
-import AgregarGasto from '../components/AgregarGasto.jsx'; 
-import EliminarGasto from '../components/EliminarGasto.jsx'; 
+import EliminarTarea from '../components/EliminarTarea.jsx';
+import TareasPendientes from '../components/TareasPendientes.jsx';
+import AgregarGasto from '../components/AgregarGasto.jsx';
+import EliminarGasto from '../components/EliminarGasto.jsx';
 
 // Componente funcional para manejar las rutas de la aplicación
 const AppRoutes = () => {
@@ -33,8 +34,15 @@ const AppRoutes = () => {
         '/eliminar-inquilino',
         '/agregar-tarea',
         '/eliminar-tarea',
+        '/tareas-pendientes',
         '/agregar-gasto',
         '/eliminar-gasto',
+        '/perfil'
+      ];
+
+      // Define las rutas permitidas para el usuario inquilino
+      const allowedPathsForInquilino = [
+        '/tareas-pendientes',
         '/perfil'
       ];
 
@@ -46,8 +54,8 @@ const AppRoutes = () => {
         }
         navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
       } else if (storedUserType.toLowerCase() === 'inquilino') {
-        // Permite el acceso a /perfil para usuarios inquilinos
-        if (window.location.pathname.includes('/perfil')) {
+        // Permite el acceso a /tareas-pendientes y /perfil para usuarios inquilinos
+        if (allowedPathsForInquilino.some(path => window.location.pathname.includes(path))) {
           return;
         }
         navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
@@ -73,6 +81,7 @@ const AppRoutes = () => {
       <Route path="/eliminar-inquilino" element={<EliminarInquilino />} />
       <Route path="/agregar-tarea" element={<AgregarTarea />} />
       <Route path="/eliminar-tarea" element={<EliminarTarea />} />
+      <Route path="/tareas-pendientes" element={<TareasPendientes />} />
       <Route path="/agregar-gasto" element={<AgregarGasto />} />
       <Route path="/eliminar-gasto" element={<EliminarGasto />} />
 

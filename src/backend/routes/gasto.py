@@ -76,3 +76,29 @@ def delete_persona_by_rut(id_gasto):
             return jsonify({"error": "Gasto no encontrado"}), 404
     except Exception as e:
         return jsonify({"error": "Error al eliminar gasto", "details": str(e)}), 500
+    
+from flask import Blueprint, jsonify
+from models import Gasto
+
+get_detalle_gasto_bp = Blueprint('get_detalle_gasto', __name__)
+
+@get_detalle_gasto_bp.route('/get_detalle_gasto/<string:factura>', methods=['GET'])
+def get_detalle_gasto(factura):
+    try:
+        gasto = Gasto.query.filter_by(factura=factura).first()
+
+        if gasto:
+            gasto_info = {
+                'id': gasto.id,
+                'id_unidad': gasto.id_unidad,
+                'factura': gasto.factura,
+                'monto': gasto.monto_original,
+                'descripcion': gasto.descripcion
+            }
+            return jsonify({"gasto": gasto_info}), 200
+        else:
+            return jsonify({"error": "Gasto no encontrado"}), 404
+
+    except Exception as e:
+        return jsonify({"error": "Error al obtener el detalle del gasto", "details": str(e)}), 500
+    
