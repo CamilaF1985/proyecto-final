@@ -49,6 +49,7 @@ import {
 import {
   // otras importaciones
   SAVE_TAREAS_ASIGNADAS,
+  UPDATE_FECHA_TERMINO,
 } from './personTaskActions.js';
 
 // Estado inicial de la aplicación
@@ -168,6 +169,22 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         tareasAsignadas: action.payload,
+      };
+
+    case UPDATE_FECHA_TERMINO:
+      const { tareaPersonaId, nuevaFechaTermino } = action.payload;
+
+      // Actualiza la fecha de término de la tarea_persona en el estado
+      const updatedTareasAsignadas = state.tareasAsignadas.map(tarea => {
+        if (tarea.id_tarea_persona === tareaPersonaId) {
+          return { ...tarea, fecha_termino: nuevaFechaTermino };
+        }
+        return tarea;
+      });
+
+      return {
+        ...state,
+        tareasAsignadas: updatedTareasAsignadas,
       };
 
     case FETCH_UNIT_BY_ID:

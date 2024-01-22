@@ -5,7 +5,9 @@ import { getUserByRut } from './userActions.js'
 // Definir tipos de acción directamente en el archivo
 const ADD_PERSON_TASK = 'ADD_PERSON_TASK';
 const ASSIGN_TASK_ERROR = 'ASSIGN_TASK_ERROR';
+const DELETE_TAREA_PERSONA = 'DELETE_TAREA_PERSONA';
 export const SAVE_TAREAS_ASIGNADAS = 'SAVE_TAREAS_ASIGNADAS';
+export const UPDATE_FECHA_TERMINO = 'UPDATE_FECHA_TERMINO';
 
 // Acción para almacenar las tareas asignadas en el estado
 // Acción para almacenar las tareas asignadas en el estado
@@ -126,6 +128,68 @@ export const getTareasAsignadas = () => {
         }
     };
 };
+
+// Acción para actualizar la fecha de término de una tarea asignada a una persona
+export const updateFechaTermino = (tareaPersonaId) => async (dispatch) => {
+    try {
+        // Obtener la fecha actual
+        const currentDate = new Date();
+        const nuevaFechaTermino = currentDate.toISOString(); // Convierte la fecha a formato ISO
+
+        // Realizar la solicitud al servidor para actualizar la fecha de término
+        const response = await axios.put(`http://localhost:5000/update_tarea_persona/${tareaPersonaId}`, {
+            fecha_termino: nuevaFechaTermino,
+        });
+
+        if (response.status === 200) {
+            // Despacha la acción para actualizar la fecha de término en el estado
+            dispatch({
+                type: UPDATE_FECHA_TERMINO,
+                payload: {
+                    tareaPersonaId,
+                    nuevaFechaTermino,
+                },
+            });
+        } else {
+            // Manejar posibles errores en la respuesta del servidor
+            console.error('Error al actualizar fecha de término:', response.data.error || 'Error desconocido');
+        }
+    } catch (error) {
+        console.error('Error durante la actualización de fecha de término:', error.message || 'Error desconocido');
+    }
+};
+
+// Acción para eliminar una tarea-persona de la base de datos
+export const deleteTareaPersona = (taskId) => async (dispatch) => {
+    // Verificar si taskId es un número
+    if (typeof taskId !== 'number') {
+        console.error('Error: El ID de tarea debe ser un número.');
+        return;
+    }
+
+    try {
+        // Realizar la solicitud al servidor para eliminar la tarea_persona
+        const response = await axios.delete(`http://localhost:5000/delete_tarea_persona_by_task/${taskId}`, {
+            params: { id_tarea: taskId }
+        });
+
+        if (response.status === 200) {
+            // Despacha la acción para eliminar la tarea_persona del estado
+            dispatch({
+                type: DELETE_TAREA_PERSONA,
+                payload: taskId,
+            });
+        } else {
+            // Manejar posibles errores en la respuesta del servidor
+            console.error('Error al eliminar tarea_persona:', response.data.error || 'Error desconocido');
+        }
+    } catch (error) {
+        console.error('Error durante la eliminación de tarea_persona:', error.message || 'Error desconocido');
+    }
+};
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 // En tu archivo taskActions.js
 import axios from 'axios';
-import { assignTaskToRandomPerson } from './personTaskActions.js';
+import { assignTaskToRandomPerson, deleteTareaPersona } from './personTaskActions.js';
 
 // Tipos de acciones
 export const ADD_TASK = 'ADD_TASK';
@@ -151,7 +151,10 @@ export const getTasksByUnit = (unitId) => {
 export const deleteTaskFromDatabase = (taskId) => {
   return async (dispatch) => {
     try {
-      // Realiza la solicitud DELETE al endpoint para eliminar la tarea por su ID
+      // Llamada a la acción para eliminar tarea_persona
+      await dispatch(deleteTareaPersona(taskId));
+
+      // Si la eliminación de tarea_persona fue exitosa, procede con la eliminación de la tarea
       const response = await axios.delete(`http://localhost:5000/delete_tarea_por_unidad/${taskId}`);
 
       if (response.status === 200) {

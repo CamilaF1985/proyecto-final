@@ -42,9 +42,11 @@ def delete_tarea_por_unidad(id):
 
 get_tarea_by_unidad_bp = Blueprint('get_tarea_by_unidad', __name__)
 CORS(get_tarea_by_unidad_bp)
+
 @get_tarea_by_unidad_bp.route('/get_tarea_by_unidad/<string:id>', methods=['GET'])
 def get_tarea_by_unidad(id):
     tareas = Tarea.query.filter_by(id_unidad=id).all()
+    
     if tareas:
         resultados = []
         for tarea in tareas:
@@ -56,7 +58,8 @@ def get_tarea_by_unidad(id):
             })
         return jsonify(resultados)
     else:
-        return jsonify({"error": "No se encontraron tareas para el ID de unidad especificado"}), 404
+        # Devuelve un array vacío y un código de estado 200
+        return jsonify([]), 200
     
 # Blueprint para traer detalles de una tarea por su nombre
 get_tarea_by_name_bp = Blueprint('get_tarea_by_name', __name__)

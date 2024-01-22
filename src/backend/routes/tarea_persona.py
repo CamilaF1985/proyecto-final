@@ -90,12 +90,12 @@ def get_tarea_persona_by_id_persona(id_persona):
 delete_tarea_persona_bp = Blueprint('delete_tarea_persona', __name__)
 CORS(delete_tarea_persona_bp)
 
-@delete_tarea_persona_bp.route('/delete_tarea_persona/<int:id>', methods=['DELETE'])
-def delete_tarea_persona(id):
-    tarea_persona = TareaPersona.query.get(id)
+@delete_tarea_persona_bp.route('/delete_tarea_persona_by_task/<int:task_id>', methods=['DELETE'])
+def delete_tarea_persona_by_task(task_id):
+    tarea_persona = TareaPersona.query.filter_by(id_tarea=task_id).first()
 
     if tarea_persona is None:
-        return jsonify({"error": "No se encontró la tarea_persona con el ID proporcionado"}), 404
+        return jsonify({"error": "No se encontró la tarea_persona asociada a la tarea con el ID proporcionado"}), 404
 
     try:
         db.session.delete(tarea_persona)
@@ -104,3 +104,15 @@ def delete_tarea_persona(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al eliminar la tarea_persona", "details": str(e)}), 500
+ 
+get_tarea_persona_id_by_task_id_bp = Blueprint('get_tarea_persona_id_by_task_id', __name__)
+CORS(get_tarea_persona_id_by_task_id_bp)
+
+@get_tarea_persona_id_by_task_id_bp.route('/get_tarea_persona_id_by_task_id/<int:id_tarea>', methods=['GET'])
+def get_tarea_persona_id_by_task_id(id_tarea):
+    tarea_persona = TareaPersona.query.filter_by(id_tarea=id_tarea).first()
+
+    if tarea_persona is not None:
+        return jsonify({"tarea_persona_id": tarea_persona.id}), 200
+    else:
+        return jsonify({"error": "No se encontró la tarea_persona asociada a la tarea con el ID proporcionado"}), 404    
