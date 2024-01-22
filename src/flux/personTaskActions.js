@@ -10,7 +10,6 @@ export const SAVE_TAREAS_ASIGNADAS = 'SAVE_TAREAS_ASIGNADAS';
 export const UPDATE_FECHA_TERMINO = 'UPDATE_FECHA_TERMINO';
 
 // Acción para almacenar las tareas asignadas en el estado
-// Acción para almacenar las tareas asignadas en el estado
 export const saveTareasAsignadas = (tareasAsignadas) => {
     return {
         type: SAVE_TAREAS_ASIGNADAS,

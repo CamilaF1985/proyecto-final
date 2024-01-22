@@ -15,8 +15,8 @@ from routes.persona_admin import create_persona_admin_bp
 from routes.persona_inquilino import create_persona_inquilino_bp
 from routes.unidad import create_unidad_bp
 from routes.tarea import create_tarea_bp, delete_tarea_por_unidad_bp, get_tarea_by_unidad_bp, get_tarea_by_name_bp
-from routes.gasto import create_gasto_bp, get_gasto_por_unidad_bp, delete_gasto_por_unidad_bp
-from routes.gasto_persona import create_gasto_persona_bp, get_gasto_por_persona_bp
+from routes.gasto import create_gasto_bp, get_gasto_por_unidad_bp, delete_gasto_por_unidad_bp, get_detalle_gasto_bp
+from routes.gasto_persona import create_gasto_persona_bp, get_gasto_por_persona_bp, get_gasto_persona_by_id_persona_bp, delete_gasto_persona_bp, update_estado_gasto_persona_bp
 from routes.direccion import create_direccion_bp  
 from routes.persona import persona_bp, get_person_by_unidad_bp, update_email_persona_bp ,delete_persona_by_rut_bp
 from routes.tarea_persona import create_tarea_persona_bp, delete_tarea_persona_bp, get_tarea_persona_id_by_task_id_bp
@@ -83,9 +83,13 @@ app.register_blueprint(get_tarea_by_name_bp)
 app.register_blueprint(create_gasto_bp)
 app.register_blueprint(delete_gasto_por_unidad_bp)
 app.register_blueprint(get_gasto_por_unidad_bp)
+app.register_blueprint(get_detalle_gasto_bp)
 
 app.register_blueprint(create_gasto_persona_bp)
 app.register_blueprint(get_gasto_por_persona_bp)
+app.register_blueprint(get_gasto_persona_by_id_persona_bp)
+app.register_blueprint(delete_gasto_persona_bp)
+app.register_blueprint(update_estado_gasto_persona_bp)
 
 app.register_blueprint(create_direccion_bp)
 app.register_blueprint(update_email_persona_bp)

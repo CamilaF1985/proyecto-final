@@ -32,11 +32,13 @@ import {
   GET_TASK_BY_NAME, // Agrega la importación del tipo de acción GET_TASK_BY_ID
 } from './taskActions.js';
 
-// Importar acciones relacionadas con gastos desde expenseActions.js
 import {
   ADD_EXPENSE,
   DELETE_EXPENSE,
   SAVE_NEW_EXPENSE_DATA,
+  GET_GASTO_DETAILS_SUCCESS,
+  GET_GASTO_DETAILS_ERROR,
+  SAVE_GASTO_DETAILS,  // Agrega la importación
 } from './expenseActions.js';
 
 // Importar acciones relacionadas con direcciones desde addressActions.js
@@ -51,6 +53,10 @@ import {
   SAVE_TAREAS_ASIGNADAS,
   UPDATE_FECHA_TERMINO,
 } from './personTaskActions.js';
+
+import {
+  ADD_GASTO_PERSONA,
+} from './personExpenseActions.js';
 
 // Estado inicial de la aplicación
 const initialState = {
@@ -86,6 +92,9 @@ const initialState = {
   direcciones: [],
   unit: {}, // Agrega un objeto vacío para inicializar el campo 'unit'
   tareasAsignadas: [],
+  gastoPersonaList: [],
+  gastoDetails: {},  // Inicializado como un objeto vacío
+  gastoDetailsError: null,
 };
 
 // Reducer que maneja las acciones y actualiza el estado global de la aplicación
@@ -205,6 +214,33 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         expenses: action.payload,
+      };
+
+    case SAVE_GASTO_DETAILS:
+      return {
+        ...state,
+        gastoDetails: action.payload,
+        gastoDetailsError: null,
+      };
+
+    case GET_GASTO_DETAILS_SUCCESS:
+      return {
+        ...state,
+        gastoDetails: action.payload,
+        gastoDetailsError: null,
+      };
+
+    case GET_GASTO_DETAILS_ERROR:
+      return {
+        ...state,
+        gastoDetails: null,
+        gastoDetailsError: action.payload,
+      };
+
+    case ADD_GASTO_PERSONA:
+      return {
+        ...state,
+        gastoPersonaList: [...state.gastoPersonaList, action.payload],
       };
 
     case SAVE_UNIT_DATA:
