@@ -58,6 +58,10 @@ import {
   ADD_GASTO_PERSONA,
 } from './personExpenseActions.js';
 
+import {
+  GET_GASTOS_PERSONA_BY_ID_GASTO,  // Agrega la importación
+} from './personExpenseActions.js';
+
 // Estado inicial de la aplicación
 const initialState = {
   modalIsOpen: false,
@@ -93,6 +97,7 @@ const initialState = {
   unit: {}, // Agrega un objeto vacío para inicializar el campo 'unit'
   tareasAsignadas: [],
   gastoPersonaList: [],
+  gastoPersonaListUpdated: [],
   gastoDetails: {},  // Inicializado como un objeto vacío
   gastoDetailsError: null,
 };
@@ -243,6 +248,13 @@ const rootReducer = (state = initialState, action) => {
         gastoPersonaList: [...state.gastoPersonaList, action.payload],
       };
 
+    case GET_GASTOS_PERSONA_BY_ID_GASTO:
+      // Actualiza los gastos persona basado en la acción GET_GASTOS_PERSONA_BY_ID_GASTO
+      return {
+        ...state,
+        gastoPersonaList: action.payload,
+      };
+
     case SAVE_UNIT_DATA:
       return { ...state, unit: { ...state.unit, ...action.payload } };
 
@@ -291,6 +303,7 @@ const rootReducer = (state = initialState, action) => {
 };
 
 export default rootReducer;
+
 
 
 

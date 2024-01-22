@@ -129,6 +129,32 @@ def update_estado_gasto_persona(id_gasto_persona):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al actualizar el estado de Gasto_persona", "details": str(e)}), 500
+    
+get_gasto_persona_by_id_gasto_bp = Blueprint('get_gasto_persona_by_id_gasto', __name__)
+
+@get_gasto_persona_by_id_gasto_bp.route('/gasto_persona_by_id_gasto/<int:id_gasto>', methods=['GET'])
+def get_gasto_persona_by_id_gasto(id_gasto):
+    try:
+        # Obtener los gastos de persona relacionados con el ID del gasto proporcionado
+        gastos_persona = GastoPersona.query.filter_by(id_gasto=id_gasto).all()
+
+        # Crear una lista de datos de gastos de persona
+        gastos_persona_data = []
+
+        for gasto_persona in gastos_persona:
+            gastos_persona_data.append({
+                "id_persona": gasto_persona.id_persona,
+                "id_gasto": gasto_persona.id_gasto,
+                "monto_prorrateado": gasto_persona.monto_prorrateado,
+                "estado": gasto_persona.estado,
+            })
+
+        # Devolver la lista de datos de gastos de persona
+        return jsonify({"gastos_persona_list": gastos_persona_data}) if gastos_persona_data else jsonify({"gastos_persona_list": []}), 200
+
+    except Exception as e:
+        # En caso de error, devolver un mensaje de error
+        return jsonify({"error": "Error al obtener los gastos de persona por ID de gasto", "details": str(e)}), 500    
 
     
     
