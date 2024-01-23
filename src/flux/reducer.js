@@ -38,7 +38,8 @@ import {
   SAVE_NEW_EXPENSE_DATA,
   GET_GASTO_DETAILS_SUCCESS,
   GET_GASTO_DETAILS_ERROR,
-  SAVE_GASTO_DETAILS,  // Agrega la importación
+  SAVE_GASTO_DETAILS,
+  UPDATE_EXPENSES,
 } from './expenseActions.js';
 
 // Importar acciones relacionadas con direcciones desde addressActions.js
@@ -56,10 +57,6 @@ import {
 
 import {
   ADD_GASTO_PERSONA,
-} from './personExpenseActions.js';
-
-import {
-  GET_GASTOS_PERSONA_BY_ID_GASTO,  // Agrega la importación
 } from './personExpenseActions.js';
 
 // Estado inicial de la aplicación
@@ -97,9 +94,9 @@ const initialState = {
   unit: {}, // Agrega un objeto vacío para inicializar el campo 'unit'
   tareasAsignadas: [],
   gastoPersonaList: [],
-  gastoPersonaListUpdated: [],
   gastoDetails: {},  // Inicializado como un objeto vacío
   gastoDetailsError: null,
+  updatedExpenses: []
 };
 
 // Reducer que maneja las acciones y actualiza el estado global de la aplicación
@@ -210,9 +207,10 @@ const rootReducer = (state = initialState, action) => {
         expenses: [...state.expenses, action.payload],
       };
     case DELETE_EXPENSE:
+      const updatedExpenses = state.expenses.filter((expense) => expense.id !== action.payload);
       return {
         ...state,
-        expenses: state.expenses.filter((expense) => expense.id !== action.payload),
+        expenses: updatedExpenses,
       };
 
     case SAVE_NEW_EXPENSE_DATA:
@@ -242,18 +240,17 @@ const rootReducer = (state = initialState, action) => {
         gastoDetailsError: action.payload,
       };
 
+    case UPDATE_EXPENSES:
+      return {
+        ...state,
+        gastos: action.payload,
+      };
+
     case ADD_GASTO_PERSONA:
       return {
         ...state,
         gastoPersonaList: [...state.gastoPersonaList, action.payload],
-      };
-
-    case GET_GASTOS_PERSONA_BY_ID_GASTO:
-      // Actualiza los gastos persona basado en la acción GET_GASTOS_PERSONA_BY_ID_GASTO
-      return {
-        ...state,
-        gastoPersonaList: action.payload,
-      };
+      }
 
     case SAVE_UNIT_DATA:
       return { ...state, unit: { ...state.unit, ...action.payload } };

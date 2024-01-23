@@ -1,6 +1,6 @@
 // En tu archivo taskActions.js
 import axios from 'axios';
-import { assignGastoPersona, deleteGastoPersonaByGasto } from './personExpenseActions.js';  // Importa la acción de personExpenseActions
+import { assignGastoPersona } from './personExpenseActions.js';  // Importa la acción de personExpenseActions
 
 // tipos de acciones
 export const ADD_EXPENSE = 'ADD_EXPENSE';
@@ -9,12 +9,21 @@ export const SAVE_NEW_EXPENSE_DATA = 'SAVE_NEW_EXPENSE_DATA';
 export const GET_GASTO_DETAILS_SUCCESS = 'GET_GASTO_DETAILS_SUCCESS';
 export const GET_GASTO_DETAILS_ERROR = 'GET_GASTO_DETAILS_ERROR';
 export const SAVE_GASTO_DETAILS = 'SAVE_GASTO_DETAILS';
+export const UPDATE_EXPENSES = 'UPDATE_EXPENSES'; // Nuevo tipo de acción
 
 // Acción para agregar un nuevo gasto al estado global
 export const addExpense = (expenseData) => {
     return {
         type: 'ADD_EXPENSE',
         payload: expenseData,
+    };
+};
+
+// Acción para actualizar el estado de los gastos
+export const updateExpenses = (updatedExpenses) => {
+    return {
+        type: 'UPDATE_EXPENSES',
+        payload: updatedExpenses,
     };
 };
 
@@ -93,54 +102,35 @@ export const deleteExpense = (expenseId) => {
     };
 };
 
-// Acción para eliminar un gasto de la base de datos
 export const deleteExpenseFromDatabase = (expenseId) => {
     return async (dispatch) => {
         try {
-            // Llama a la acción para obtener los datos actualizados de gastos
-            const updatedExpenses = await dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')));
-
-            // Busca el gasto correspondiente en los datos actualizados
-            const targetExpense = updatedExpenses.gastos.find(expense => expense.id === expenseId);
-
-            if (!targetExpense) {
-                console.error('Gasto no encontrado en los datos actualizados.');
-                return null;
+            const unitId = localStorage.getItem('id_unidad');
+            if (!unitId) {
+                console.error('No se proporcionó un ID de unidad para la eliminación de gastos.');
+                return;
             }
 
-            // Llama a la acción para obtener los detalles del gasto usando la factura
-            await dispatch(getGastoDetails(targetExpense.factura));
-
-            // Llama a la acción para eliminar gastos persona por el ID del gasto asociado
-            await dispatch(deleteGastoPersonaByGasto(targetExpense.factura));
-
-            // Obtiene y guarda los datos actualizados de gastos utilizando la acción correspondiente
-            const updatedExpensesAfterDelete = await dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')));
-
-            // Despacha la acción para eliminar el gasto del estado global después de obtener los datos actualizados
-            dispatch(deleteExpense(expenseId));
-
-            // Realiza la solicitud DELETE al endpoint para eliminar el gasto por su ID al final
+            // Realizar la eliminación del gasto específico por su ID
             const response = await axios.delete(`http://localhost:5000/delete_gasto_por_unidad/${expenseId}`);
 
-            if (response.status !== 200) {
-                // Maneja el caso en que la respuesta del servidor no sea exitosa
-                console.error('Error al eliminar el gasto:', response.data.error);
-                // Devuelve null o algún valor que indique que la eliminación falló
-                return null;
+            if (response.status === 200) {
+                // Despachar la acción para eliminar el gasto del estado global
+                dispatch(deleteExpense(expenseId));
+            } else {
+                console.error(`Error al eliminar el gasto con ID ${expenseId}:`, response.data.error);
             }
-
-            // Devuelve los datos actualizados de gastos después de la eliminación
-            return updatedExpensesAfterDelete;
         } catch (error) {
-            // Maneja los errores según sea necesario
-            console.error('Error durante la eliminación del gasto:', error);
-            // Devuelve null o algún valor que indique que la eliminación falló
-            return null;
+            // Si la respuesta del servidor es 200, entonces considerar que la eliminación fue exitosa
+            if (error.response && error.response.status === 200) {
+                console.log(`Gasto con ID ${expenseId} eliminado correctamente.`);
+                dispatch(deleteExpense(expenseId));
+            } else {
+                console.error(`Error al eliminar el gasto con ID ${expenseId}:`, error);
+            }
         }
     };
 };
-
 
 // Acción para obtener detalles del gasto
 export const getGastoDetails = (factura) => async (dispatch) => {

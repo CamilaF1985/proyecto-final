@@ -8,47 +8,42 @@ import { useNavigate } from 'react-router-dom';
 const EliminarGasto = () => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.modalIsOpen);
-  const [expensesList, setExpensesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [updatedExpenses, setUpdatedExpenses] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const unitId = localStorage.getItem('id_unidad');
-        if (unitId) {
-          const { gastos } = await dispatch(getExpensesByUnit(unitId));
-          setExpensesList(gastos);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error al obtener la lista de gastos:', error);
-        setLoading(false);
+    const fetchData = () => {
+      const unitId = localStorage.getItem('id_unidad');
+      if (unitId) {
+        dispatch(getExpensesByUnit(unitId))
+          .then(({ gastos }) => {
+            setUpdatedExpenses(gastos);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error('Error al obtener la lista de gastos:', error);
+            setLoading(false);
+          });
       }
     };
-
+  
     fetchData();
   }, [dispatch]);
 
   const handleEliminarGasto = (id) => {
     // Eliminar el gasto
     dispatch(deleteExpenseFromDatabase(id))
-      .then((deletedGastoId) => {
-        if (deletedGastoId) {
-          console.log('Gasto eliminado con éxito:', deletedGastoId);
-  
-          // Después de eliminar, obtener la lista actualizada
-          dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')))
-            .then((updatedExpenses) => {
-              // Actualizar el estado local con la lista actualizada
-              setExpensesList(updatedExpenses);
-            })
-            .catch((error) => {
-              console.error('Error al obtener la lista actualizada de gastos:', error);
-            });
-        } else {
-          console.error('Error al eliminar el gasto:', id);
-        }
+      .then(() => {
+        // Después de eliminar, obtener la lista actualizada
+        dispatch(getExpensesByUnit(localStorage.getItem('id_unidad')))
+          .then(({ gastos }) => {
+            // Actualizar el estado local con la lista actualizada
+            setUpdatedExpenses(gastos);
+          })
+          .catch((error) => {
+            console.error('Error al obtener la lista actualizada de gastos:', error);
+          });
       })
       .catch((error) => {
         console.error('Error al procesar la eliminación del gasto:', error);
@@ -83,8 +78,8 @@ const EliminarGasto = () => {
           ) : (
             <div className="row g-3">
               {/* Muestra la lista de gastos */}
-              {expensesList && expensesList.length > 0 ? (
-                expensesList.map((expense) => (
+              {updatedExpenses && updatedExpenses.length > 0 ? (
+                updatedExpenses.map((expense) => (
                   <div key={expense.id} className="col-md-12 mb-3">
                     <p>{`Monto: ${expense.monto || 'No disponible'}, Descripción: ${expense.descripcion || 'No disponible'}`}</p>
                     <button
@@ -108,6 +103,10 @@ const EliminarGasto = () => {
 };
 
 export default EliminarGasto;
+
+
+
+
 
 
 
