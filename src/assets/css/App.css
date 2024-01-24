@@ -102,6 +102,19 @@ img {
     margin-bottom: 5px;
 }
 
+p,
+input,
+label {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+}
+
+input[type="checkbox"] {
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+}
+
 /* Estilos para los campos de entrada del formulario */
 .form-control {
     margin-bottom: 5px;

@@ -63,6 +63,7 @@ const TareasPendientes = () => {
             <div className="modal-body">
                 <div className="form-container">
                     <h2 className="form-titulo">Tareas Pendientes</h2>
+                    <p ClassName= "subtitulo"> Marca las tareas que ya has realizado </p> {/* Nuevo texto agregado */}
                     {loading ? (
                         <p>Cargando...</p>
                     ) : (
@@ -78,10 +79,13 @@ const TareasPendientes = () => {
                                             // Verifica si la tarea no tiene una fecha de término asignada
                                             !tarea.fecha_termino && (
                                                 <div key={tarea.id_tarea_persona} className="col-md-12 mb-3">
-                                                    <p>{`Nombre de la tarea: ${tarea.nombre_tarea || "Sin nombre"}`}</p>
-                                                    <button onClick={() => handleUpdateFechaTermino(tarea.id_tarea_persona)}>
-                                                        Ya lo hice
-                                                    </button>
+                                                    <label>
+                                                        {` ${tarea.nombre_tarea || "Sin nombre"}`}
+                                                        <input
+                                                            type="checkbox"
+                                                            onChange={() => handleUpdateFechaTermino(tarea.id_tarea_persona)}
+                                                        />
+                                                    </label>
                                                 </div>
                                             )
                                         ))

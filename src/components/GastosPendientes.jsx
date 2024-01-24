@@ -9,19 +9,13 @@ const GastosPendientes = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isOpen = useSelector((state) => state.modalIsOpen);
-    const [loading, setLoading] = useState(true);
-    const [todosGastosPagados, setTodosGastosPagados] = useState(false);
     const gastosPersonaListAsync = useSelector((state) => state.gastosPersonaListAsync);
 
     useEffect(() => {
         const fetchGastosPersona = () => {
             dispatch(getGastosPersona())
-                .then(() => {
-                    setLoading(false);
-                })
                 .catch((error) => {
                     console.error('Error al obtener los gastos persona:', error);
-                    setLoading(false);
                 });
         };
 
@@ -33,17 +27,21 @@ const GastosPendientes = () => {
     };
 
     const handlePagoClick = (gastoPersona) => {
+        // Llamar a la acción para actualizar el estado en la base de datos
         dispatch(updateEstadoGastoPersona(gastoPersona))
-            .then(() => dispatch(getGastosPersona()))
-            .then((updatedGastosList) => {
-                // Verifica si updatedGastosList es undefined o no tiene la propiedad "every"
-                const pagados = Array.isArray(updatedGastosList) && updatedGastosList.every(gasto => gasto.estado);
-                setTodosGastosPagados(pagados);
+            .then(() => {
+                // Actualizar el estado directamente después de la acción exitosa
+                // Utilizamos el nuevo estado después de la actualización
+                const updatedGastosList = gastosPersonaListAsync.filter((gasto) => gasto.id !== gastoPersona.id);
+                dispatch({ type: 'SET_GASTOS_PERSONA_LIST', payload: updatedGastosList });
             })
             .catch((error) => {
                 console.error('Error al actualizar el estado del gasto persona:', error);
             });
     };
+
+    // Verifica si todos los gastos están pagados
+    const todosGastosPagados = gastosPersonaListAsync.every((gasto) => gasto.estado);
 
     return (
         <Modal
@@ -62,45 +60,37 @@ const GastosPendientes = () => {
             <div className="modal-body">
                 <div className="form-container">
                     <h2 className="form-titulo">Gastos Pendientes</h2>
-                    {loading ? (
-                        <p>Cargando...</p>
-                    ) : (
-                        <div className="row g-3">
-                            {gastosPersonaListAsync && gastosPersonaListAsync.length > 0 ? (
-                                <>
-                                    {gastosPersonaListAsync.map((gastoPersona, index) => (
-                                        // Filtra los gastos que ya están pagados
-                                        !gastoPersona.estado && (
-                                            <div className="col-md-12 mb-3" key={index}>
-                                                <p>{`Concepto: ${gastoPersona.descripcion_gasto || "Sin nombre"}`}</p>
-                                                <p>{`Monto a pagar: ${gastoPersona.monto_prorrateado || 0}`}</p>
-                                                <button
-                                                    onClick={() => handlePagoClick(gastoPersona)}
+                    <p className="subtitulo"> Marca los pagos que ya hayas realizado </p>
+                    <div className="row g-3">
+                        {gastosPersonaListAsync && gastosPersonaListAsync.length > 0 ? (
+                            <div className="col-md-12 mb-3">
+                                {gastosPersonaListAsync
+                                    .filter((gastoPersona) => !gastoPersona.estado) // Filtra solo los no pagados
+                                    .map((gastoPersona, index) => (
+                                        <div className="d-flex align-items-center" key={index}>
+                                            <label>
+                                                {`Concepto: ${gastoPersona.descripcion_gasto || "Sin nombre"} `}
+                                                {`| Monto a pagar: ${gastoPersona.monto_prorrateado || 0}`}
+                                                <input
+                                                    type="checkbox"
+                                                    onChange={() => handlePagoClick(gastoPersona)}
                                                     disabled={gastoPersona.estado}
-                                                >
-                                                    Ya lo pagué
-                                                </button>
-                                            </div>
-                                        )
+                                                    defaultChecked={gastoPersona.estado}
+                                                />
+
+                                            </label>
+                                        </div>
                                     ))}
-                                    {todosGastosPagados && (
-                                        <div className="col-md-12 mb-3" key="todosGastosPagados">
-                                            <p>No hay gastos pendientes para este usuario.</p>
-                                        </div>
-                                    )}
-                                    {!todosGastosPagados && gastosPersonaListAsync.every(gasto => gasto.estado) && (
-                                        <div className="col-md-12 mb-3" key="noGastosPendientes">
-                                            <p>No hay gastos pendientes.</p>
-                                        </div>
-                                    )}
-                                </>
-                            ) : (
-                                <div className="col-md-12 mb-3" key="noGastosAsignados">
-                                    <p>No hay gastos asignados al usuario.</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                                {todosGastosPagados && (
+                                    <p>No hay gastos pendientes.</p>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="col-md-12 mb-3" key="noGastosAsignados">
+                                <p>No hay gastos asignados al usuario.</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </Modal>
@@ -108,6 +98,8 @@ const GastosPendientes = () => {
 };
 
 export default GastosPendientes;
+
+
 
 
 
