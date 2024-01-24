@@ -12,8 +12,9 @@ import {
 import '../assets/css/App.css';
 
 const RegistroForm = () => {
+  // Hooks y selectores
   const dispatch = useDispatch();
-  const navigate = useNavigate();  // Añade useNavigate
+  const navigate = useNavigate();
   const regiones = useSelector((state) => state.regiones);
   const comunas = useSelector((state) => state.comunas);
 
@@ -22,22 +23,24 @@ const RegistroForm = () => {
     dispatch(fetchAllRegiones());
   }, [dispatch]);
 
-  console.log('Regiones:', regiones); // Agrega este log
+  console.log('Regiones:', regiones);
 
+  // Declarar el estado del formulario, inicializarr las variables en null
   const [formData, setFormData] = useState({
     rut: '',
     email: '',
     nombre: '',
     contrasena: '',
     nombreUnidad: '',
-    idRegion: '', // Nuevo campo para el ID de la región
-    idComuna: '', // Nuevo campo para el ID de la comuna
-    calle: '', // Nuevo campo para la calle
-    numero: '', // Nuevo campo para el número
-    deptoCasa: '', // Nuevo campo para el departamento/casa
+    idRegion: '',
+    idComuna: '',
+    calle: '',
+    numero: '',
+    deptoCasa: '',
   });
 
   const handleChange = (e) => {
+    // Manejo de cambios en el formulario
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -45,6 +48,7 @@ const RegistroForm = () => {
   };
 
   const handleRegionChange = (e) => {
+    // Manejo de cambios al seleccionar una región
     const selectedRegionId = e.target.value;
     setFormData({
       ...formData,
@@ -58,16 +62,18 @@ const RegistroForm = () => {
   };
 
   const handleComunaChange = (e) => {
+    // Carga las comunas para la región seleccionada
     const selectedComunaId = e.target.value;
     setFormData({
       ...formData,
       idComuna: selectedComunaId,
     });
 
-    // Agrega el log aquí
+    //Console.log para el id de la comuna seleccionada
     console.log('ID de Comuna:', selectedComunaId);
   };
 
+  // No enviar el formulario hasta que este completo
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -122,8 +128,8 @@ const RegistroForm = () => {
   };
 
   return (
-<div className="contenedor mt-4 mb-1 p-3 formulario-registro">
-      <div className="row"> {/* Sección del logo */} <div className="col-10 text-center">
+    <div className="contenedor mt-4 mb-1 p-3 formulario-registro">
+      <div className="row"> <div className="col-10 text-center">
         <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
       </div>
         <div className="row col-12 justify-content-center">
