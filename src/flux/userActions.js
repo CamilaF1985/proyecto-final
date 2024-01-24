@@ -42,45 +42,62 @@ export const saveNewUserData = (userData) => {
 
         // Realizar la solicitud POST al endpoint para crear el administrador
         const response = await axios.post('http://localhost:5000/create_persona_admin', userData);
-        // Console logs para identificar errores
-        console.log(response);
+
+        // Verificar si la respuesta tiene un código de estado exitoso (por ejemplo, 2xx)
+        if (response.status >= 200 && response.status < 300) {
+          console.log('Usuario creado exitosamente:', response.data);
+        } else {
+          // Si la respuesta no es exitosa, lanzar una excepción con el mensaje del servidor
+          throw new Error(`Error al crear el usuario: ${response.data.msg}`);
+        }
       } else {
         console.error('Error al obtener la unidad:', unitData);
       }
     } catch (error) {
-      console.error('Error al guardar el usuario:', error);
+      // Lanzar la excepción para ser capturada por el componente
+      throw error;
     }
   };
 };
 
 // Acción para guardar nuevo inquilino en la base de datos
 export const saveNewInquilinoData = (userData) => {
-  return async (dispatch) => { 
-    try {
-      // Obtener el id_unidad desde el localStorage
-      const idUnidad = localStorage.getItem('id_unidad');
+  return async (dispatch) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Obtener el id_unidad desde el localStorage
+        const idUnidad = localStorage.getItem('id_unidad');
 
-      // Verificar si id_unidad tiene un valor antes de continuar
-      if (idUnidad) {
-        // Actualizar el ID de la unidad en userData
-        userData.id_unidad = idUnidad;
-        console.log('ID de unidad desde localStorage:', idUnidad);
+        // Verificar si id_unidad tiene un valor antes de continuar
+        if (idUnidad) {
+          // Actualizar el ID de la unidad en userData
+          userData.id_unidad = idUnidad;
+          console.log('ID de unidad desde localStorage:', idUnidad);
 
-        // Verificar que userData tenga todos los campos necesarios y esté bien formado
-        console.log('Datos del inquilino a enviar:', userData);
+          // Verificar que userData tenga todos los campos necesarios y esté bien formado
+          console.log('Datos del inquilino a enviar:', userData);
 
-        // Realizar la solicitud POST al endpoint para crear el inquilino
-        const response = await axios.post('http://localhost:5000/create_persona_inquilino', userData);
-        console.log('Respuesta del servidor:', response);
+          // Realizar la solicitud POST al endpoint para crear el inquilino
+          const response = await axios.post('http://localhost:5000/create_persona_inquilino', userData);
+          console.log('Respuesta del servidor:', response);
 
-        // Despachar la acción para guardar los nuevos datos del inquilino en el estado global
-        dispatch(saveUserData(response.data));
-      } else {
-        console.error('Error: id_unidad no encontrado en el localStorage');
+          // Despachar la acción para guardar los nuevos datos del inquilino en el estado global
+          dispatch(saveUserData(response.data));
+
+          // Resolver la promesa con el resultado de la solicitud
+          resolve(response.data);
+        } else {
+          console.error('Error: id_unidad no encontrado en el localStorage');
+          // Rechazar la promesa con un mensaje de error
+          reject(new Error('Error: id_unidad no encontrado en el localStorage'));
+        }
+      } catch (error) {
+        console.error('Error al guardar el inquilino:', error);
+
+        // Rechazar la promesa con el error obtenido
+        reject(error);
       }
-    } catch (error) {
-      console.error('Error al guardar el inquilino:', error);
-    }
+    });
   };
 };
 
@@ -100,45 +117,44 @@ export const loginUser = (formData, closeModal, navigate) => {
         contrasena: formData.password,
       });
 
-      if (response.status === 200) {
-        const userData = response.data;
+      const userData = response.data;
 
-        // Acceder a id_unidad directamente desde userData
-        const idUnidad = userData.id_unidad;
-        console.log('Valor de id_unidad:', idUnidad);
+      // Acceder a id_unidad directamente desde userData
+      const idUnidad = userData.id_unidad;
+      console.log('Valor de id_unidad:', idUnidad);
 
-        // Determinar el tipo de usuario basado en el id_perfil obtenido
-        const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';
+      // Determinar el tipo de usuario basado en el id_perfil obtenido
+      const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';
 
-        // Agregar el tipo de usuario a los datos del usuario
-        userData.userType = userType;
+      // Agregar el tipo de usuario a los datos del usuario
+      userData.userType = userType;
 
-        // Guardar los datos del usuario en el estado global
-        dispatch(saveUserData(userData));
+      // Guardar los datos del usuario en el estado global
+      dispatch(saveUserData(userData));
 
-        // Guardar los datos del usuario en el localStorage
-        saveToLocalStorage(userData);
+      // Guardar los datos del usuario en el localStorage
+      saveToLocalStorage(userData);
 
-        // Cerrar el modal de inicio de sesión
-        closeModal();
+      // Cerrar el modal de inicio de sesión
+      closeModal();
 
-        // Redirigir a la página correspondiente según el tipo de usuario
-        if (userType === 'Administrador') {
-          navigate(`/home-administrador`);
-        } else if (userType === 'Inquilino') {
-          navigate(`/home-inquilino`);
-        }
-      } else {
-        // En caso de respuesta no exitosa, mostrar un mensaje de error
-        const errorData = response.data;
-        alert(`Error: ${errorData.msg}`);
-        closeModal();
+      // Redirigir a la página correspondiente según el tipo de usuario
+      if (userType === 'Administrador') {
+        navigate(`/home-administrador`);
+      } else if (userType === 'Inquilino') {
+        navigate(`/home-inquilino`);
       }
     } catch (error) {
       // En caso de error durante la solicitud, mostrar un mensaje de error
       console.error('Error durante el inicio de sesión:', error);
-      alert('Se produjo un error inesperado. Por favor, inténtalo de nuevo más tarde.');
-      closeModal();
+
+      // Si el error proviene del servidor (por ejemplo, código 401), lanzar una excepción
+      if (error.response && error.response.status === 401) {
+        throw new Error('Credenciales inválidas. Por favor, inténtalo de nuevo.');
+      }
+
+      // Si el error no es del servidor, mostrar un mensaje de error genérico
+      throw new Error('Se produjo un error inesperado. Por favor, inténtalo de nuevo más tarde.');
     }
   };
 };

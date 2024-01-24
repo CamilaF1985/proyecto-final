@@ -10,6 +10,7 @@ import {
   createDireccionDB,
 } from '../flux/addressActions';
 import '../assets/css/App.css';
+import Swal from 'sweetalert2';
 
 const RegistroForm = () => {
   // Hooks y selectores
@@ -74,7 +75,7 @@ const RegistroForm = () => {
   };
 
   // No enviar el formulario hasta que este completo
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -83,10 +84,9 @@ const RegistroForm = () => {
         nombre: formData.nombreUnidad,
       };
 
-      // Manejar la promesa directamente usando then
-      dispatch(saveNewUnitData(unitData)).then((unitId) => {
-        if (unitId) {
-
+      // Llamar a la acción y trabajar con la promesa resultante usando then y catch
+      dispatch(saveNewUnitData(unitData))
+        .then((unitId) => {
           if (unitId) {
             // Guardar la dirección en la base de datos
             const direccionData = {
@@ -101,29 +101,53 @@ const RegistroForm = () => {
 
             console.log('Datos de la dirección:', direccionData);
 
-            dispatch(createDireccionDB(direccionData));
+            dispatch(createDireccionDB(direccionData))
+              .then(() => {
+                // Si la creación de la unidad y dirección es exitosa, proceder a guardar el usuario
+                const userData = {
+                  rut: formData.rut,
+                  email: formData.email,
+                  nombre: formData.nombre,
+                  contrasena: formData.contrasena,
+                  id_unidad: unitId,
+                };
 
-            // Si la creación de la unidad y dirección es exitosa, proceder a guardar el usuario
-            const userData = {
-              rut: formData.rut,
-              email: formData.email,
-              nombre: formData.nombre,
-              contrasena: formData.contrasena,
-              id_unidad: unitId,
-            };
+                dispatch(saveNewUserData(userData))
+                  .then(() => {
+                    // Redirigir a la página principal después de completar el proceso de registro
+                    navigate('/');
 
-            dispatch(saveNewUserData(userData));
-
-            // Redirigir a la página principal después de completar el proceso de registro
-            navigate('/');
-
+                    // Mostrar mensaje de registro exitoso
+                    Swal.fire({
+                      icon: 'success',
+                      title: '¡Registro Exitoso!',
+                      text: 'Bienvenido.',
+                    });
+                  })
+                  .catch((error) => {
+                    console.error('Error al guardar el usuario:', error);
+                    // Mostrar mensaje de error en el registro
+                    Swal.fire({
+                      icon: 'error',
+                      title: '¡Ocurrió un error en el registro!',
+                      text: 'Por favor revise los campos.',
+                    });
+                  });
+              })
+              .catch((error) => {
+                console.error('Error al guardar la dirección:', error);
+              });
           } else {
             console.error('Error al guardar la unidad:', unitId);
           }
-        }
-      });
+        })
+        .catch((error) => {
+          console.error('Error al guardar la unidad:', error);
+          // También podrías mostrar un mensaje de error aquí si es necesario
+        });
     } catch (error) {
-      console.error('Error en el registro:', error);
+      console.error('Error general:', error);
+      // También podrías mostrar un mensaje de error aquí si es necesario
     }
   };
 

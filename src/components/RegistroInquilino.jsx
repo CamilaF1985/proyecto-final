@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { saveNewInquilinoData } from '../flux/userActions'; // Cambiado el import
+import { saveNewInquilinoData } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
-import '../assets/css/App.css';
+import Swal from 'sweetalert2'; // Agregado import
 
 // Componente funcional para el formulario de registro de inquilinos
 const RegistroInquilino = () => {
@@ -20,7 +20,7 @@ const RegistroInquilino = () => {
     email: '',
     nombre: '',
     contrasena: '',
-    id_unidad: ''
+    id_unidad: '',
   });
 
   // Obtener el id_unidad desde el localStorage
@@ -40,15 +40,31 @@ const RegistroInquilino = () => {
 
     // Guardar todos los datos del inquilino en el estado global
     const inquilinoData = {
-      ...formData,  // Incluye todos los campos del formulario
+      ...formData, // Incluye todos los campos del formulario
       id_unidad: idUnidad,
     };
 
-    // Usar la nueva acción saveNewInquilinoData
-    dispatch(saveNewInquilinoData(inquilinoData));
-
-    // Cierra el modal después de enviar la solicitud
-    handleCloseModal();
+    // Usar la acción saveNewInquilinoData
+    dispatch(saveNewInquilinoData(inquilinoData))
+      .then(() => {
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          icon: 'success',
+          title: '¡Registro Exitoso!',
+          text: 'Nuevo inquilino registrado correctamente.',
+        });
+        // Cierra el modal después de enviar la solicitud
+        handleCloseModal();
+      })
+      .catch((error) => {
+        console.error('Error al registrar inquilino:', error);
+        // Mostrar mensaje de error
+        Swal.fire({
+          icon: 'error',
+          title: '¡Ocurrió un error!',
+          text: 'Por favor revisa los campos.',
+        });
+      });
   };
 
   // Función para cerrar la ventana modal y redirigir

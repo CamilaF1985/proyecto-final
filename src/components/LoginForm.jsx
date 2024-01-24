@@ -1,10 +1,10 @@
-// LoginForm.jsx
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 import { loginUser } from '../flux/userActions';
 import { closeModal, closeModalAndRedirect } from '../flux/modalActions';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -24,7 +24,30 @@ const LoginForm = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    dispatch(loginUser(formData, closeModal, navigate));
+
+    dispatch(loginUser(formData, closeModal, navigate))
+      .then(() => {
+        // Autenticación exitosa
+        Swal.fire({
+          icon: 'success',
+          title: '¡Inicio de sesión exitoso!',
+          text: 'Bienvenido de nuevo.',
+        });
+
+        // Cierra el modal después de un breve tiempo (ajusta el tiempo según sea necesario)
+        setTimeout(() => {
+          handleCloseModal();
+        }, 3000);
+      })
+      .catch((error) => {
+        // Maneja el error (puedes mostrar un mensaje de error si es necesario)
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: '¡Credenciales incorrectas!',
+          text: 'Por favor revisa tus credenciales.',
+        });
+      });
   };
 
   const handleCloseModal = () => {
@@ -98,6 +121,7 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
 
 
 
