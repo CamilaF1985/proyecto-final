@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { saveNewUserData } from '../flux/userActions';
 import { saveNewUnitData } from '../flux/unitActions';
+import logo from '../assets/img/logo.png';
 import { useNavigate } from 'react-router-dom';
 import {
   fetchAllRegiones,
@@ -48,10 +49,9 @@ const RegistroForm = () => {
     setFormData({
       ...formData,
       idRegion: selectedRegionId,
-      idComuna: '', // Reiniciar la comuna cuando cambie la región
+      idComuna: '',
     });
 
-    // Agrega el log aquí
     console.log('ID de Región:', selectedRegionId);
     // Cargar las comunas para la región seleccionada
     dispatch(fetchComunasByRegionId(selectedRegionId));
@@ -80,12 +80,11 @@ const RegistroForm = () => {
       // Manejar la promesa directamente usando then
       dispatch(saveNewUnitData(unitData)).then((unitId) => {
         if (unitId) {
-          // Resto del código...
 
           if (unitId) {
             // Guardar la dirección en la base de datos
             const direccionData = {
-              id_pais: '1', // Ejemplo: asignar el ID del país según tu lógica
+              id_pais: '1',
               id_region: formData.idRegion,
               id_comuna: formData.idComuna,
               calle: formData.calle,
@@ -94,7 +93,7 @@ const RegistroForm = () => {
               id_unidad: unitId,
             };
 
-            console.log('Datos de la dirección:', direccionData); // Agrega este log
+            console.log('Datos de la dirección:', direccionData);
 
             dispatch(createDireccionDB(direccionData));
 
@@ -123,211 +122,99 @@ const RegistroForm = () => {
   };
 
   return (
-
-    <div className="form-container">
-      <h2 className="form-titulo">Registro</h2>
-      <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
-        <div className="col-md-12 mb-3">
-          <label htmlFor="rut" className="form-label">
-            RUT:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="rut"
-            name="rut"
-            value={formData.rut}
-            onChange={handleChange}
-            placeholder="Ingresa tu RUT"
-            required
-          />
-          <div className="invalid-feedback">Por favor, ingresa tu RUT.</div>
-        </div>
-
-        <div className="col-md-12 mb-3">
-          <label htmlFor="nombreUnidad" className="form-label">
-            Nombre de la Unidad:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="nombreUnidad"
-            name="nombreUnidad"
-            value={formData.nombreUnidad}
-            onChange={handleChange}
-            placeholder="Ingresa el nombre de la Unidad"
-            required
-          />
-          <div className="invalid-feedback">
-            Por favor, ingresa el nombre de la Unidad.
+<div className="contenedor mt-4 mb-1 p-3 formulario-registro">
+      <div className="row"> {/* Sección del logo */} <div className="col-10 text-center">
+        <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
+      </div>
+        <div className="row col-12 justify-content-center">
+          <div className="row">
+            <div className="col-md-12 mb-3">
+              <h2 className="form-titulo-registro">Registro</h2>
+            </div>
+            <div className="form-container-contacto">
+              <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="rut" className="form-label"> RUT: </label>
+                  <input type="text" className="form-control" id="rut" name="rut" value={formData.rut}
+                    onChange={handleChange} placeholder="Ingresa tu RUT" required />
+                  <div className="invalid-feedback">Por favor, ingresa tu RUT.</div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="nombreUnidad" className="form-label"> Nombre de la Unidad: </label>
+                  <input type="text" className="form-control" id="nombreUnidad" name="nombreUnidad"
+                    value={formData.nombreUnidad} onChange={handleChange} placeholder="Ingresa el nombre de la Unidad" required />
+                  <div className="invalid-feedback"> Por favor, ingresa el nombre de la Unidad. </div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="idRegion" className="form-label"> Región: </label>
+                  <select className="form-select" id="idRegion" name="idRegion" value={formData.idRegion}
+                    onChange={handleRegionChange} required>
+                    <option value="" disabled> Selecciona una región </option>
+                    {regiones && regiones.map((region) => (<option key={region.id} value={region.id}> {region.nombre}
+                    </option>))}
+                  </select>
+                  <div className="invalid-feedback">Por favor, selecciona una región.</div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="idComuna" className="form-label"> Comuna: </label>
+                  <select className="form-select" id="idComuna" name="idComuna" value={formData.idComuna}
+                    onChange={handleComunaChange} required>
+                    <option value="" disabled> Selecciona una comuna </option>
+                    {comunas && comunas.map((comuna) => (<option key={comuna.id} value={comuna.id}> {comuna.nombre}
+                    </option>))}
+                  </select>
+                  <div className="invalid-feedback">Por favor, selecciona una comuna.</div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="calle" className="form-label"> Calle: </label>
+                  <input type="text" className="form-control" id="calle" name="calle" value={formData.calle}
+                    onChange={handleChange} placeholder="Ingresa la calle" required />
+                  <div className="invalid-feedback">Por favor, ingresa la calle.</div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="numero" className="form-label"> Número: </label>
+                  <input type="text" className="form-control" id="numero" name="numero" value={formData.numero}
+                    onChange={handleChange} placeholder="Ingresa el número" required />
+                  <div className="invalid-feedback">Por favor, ingresa el número.</div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="deptoCasa" className="form-label"> Depto/Casa: </label>
+                  <input type="text" className="form-control" id="deptoCasa" name="deptoCasa"
+                    value={formData.deptoCasa} onChange={handleChange} placeholder="Ingresa el departamento/casa" required />
+                  <div className="invalid-feedback"> Por favor, ingresa el departamento/casa. </div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="email" className="form-label"> Correo Electrónico: </label>
+                  <input type="email" className="form-control" id="email" name="email"
+                    value={formData.email} onChange={handleChange} placeholder="Ingresa tu correo electrónico" required />
+                  <div className="invalid-feedback"> Por favor, ingresa un correo electrónico válido. </div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="nombre" className="form-label"> Nombre: </label>
+                  <input type="text" className="form-control" id="nombre" name="nombre"
+                    value={formData.nombre} onChange={handleChange} placeholder="Ingresa tu nombre" required />
+                  <div className="invalid-feedback">Por favor, ingresa tu nombre.</div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="contrasena" className="form-label"> Contraseña: </label>
+                  <input type="password" className="form-control" id="contrasena" name="contrasena"
+                    value={formData.contrasena} onChange={handleChange} placeholder="Ingresa tu contraseña" required />
+                  <div className="invalid-feedback">Por favor, ingresa tu contraseña.</div>
+                </div>
+                <div className="col-md-12 mt-2 d-flex justify-content-end">
+                  <button className="btn btn-primary" type="submit"> Registrarse </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-        <div className="col-md-12 mb-3">
-          <label htmlFor="idRegion" className="form-label">
-            Región:
-          </label>
-          <select
-            className="form-select"
-            id="idRegion"
-            name="idRegion"
-            value={formData.idRegion}
-            onChange={handleRegionChange}
-            required
-          >
-            <option value="" disabled>
-              Selecciona una región
-            </option>
-            {regiones && regiones.map((region) => (
-              <option key={region.id} value={region.id}>
-                {region.nombre}
-              </option>
-            ))}
-
-          </select>
-          <div className="invalid-feedback">Por favor, selecciona una región.</div>
-        </div>
-
-        <div className="col-md-12 mb-3">
-          <label htmlFor="idComuna" className="form-label">
-            Comuna:
-          </label>
-          <select
-            className="form-select"
-            id="idComuna"
-            name="idComuna"
-            value={formData.idComuna}
-            onChange={handleComunaChange}
-            required
-          >
-            <option value="" disabled>
-              Selecciona una comuna
-            </option>
-            {comunas && comunas.map((comuna) => (
-              <option key={comuna.id} value={comuna.id}>
-                {comuna.nombre}
-              </option>
-            ))}
-          </select>
-          <div className="invalid-feedback">Por favor, selecciona una comuna.</div>
-        </div>
-
-        <div className="col-md-12 mb-3">
-          <label htmlFor="calle" className="form-label">
-            Calle:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="calle"
-            name="calle"
-            value={formData.calle}
-            onChange={handleChange}
-            placeholder="Ingresa la calle"
-            required
-          />
-          <div className="invalid-feedback">Por favor, ingresa la calle.</div>
-        </div>
-
-        <div className="col-md-12 mb-3">
-          <label htmlFor="numero" className="form-label">
-            Número:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="numero"
-            name="numero"
-            value={formData.numero}
-            onChange={handleChange}
-            placeholder="Ingresa el número"
-            required
-          />
-          <div className="invalid-feedback">Por favor, ingresa el número.</div>
-        </div>
-
-        <div className="col-md-12 mb-3">
-          <label htmlFor="deptoCasa" className="form-label">
-            Depto/Casa:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="deptoCasa"
-            name="deptoCasa"
-            value={formData.deptoCasa}
-            onChange={handleChange}
-            placeholder="Ingresa el departamento/casa"
-            required
-          />
-          <div className="invalid-feedback">
-            Por favor, ingresa el departamento/casa.
-          </div>
-        </div>
-
-        <div className="col-md-12 mb-3">
-          <label htmlFor="email" className="form-label">
-            Correo Electrónico:
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Ingresa tu correo electrónico"
-            required
-          />
-          <div className="invalid-feedback">
-            Por favor, ingresa un correo electrónico válido.
-          </div>
-        </div>
-
-        <div className="col-md-12 mb-3">
-          <label htmlFor="nombre" className="form-label">
-            Nombre:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="nombre"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            placeholder="Ingresa tu nombre"
-            required
-          />
-          <div className="invalid-feedback">Por favor, ingresa tu nombre.</div>
-        </div>
-
-        <div className="col-md-12 mb-3">
-          <label htmlFor="contrasena" className="form-label">
-            Contraseña:
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="contrasena"
-            name="contrasena"
-            value={formData.contrasena}
-            onChange={handleChange}
-            placeholder="Ingresa tu contraseña"
-            required
-          />
-          <div className="invalid-feedback">Por favor, ingresa tu contraseña.</div>
-        </div>
-
-        <div className="col-md-12 d-flex justify-content-end">
-          <button className="btn btn-primary" type="submit">
-            Registrarse
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };
 
 export default RegistroForm;
+
 
 
 

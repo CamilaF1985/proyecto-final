@@ -70,6 +70,11 @@ img {
     font-weight: 100;
 }
 
+.form-titulo-registro {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
 
 /* Estilos para el mapa de Google */
 .google-maps-iframe {
@@ -108,6 +113,16 @@ input,
 label {
     font-family: 'Roboto', sans-serif;
     font-weight: 100;
+}
+
+.contenedor {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+}
+
+.formulario-registro img.img-logo {
+   margin-right: 200px;
+    /* Ajusta la cantidad de margen derecho según tus necesidades */
 }
 
 /* Estilos para las checkboxes */
