@@ -143,11 +143,9 @@ const RegistroForm = () => {
         })
         .catch((error) => {
           console.error('Error al guardar la unidad:', error);
-          // También podrías mostrar un mensaje de error aquí si es necesario
         });
     } catch (error) {
       console.error('Error general:', error);
-      // También podrías mostrar un mensaje de error aquí si es necesario
     }
   };
 

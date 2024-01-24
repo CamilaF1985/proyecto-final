@@ -14,8 +14,8 @@ const LoginForm = () => {
     rut: '',
     password: '',
   });
-
   const handleInputChange = (e) => {
+    // Manejo de cambios en el formulario
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
@@ -23,6 +23,7 @@ const LoginForm = () => {
   };
 
   const handleLogin = (e) => {
+    // No enviar el formulario hasta que este completo
     e.preventDefault();
 
     dispatch(loginUser(formData, closeModal, navigate))
@@ -34,13 +35,13 @@ const LoginForm = () => {
           text: 'Bienvenido de nuevo.',
         });
 
-        // Cierra el modal después de un breve tiempo (ajusta el tiempo según sea necesario)
+        // Cierra el modal después de un breve tiempo 
         setTimeout(() => {
           handleCloseModal();
         }, 3000);
       })
       .catch((error) => {
-        // Maneja el error (puedes mostrar un mensaje de error si es necesario)
+        // Mensaje de error
         console.error(error);
         Swal.fire({
           icon: 'error',
@@ -49,8 +50,8 @@ const LoginForm = () => {
         });
       });
   };
-
   const handleCloseModal = () => {
+    // Cierre de modal y redirección
     dispatch(closeModal());
     dispatch(closeModalAndRedirect('/', navigate));
   };

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
 import { saveNewExpenseData } from '../flux/expenseActions';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const AgregarGasto = () => {
   // Hooks y Redux
@@ -22,10 +23,10 @@ const AgregarGasto = () => {
 
   // Función para agregar un nuevo gasto
   const handleAgregarGasto = () => {
-
     // Validar que se hayan ingresado todos los valores
     if (factura && monto && descripcion) {
       const idUnidad = localStorage.getItem('id_unidad');
+
       // Dispatch de la acción para agregar gasto
       dispatch(
         saveNewExpenseData({
@@ -34,16 +35,34 @@ const AgregarGasto = () => {
           descripcion: descripcion,
           id_unidad: idUnidad,
         })
-      );
+      ).then(() => {
+        // Cerrar el modal y redirigir después de que la acción sea completada
+        handleCloseModal();
 
-      // Cerrar el modal y redirigir
-      handleCloseModal();
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          icon: 'success',
+          title: '¡Gasto Agregado!',
+          text: 'El nuevo gasto se ha agregado correctamente.',
+        });
+      }).catch((error) => {
+        // Mostrar mensaje de error
+        Swal.fire({
+          icon: 'error',
+          title: '¡Error al Agregar Gasto!',
+          text: error.message || 'Ocurrió un error al agregar el gasto.',
+        });
+        console.error('Error al agregar el gasto:', error);
+      });
     } else {
-      // Manejar caso donde no se ingresaron todos los valores
-      alert('Por favor, ingrese todos los detalles del gasto.');
+      // Mostrar mensaje en caso de que no se ingresen todos los valores
+        Swal.fire({
+          icon: 'error',
+          title: '¡Valores faltantes!',
+          text: 'Por favor revise los campos.',
+        });
     }
   };
-
 
   return (
     // Modal para agregar gasto

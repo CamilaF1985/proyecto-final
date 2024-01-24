@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
 import { saveNewInquilinoData } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'; // Agregado import
+import Swal from 'sweetalert2'; 
 
 // Componente funcional para el formulario de registro de inquilinos
 const RegistroInquilino = () => {
