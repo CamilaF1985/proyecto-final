@@ -1,4 +1,3 @@
-// Importaciones de módulos y componentes
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import App from '../App.jsx';
@@ -57,7 +56,7 @@ const AppRoutes = () => {
         }
         navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
       } else if (storedUserType.toLowerCase() === 'inquilino') {
-        // Permite el acceso a /tareas-pendientes y /perfil para usuarios inquilinos
+        // Permite el acceso a /tareas-pendientes, /gastos-pendientes y /perfil para usuarios inquilinos
         if (allowedPathsForInquilino.some(path => window.location.pathname.includes(path))) {
           return;
         }
@@ -96,7 +95,6 @@ const AppRoutes = () => {
   );
 };
 
-// Exporta el componente AppRoutes para su uso en la aplicación
 export default AppRoutes;
 
 

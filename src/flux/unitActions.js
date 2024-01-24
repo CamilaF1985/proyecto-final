@@ -1,6 +1,6 @@
-// unitActions.js
 import axios from 'axios';
 
+// Tipos de acciones
 export const SAVE_UNIT_DATA = 'SAVE_UNIT_DATA';
 export const FETCH_UNIT_BY_ID = 'FETCH_UNIT_BY_ID';
 export const SAVE_NEW_UNIT_DATA = 'SAVE_NEW_UNIT_DATA';
@@ -11,21 +11,22 @@ export const saveUnitData = (unitData) => ({
   payload: unitData,
 });
 
+// Acción para buscar la unidad por su Id en la base de datos
 export const fetchUnitById = (unitId) => {
-  return async (dispatch) => {  // Asegúrate de recibir el despachador como argumento
+  return async (dispatch) => {  
     try {
-      // Espera solicitud de la promesa antes de asignar el valor
+      // Esperar solicitud de la promesa antes de asignar el valor
       const resolvedUnitId = await unitId;
-      // Asigna el valor del id de la unidad a la solicitud get
+      // Asignar el valor del id de la unidad a la solicitud get
       const response = await axios.get(`http://localhost:5000/unidad/${resolvedUnitId}`);
 
-      // Guarda los datos de la unidad en el estado global usando la acción saveUnitData
+      // Guardar los datos de la unidad en el estado global usando la acción saveUnitData
       dispatch(saveUnitData(response.data));
 
       return response.data;
     } catch (error) {
       console.error('Error al obtener la unidad:', error);
-      throw error; // Propagar el error para que pueda ser manejado en userActions.js
+      throw error; 
     }
   };
 };
@@ -41,12 +42,12 @@ export const saveNewUnitData = (unitData) => {
         // Si la solicitud es exitosa, devolver el ID de la unidad creada directamente
         return response.data.id;
       } else {
-        // Manejar otros casos de respuesta si es necesario
+        // Manejar otros casos de respuesta 
         console.error('Error al guardar la unidad:', response.data);
         return null;
       }
     } catch (error) {
-      // Manejar errores aquí, puedes despachar otra acción de error si es necesario
+      // Manejo de errores
       console.error('Error al guardar la unidad:', error);
       return null;
     }

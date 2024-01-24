@@ -1,9 +1,8 @@
-// En tu archivo personExpenseActions.js
 import axios from 'axios';
 import { getUsersByUnit } from './userActions.js';
 import { getUserByRut } from './userActions.js';
 
-
+// tipos de acciones
 export const ADD_GASTO_PERSONA = 'ADD_GASTO_PERSONA';
 export const GET_GASTOS_PERSONA = 'GET_GASTOS_PERSONA';
 export const SAVE_GASTOS_PERSONA = 'SAVE_GASTOS_PERSONA';
@@ -26,6 +25,7 @@ export const saveGastosPersona = (gastosPersona) => {
     };
 };
 
+// Acción para guardar los Ids en el estado
 export const saveIdsGastos = (ids) => ({
     type: SAVE_IDS_GASTOS,
     payload: ids,
@@ -105,27 +105,28 @@ export const assignGastoPersona = () => async (dispatch, getState) => {
         // Imprimir toda la respuesta
         console.log('Respuesta completa:', error.response);
 
-        // Si hay una respuesta en el error, imprímela
+        // Imprimir respuesta de error
         if (error.response) {
             console.error('Detalles de la respuesta:', error.response.data);
         }
     }
 };
 
+// Acción para obtener los gastos persona desde la base de datos
 export const getGastosPersona = () => {
     return async (dispatch, getState) => {
         try {
             await dispatch(getUserByRut());
             const idUsuario = getState().user.id;
 
-            // Realiza la solicitud al servidor para obtener los gastos persona
+            // Realizar la solicitud al servidor para obtener los gastos persona
             const response = await axios.get(`http://localhost:5000/gasto_persona_by_id_persona/${idUsuario}`);
 
             if (response.status === 200) {
                 const gastosPersona = response.data && response.data.gastos_persona_list;
 
                 if (gastosPersona) {
-                    // Opcional: Guarda los ids en el estado
+                    // Guarda los ids en el estado
                     const idsGastos = gastosPersona.map(gastoPersona => ({
                         idGasto: gastoPersona.id_gasto,
                         idPersona: gastoPersona.id_persona
@@ -147,6 +148,7 @@ export const getGastosPersona = () => {
     };
 };
 
+// Accion para modificar el estado de un gasto persona en la base de datos
 export const updateEstadoGastoPersona = (selectedGasto) => {
     return async (dispatch, getState) => {
         try {
@@ -172,7 +174,7 @@ export const updateEstadoGastoPersona = (selectedGasto) => {
 
                 console.log('Estado de gasto persona actualizado exitosamente:', response.data);
 
-                // Obtén los datos actualizados nuevamente después de la actualización del estado
+                // Obtener los datos actualizados nuevamente después de la actualización del estado
                 await dispatch(getGastosPersona());
 
                 // Ahora, el estado debería estar actualizado con la lista completa de gastos persona

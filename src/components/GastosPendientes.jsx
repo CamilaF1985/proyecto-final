@@ -12,13 +12,14 @@ const GastosPendientes = () => {
     const gastosPersonaListAsync = useSelector((state) => state.gastosPersonaListAsync);
 
     useEffect(() => {
+        // Función para obtener los gastos asignados cuando el componente se monta
         const fetchGastosPersona = () => {
             dispatch(getGastosPersona())
                 .catch((error) => {
                     console.error('Error al obtener los gastos persona:', error);
                 });
         };
-
+        // Llama a la función de obtener gastos al montar el componente
         fetchGastosPersona();
     }, [dispatch]);
 

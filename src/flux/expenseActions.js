@@ -1,6 +1,5 @@
-// En tu archivo taskActions.js
 import axios from 'axios';
-import { assignGastoPersona } from './personExpenseActions.js';  // Importa la acción de personExpenseActions
+import { assignGastoPersona } from './personExpenseActions.js';  
 
 // tipos de acciones
 export const ADD_EXPENSE = 'ADD_EXPENSE';
@@ -9,7 +8,7 @@ export const SAVE_NEW_EXPENSE_DATA = 'SAVE_NEW_EXPENSE_DATA';
 export const GET_GASTO_DETAILS_SUCCESS = 'GET_GASTO_DETAILS_SUCCESS';
 export const GET_GASTO_DETAILS_ERROR = 'GET_GASTO_DETAILS_ERROR';
 export const SAVE_GASTO_DETAILS = 'SAVE_GASTO_DETAILS';
-export const UPDATE_EXPENSES = 'UPDATE_EXPENSES'; // Nuevo tipo de acción
+export const UPDATE_EXPENSES = 'UPDATE_EXPENSES'; 
 
 // Acción para agregar un nuevo gasto al estado global
 export const addExpense = (expenseData) => {
@@ -58,7 +57,7 @@ export const saveNewExpenseData = (expenseData) => {
             // Imprime toda la respuesta
             console.log('Respuesta completa:', error.response);
 
-            // Si hay una respuesta en el error, imprímela
+            // Imprime si hay una respuesta en el error
             if (error.response) {
                 console.error('Detalles de la respuesta:', error.response.data);
             }
@@ -73,7 +72,7 @@ export const getExpensesByUnit = (unitId) => {
             try {
                 const response = await axios.get(`http://localhost:5000/get_gasto_por_unidad/${unitId}`);
 
-                console.log('Respuesta de getExpensesByUnit:', response.data); // Agregado aquí
+                console.log('Respuesta de getExpensesByUnit:', response.data); 
 
                 if (response.status === 200) {
                     // Guardar los gastos en el estado global antes de devolver la respuesta
@@ -102,6 +101,7 @@ export const deleteExpense = (expenseId) => {
     };
 };
 
+// Acción para eliminar un gasto de la base de datos
 export const deleteExpenseFromDatabase = (expenseId) => {
     return async (dispatch) => {
         try {
@@ -140,22 +140,20 @@ export const getGastoDetails = (factura) => async (dispatch) => {
         if (response.status === 200) {
             const gastoDetails = response.data.gasto;
 
-            // Asegúrate de extraer correctamente el ID y el número de factura del objeto gastoDetails
+            // Extraer el ID y el número de factura del objeto gastoDetails
             const gastoId = gastoDetails ? gastoDetails.id : null;
             const gastoFactura = gastoDetails ? gastoDetails.factura : null;
-
+            // Manejo de éxito y errores al ejecutar la acción
             if (gastoId && gastoFactura) {
                 console.log('Detalles del gasto obtenidos con éxito:', gastoDetails);
                 dispatch({ type: GET_GASTO_DETAILS_SUCCESS, payload: gastoDetails });
 
-                // Agrega un console.log para la data que se está enviando al estado
                 console.log('Data enviada al estado:', gastoDetails);
             } else {
                 console.error('Error: No se pudo obtener el ID o el número de factura del gasto desde los detalles:', gastoDetails);
                 dispatch({ type: GET_GASTO_DETAILS_ERROR, payload: 'Error al obtener detalles del gasto' });
             }
 
-            // Mover la línea dentro del bloque try
             dispatch({ type: SAVE_GASTO_DETAILS, payload: gastoDetails });
         } else {
             console.error('Error en getGastoDetails. Estado de la respuesta:', response.status);

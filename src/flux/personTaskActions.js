@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getUsersByUnit } from './userActions.js';
 import { getUserByRut } from './userActions.js'
 
-// Definir tipos de acción directamente en el archivo
+// Tipos de acciones
 const ADD_PERSON_TASK = 'ADD_PERSON_TASK';
 const ASSIGN_TASK_ERROR = 'ASSIGN_TASK_ERROR';
 const DELETE_TAREA_PERSONA = 'DELETE_TAREA_PERSONA';
@@ -90,45 +90,45 @@ export const assignTaskToRandomPerson = (taskData) => async (dispatch) => {
 export const getTareasAsignadas = () => {
     return async (dispatch, getState) => {
         try {
-            // Utiliza la acción getUserByRut y espera a que se resuelva
+            // Utilizar la acción getUserByRut y esperar a que se resuelva
             await dispatch(getUserByRut());
 
-            // Obtiene el ID del usuario almacenado en el estado después de llamar a getUserByRut
-            const idUsuario = getState().user.id; // Ajusta la propiedad según tu estructura de estado
+            // Obtener el ID del usuario almacenado en el estado después de llamar a getUserByRut
+            const idUsuario = getState().user.id; 
 
-            // Agrega un console.log para imprimir el ID del usuario
+            // Console.log para imprimir el ID del usuario
             console.log('ID del Usuario:', idUsuario);
 
-            // Realiza una solicitud al servidor para obtener las tareas asignadas al usuario por su ID
+            // Realizar una solicitud al servidor para obtener las tareas asignadas al usuario por su ID
             const response = await axios.get(`http://localhost:5000/tarea_persona_by_id_persona/${idUsuario}`);
 
             if (response.status === 200) {
-                // Extrae directamente tarea_persona_list de la respuesta
+                // Extraer directamente tarea_persona_list de la respuesta
                 const tareasAsignadas = response.data.tarea_persona_list;
 
-                // Despacha la acción para guardar las tareas asignadas en el estado
+                // Despachar la acción para guardar las tareas asignadas en el estado
                 dispatch(saveTareasAsignadas(tareasAsignadas));
 
-                // Realiza cualquier otra acción que necesites con las tareas asignadas
+                // Console.log para las tareas asignadas
                 console.log('Tareas asignadas:', tareasAsignadas);
 
-                // Imprime el nombre de la primera tarea (ajusta según tu estructura de datos)
+                // Imprimir el nombre de la primera tarea
                 if (tareasAsignadas.length > 0) {
                     console.log('Nombre de la primera tarea:', tareasAsignadas[0].nombre_tarea);
                 }
             } else {
-                // Muestra un mensaje de error si la solicitud no fue exitosa
+                // ostrar un mensaje de error si la solicitud no fue exitosa
                 const errorData = response.data;
                 console.error(`Error al obtener las tareas asignadas: ${errorData.error}`);
             }
         } catch (error) {
-            // Muestra un mensaje de error si ocurre un error durante la obtención de las tareas asignadas
+            // Mostrar un mensaje de error si ocurre un error durante la obtención de las tareas asignadas
             console.error('Error al obtener las tareas asignadas:', error);
         }
     };
 };
 
-// Acción para actualizar la fecha de término de una tarea asignada a una persona
+// Acción para actualizar la fecha de término de una tarea asignada a una persona en la base de datos
 export const updateFechaTermino = (tareaPersonaId) => async (dispatch) => {
     try {
         // Obtener la fecha actual
@@ -141,7 +141,7 @@ export const updateFechaTermino = (tareaPersonaId) => async (dispatch) => {
         });
 
         if (response.status === 200) {
-            // Despacha la acción para actualizar la fecha de término en el estado
+            // Despachar la acción para actualizar la fecha de término en el estado
             dispatch({
                 type: UPDATE_FECHA_TERMINO,
                 payload: {
@@ -173,7 +173,7 @@ export const deleteTareaPersona = (taskId) => async (dispatch) => {
         });
 
         if (response.status === 200) {
-            // Despacha la acción para eliminar la tarea_persona del estado
+            // Despachar la acción para eliminar la tarea_persona del estado
             dispatch({
                 type: DELETE_TAREA_PERSONA,
                 payload: taskId,

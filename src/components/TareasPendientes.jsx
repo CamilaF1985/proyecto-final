@@ -13,6 +13,7 @@ const TareasPendientes = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Función para obtener las tareas asignadas cuando el componente se monta
         const fetchTareas = () => {
             dispatch(getTareasAsignadas())
                 .then(() => {
@@ -23,11 +24,12 @@ const TareasPendientes = () => {
                     setLoading(false);
                 });
         };
-
+        // Llama a la función de obtener tareas al montar el componente
         fetchTareas();
     }, [dispatch]);
 
     const handleCloseModal = () => {
+        // Función para cerrar el modal y navegar a la página principal
         navigate('/');
     };
 
@@ -63,7 +65,7 @@ const TareasPendientes = () => {
             <div className="modal-body">
                 <div className="form-container">
                     <h2 className="form-titulo">Tareas Pendientes</h2>
-                    <p ClassName= "subtitulo"> Marca las tareas que ya has realizado </p> {/* Nuevo texto agregado */}
+                    <p ClassName="subtitulo"> Marca las tareas que ya has realizado </p>
                     {loading ? (
                         <p>Cargando...</p>
                     ) : (

@@ -89,7 +89,7 @@ const RegistroInquilino = () => {
                 name="rut"
                 value={formData.rut}
                 onChange={handleChange}
-                placeholder="Ingresa tu RUT"
+                placeholder="Ingresa el rut del inquilino"
                 required
               />
               <div className="invalid-feedback">
@@ -107,7 +107,7 @@ const RegistroInquilino = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Ingresa tu correo electrónico"
+                placeholder="Ingresa el correo del inquilino"
                 required
               />
               <div className="invalid-feedback">
@@ -125,7 +125,7 @@ const RegistroInquilino = () => {
                 name="nombre"
                 value={formData.nombre}
                 onChange={handleChange}
-                placeholder="Ingresa tu nombre"
+                placeholder="Ingresa el nombre del inquilino"
                 required
               />
               <div className="invalid-feedback">
@@ -143,7 +143,7 @@ const RegistroInquilino = () => {
                 name="contrasena"
                 value={formData.contrasena}
                 onChange={handleChange}
-                placeholder="Ingresa tu contraseña"
+                placeholder="Ingresa una contraseña para el inquilino"
                 required
               />
               <div className="invalid-feedback">

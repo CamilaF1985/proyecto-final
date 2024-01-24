@@ -29,9 +29,10 @@ import {
   ADD_TASK,
   DELETE_TASK,
   SAVE_NEW_TASK_DATA,
-  GET_TASK_BY_NAME, // Agrega la importación del tipo de acción GET_TASK_BY_ID
+  GET_TASK_BY_NAME,
 } from './taskActions.js';
 
+// Importar acciones relacionadas con gastos desde expenseActions.js
 import {
   ADD_EXPENSE,
   DELETE_EXPENSE,
@@ -49,12 +50,13 @@ import {
   CREATE_DIRECCION,
 } from './addressActions.js';
 
+// Importar acciones relacionas con tarea persona desde personTaskActions.js
 import {
-  // otras importaciones
   SAVE_TAREAS_ASIGNADAS,
   UPDATE_FECHA_TERMINO,
 } from './personTaskActions.js';
 
+// Importar acciones relacionas con gasto persona desde personExpenseActions.js
 import {
   ADD_GASTO_PERSONA,
   SAVE_GASTOS_PERSONA,
@@ -94,12 +96,12 @@ const initialState = {
   comunas: [],
   regiones: [],
   direcciones: [],
-  unit: {}, // Agrega un objeto vacío para inicializar el campo 'unit'
+  unit: {}, 
   tareasAsignadas: [],
   gastoPersonaList: [],
   gastosPersonaListAsync: [],
   idsGastos: [],
-  gastoDetails: {},  // Inicializado como un objeto vacío
+  gastoDetails: {},  
   gastoDetailsError: null,
   updatedExpenses: []
 };
@@ -155,13 +157,11 @@ const rootReducer = (state = initialState, action) => {
       };
 
     case GET_TASK_BY_NAME:
-      const { data, status, statusText } = action.payload;
+      const { data } = action.payload;
 
-      // Verifica si la tarea ya existe en el estado
       const existingTask = state.tasks.find(task => task.id === data.id);
 
       if (existingTask) {
-        // Si la tarea existe, actualiza solo los campos necesarios
         const updatedTasks = state.tasks.map(task => {
           if (task.id === data.id) {
             return { ...task, ...data };
@@ -174,7 +174,7 @@ const rootReducer = (state = initialState, action) => {
           tasks: updatedTasks,
         };
       } else {
-        // Si la tarea no existe, agrégala al estado
+
         return {
           ...state,
           tasks: [...state.tasks, data],
@@ -190,7 +190,6 @@ const rootReducer = (state = initialState, action) => {
     case UPDATE_FECHA_TERMINO:
       const { tareaPersonaId, nuevaFechaTermino } = action.payload;
 
-      // Actualiza la fecha de término de la tarea_persona en el estado
       const updatedTareasAsignadas = state.tareasAsignadas.map(tarea => {
         if (tarea.id_tarea_persona === tareaPersonaId) {
           return { ...tarea, fecha_termino: nuevaFechaTermino };
@@ -204,7 +203,6 @@ const rootReducer = (state = initialState, action) => {
       };
 
     case FETCH_UNIT_BY_ID:
-      // Actualiza el estado basado en la acción FETCH_UNIT_BY_ID si es necesario
       return state;
     case ADD_EXPENSE:
       return {
@@ -260,14 +258,12 @@ const rootReducer = (state = initialState, action) => {
     case SAVE_GASTOS_PERSONA:
       return {
         ...state,
-        gastosPersonaListAsync: action.payload, // Almacena la lista completa obtenida mediante operaciones asíncronas
+        gastosPersonaListAsync: action.payload, 
       };
 
     case UPDATE_ESTADO_GASTO_PERSONA:
-      // Aquí asumes que action.payload contiene la información actualizada
       const { idGasto, estadoActualizado } = action.payload;
 
-      // Actualiza gastosPersonaListAsync con la nueva información
       const gastosPersonaListActualizado = state.gastosPersonaListAsync.map((gasto) =>
         gasto.id_gasto === idGasto ? { ...gasto, estado: estadoActualizado } : gasto
       );
