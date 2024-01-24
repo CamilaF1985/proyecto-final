@@ -43,6 +43,9 @@ const TareasPendientes = () => {
             });
     };
 
+    // Verifica si todas las tareas tienen una fecha de término asignada
+    const todasTienenFechaTermino = tareasAsignadas.every((tarea) => tarea.fecha_termino);
+
     return (
         <Modal
             isOpen={isOpen ?? false}
@@ -66,17 +69,23 @@ const TareasPendientes = () => {
                         <div className="row g-3">
                             {tareasAsignadas && tareasAsignadas.length > 0 ? (
                                 <>
-                                    {tareasAsignadas.map((tarea) => (
-                                        // Verifica si la tarea no tiene una fecha de término asignada
-                                        !tarea.fecha_termino && (
-                                            <div key={tarea.id_tarea_persona} className="col-md-12 mb-3">
-                                                <p>{`Nombre de la tarea: ${tarea.nombre_tarea || "Sin nombre"}`}</p>
-                                                <button onClick={() => handleUpdateFechaTermino(tarea.id_tarea_persona)}>
-                                                    Actualizar Estado
-                                                </button>
-                                            </div>
-                                        )
-                                    ))}
+                                    {todasTienenFechaTermino ? (
+                                        <div className="col-md-12 mb-3">
+                                            <p>No hay tareas pendientes.</p>
+                                        </div>
+                                    ) : (
+                                        tareasAsignadas.map((tarea) => (
+                                            // Verifica si la tarea no tiene una fecha de término asignada
+                                            !tarea.fecha_termino && (
+                                                <div key={tarea.id_tarea_persona} className="col-md-12 mb-3">
+                                                    <p>{`Nombre de la tarea: ${tarea.nombre_tarea || "Sin nombre"}`}</p>
+                                                    <button onClick={() => handleUpdateFechaTermino(tarea.id_tarea_persona)}>
+                                                        Ya lo hice
+                                                    </button>
+                                                </div>
+                                            )
+                                        ))
+                                    )}
                                 </>
                             ) : (
                                 <div className="col-md-12 mb-3">
@@ -92,6 +101,7 @@ const TareasPendientes = () => {
 };
 
 export default TareasPendientes;
+
 
 
 

@@ -1,8 +1,14 @@
 // En tu archivo personExpenseActions.js
 import axios from 'axios';
 import { getUsersByUnit } from './userActions.js';
+import { getUserByRut } from './userActions.js';
+
+
 export const ADD_GASTO_PERSONA = 'ADD_GASTO_PERSONA';
-export const GET_GASTOS_PERSONA_BY_ID_GASTO = 'GET_GASTOS_PERSONA_BY_ID_GASTO';
+export const GET_GASTOS_PERSONA = 'GET_GASTOS_PERSONA';
+export const SAVE_GASTOS_PERSONA = 'SAVE_GASTOS_PERSONA';
+export const UPDATE_ESTADO_GASTO_PERSONA = 'UPDATE_ESTADO_GASTO_PERSONA';
+export const SAVE_IDS_GASTOS = 'SAVE_IDS_GASTOS';
 
 // Acción para agregar gasto_persona al estado global
 export const addGastoPersona = (expensePersonaData) => {
@@ -11,6 +17,19 @@ export const addGastoPersona = (expensePersonaData) => {
         payload: expensePersonaData,
     };
 };
+
+// Acción para guardar los gastos persona en el estado
+export const saveGastosPersona = (gastosPersona) => {
+    return {
+        type: SAVE_GASTOS_PERSONA,
+        payload: gastosPersona,
+    };
+};
+
+export const saveIdsGastos = (ids) => ({
+    type: SAVE_IDS_GASTOS,
+    payload: ids,
+});
 
 // Acción para asignar gasto_persona después de crear un nuevo gasto
 export const assignGastoPersona = () => async (dispatch, getState) => {
@@ -92,6 +111,117 @@ export const assignGastoPersona = () => async (dispatch, getState) => {
         }
     }
 };
+
+export const getGastosPersona = () => {
+    return async (dispatch, getState) => {
+        try {
+            await dispatch(getUserByRut());
+            const idUsuario = getState().user.id;
+
+            // Realiza la solicitud al servidor para obtener los gastos persona
+            const response = await axios.get(`http://localhost:5000/gasto_persona_by_id_persona/${idUsuario}`);
+
+            if (response.status === 200) {
+                const gastosPersona = response.data && response.data.gastos_persona_list;
+
+                if (gastosPersona) {
+                    // Opcional: Guarda los ids en el estado
+                    const idsGastos = gastosPersona.map(gastoPersona => ({
+                        idGasto: gastoPersona.id_gasto,
+                        idPersona: gastoPersona.id_persona
+                    }));
+                    dispatch(saveIdsGastos(idsGastos));
+
+                    // Guarda los datos en el estado local o realiza cualquier otro procesamiento necesario
+                    dispatch(saveGastosPersona(gastosPersona));
+                } else {
+                    console.error('Error: La respuesta del servidor no contiene la propiedad gastos_persona_list.');
+                }
+            } else {
+                const errorData = response.data;
+                console.error(`Error al obtener los gastos persona: ${errorData.error}`);
+            }
+        } catch (error) {
+            console.error('Error en la acción getGastosPersona:', error);
+        }
+    };
+};
+
+export const updateEstadoGastoPersona = (selectedGasto) => {
+    return async (dispatch, getState) => {
+        try {
+            const { id_gasto, id_persona } = selectedGasto;
+
+            if (!id_gasto || !id_persona) {
+                console.error('Objeto seleccionado no tiene los valores necesarios.');
+                return;
+            }
+
+            // Realiza la solicitud para actualizar el estado de gasto persona
+            const response = await axios.put(`http://localhost:5000/update_estado_gasto_persona/${id_gasto}/${id_persona}`);
+
+            if (response.status === 200) {
+                // Actualiza el estado local directamente sin llamar a getGastosPersona()
+                dispatch({
+                    type: UPDATE_ESTADO_GASTO_PERSONA,
+                    payload: { idGasto: id_gasto, estadoActualizado: true },
+                });
+
+                // Log del estado actualizado
+                console.log('Estado actualizado después de la acción:', getState());
+
+                console.log('Estado de gasto persona actualizado exitosamente:', response.data);
+
+                // Obtén los datos actualizados nuevamente después de la actualización del estado
+                await dispatch(getGastosPersona());
+
+                // Ahora, el estado debería estar actualizado con la lista completa de gastos persona
+            } else {
+                console.error('Error al actualizar el estado de gasto persona:', response.data);
+            }
+        } catch (error) {
+            console.error('Error en la acción updateEstadoGastoPersona:', error);
+        }
+    };
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -67,7 +67,6 @@ def get_gasto_persona_by_id_persona(id_persona):
     try:
         # Obtener los gastos relacionados con la persona, incluyendo la descripción del gasto
         gastos_persona = db.session.query(
-            GastoPersona.id.label('id_gasto_persona'),
             GastoPersona.id_persona,
             GastoPersona.id_gasto,
             GastoPersona.monto_prorrateado,
@@ -80,7 +79,6 @@ def get_gasto_persona_by_id_persona(id_persona):
 
         for gasto_persona in gastos_persona:
             gastos_persona_data.append({
-                "id_gasto_persona": gasto_persona.id_gasto_persona,
                 "id_persona": gasto_persona.id_persona,
                 "id_gasto": gasto_persona.id_gasto,
                 "monto_prorrateado": gasto_persona.monto_prorrateado,
@@ -114,21 +112,22 @@ def delete_gasto_persona_by_gasto(id_gasto):
 
 update_estado_gasto_persona_bp = Blueprint('update_estado_gasto_persona', __name__)
 
-@update_estado_gasto_persona_bp.route('/update_estado_gasto_persona/<int:id_gasto_persona>', methods=['PUT'])
-def update_estado_gasto_persona(id_gasto_persona):
-    gasto_persona = GastoPersona.query.get(id_gasto_persona)
+@update_estado_gasto_persona_bp.route('/update_estado_gasto_persona/<int:id_gasto>/<int:id_persona>', methods=['PUT'])
+def update_estado_gasto_persona(id_gasto, id_persona):
+    gasto_persona = GastoPersona.query.filter_by(id_gasto=id_gasto, id_persona=id_persona).first()
 
-    if gasto_persona is None:
-        return jsonify({"error": "No se encontró el gasto_persona con el ID proporcionado"}), 404
+    if not gasto_persona:
+        return jsonify({"error": "No se encontró el registro de gasto_persona para la combinación proporcionada"}), 404
 
     try:
         # Actualizar el valor de la columna 'estado' a True
         gasto_persona.estado = True
         db.session.commit()
-        return jsonify({"message": "Estado de Gasto_persona actualizado exitosamente"}), 200
+
+        return jsonify({"message": "Estado de gasto_persona actualizado exitosamente"}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": "Error al actualizar el estado de Gasto_persona", "details": str(e)}), 500
+        return jsonify({"error": "Error al actualizar el estado de gasto_persona", "details": str(e)}), 500
     
 get_gasto_persona_by_id_gasto_bp = Blueprint('get_gasto_persona_by_id_gasto', __name__)
 

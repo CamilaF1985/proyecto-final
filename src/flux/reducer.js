@@ -57,6 +57,9 @@ import {
 
 import {
   ADD_GASTO_PERSONA,
+  SAVE_GASTOS_PERSONA,
+  UPDATE_ESTADO_GASTO_PERSONA,
+  SAVE_IDS_GASTOS,
 } from './personExpenseActions.js';
 
 // Estado inicial de la aplicación
@@ -94,6 +97,8 @@ const initialState = {
   unit: {}, // Agrega un objeto vacío para inicializar el campo 'unit'
   tareasAsignadas: [],
   gastoPersonaList: [],
+  gastosPersonaListAsync: [],
+  idsGastos: [],
   gastoDetails: {},  // Inicializado como un objeto vacío
   gastoDetailsError: null,
   updatedExpenses: []
@@ -251,6 +256,33 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         gastoPersonaList: [...state.gastoPersonaList, action.payload],
       }
+
+    case SAVE_GASTOS_PERSONA:
+      return {
+        ...state,
+        gastosPersonaListAsync: action.payload, // Almacena la lista completa obtenida mediante operaciones asíncronas
+      };
+
+    case UPDATE_ESTADO_GASTO_PERSONA:
+      // Aquí asumes que action.payload contiene la información actualizada
+      const { idGasto, estadoActualizado } = action.payload;
+
+      // Actualiza gastosPersonaListAsync con la nueva información
+      const gastosPersonaListActualizado = state.gastosPersonaListAsync.map((gasto) =>
+        gasto.id_gasto === idGasto ? { ...gasto, estado: estadoActualizado } : gasto
+      );
+
+      return {
+        ...state,
+        gastosPersonaListAsync: gastosPersonaListActualizado,
+      };
+
+
+    case SAVE_IDS_GASTOS:
+      return {
+        ...state,
+        idsGastos: action.payload,
+      };
 
     case SAVE_UNIT_DATA:
       return { ...state, unit: { ...state.unit, ...action.payload } };

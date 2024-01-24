@@ -14,6 +14,7 @@ import EliminarTarea from '../components/EliminarTarea.jsx';
 import TareasPendientes from '../components/TareasPendientes.jsx';
 import AgregarGasto from '../components/AgregarGasto.jsx';
 import EliminarGasto from '../components/EliminarGasto.jsx';
+import GastosPendientes from '../components/GastosPendientes.jsx';
 
 // Componente funcional para manejar las rutas de la aplicación
 const AppRoutes = () => {
@@ -35,6 +36,7 @@ const AppRoutes = () => {
         '/agregar-tarea',
         '/eliminar-tarea',
         '/tareas-pendientes',
+        '/gastos-pendientes',
         '/agregar-gasto',
         '/eliminar-gasto',
         '/perfil'
@@ -43,6 +45,7 @@ const AppRoutes = () => {
       // Define las rutas permitidas para el usuario inquilino
       const allowedPathsForInquilino = [
         '/tareas-pendientes',
+        '/gastos-pendientes',
         '/perfil'
       ];
 
@@ -84,6 +87,7 @@ const AppRoutes = () => {
       <Route path="/tareas-pendientes" element={<TareasPendientes />} />
       <Route path="/agregar-gasto" element={<AgregarGasto />} />
       <Route path="/eliminar-gasto" element={<EliminarGasto />} />
+      <Route path="/gastos-pendientes" element={<GastosPendientes />} />
 
       {/* Ruta para cerrar sesión */}
       <Route path="/logout" element={<Navigate to="/" replace={true} state={{ from: '/' }} />} />

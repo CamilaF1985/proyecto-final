@@ -9,6 +9,8 @@ import gastosImage from '../assets/img/gastos.png';
 import tareasImage from '../assets/img/tareas.png';
 import Perfil from '../components/Perfil.jsx';
 import { openModal, closeModal } from '../flux/modalActions';
+import TareasPendientes from '../components/TareasPendientes.jsx';
+import GastosPendientes from '../components/GastosPendientes.jsx';
 
 // Importar los selectores desde el archivo selectors.js
 import selectors from '../flux/selectors';
@@ -36,6 +38,11 @@ const HomeInquilino = () => {
   // Función para abrir el modal de tareas
   const handleOpenTareasModal = () => {
     openModalAndRedirect('/tareas-pendientes');
+  };
+
+  // Función para abrir el modal de gastos
+  const handleOpenGastosModal = () => {
+    openModalAndRedirect('/gastos-pendientes');
   };
 
   // Función para cerrar el modal
@@ -75,7 +82,7 @@ const HomeInquilino = () => {
 
           {/* Icono "Cuentas pendientes" */}
           <div className="col-6 col-md-4 mb-md-3">
-            <div className="contenedor-imagen contenedor-imagen-debajo">
+            <div className="contenedor-imagen contenedor-imagen-debajo" onClick={handleOpenGastosModal}>
               <img src={gastosImage} alt="Cuentas pendientes" className="img-fluid" />
             </div>
             <p className="texto-debajo-imagen">Cuentas pendientes</p>
@@ -91,20 +98,26 @@ const HomeInquilino = () => {
         </div>
       </div>
 
-      {/* Modal de perfil o tareas pendientes */}
+      {/* Modal de perfil, tareas pendientes o gastos pendientes */}
       {ReactDOM.createPortal(
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={handleCloseModal}
-          contentLabel={location.pathname === '/perfil' ? 'Perfil Modal' : 'Tareas Pendientes Modal'}
+          contentLabel={
+            location.pathname === '/perfil' ? 'Perfil Modal' :
+              location.pathname === '/tareas-pendientes' ? 'Tareas Pendientes Modal' :
+                location.pathname === '/gastos-pendientes' ? 'Gastos Pendientes Modal' : ''
+          }
           className="modal-content"
           overlayClassName="modal-overlay"
         >
-          {/* Contenido del modal (Perfil o TareasPendientes en lugar de PerfilForm) */}
+          {/* Contenido del modal (Perfil, TareasPendientes o GastosPendientes) */}
           {location.pathname === '/perfil' ? (
             <Perfil />
           ) : location.pathname === '/tareas-pendientes' ? (
             <TareasPendientes />
+          ) : location.pathname === '/gastos-pendientes' ? (
+            <GastosPendientes />
           ) : null}
         </Modal>,
         document.body
