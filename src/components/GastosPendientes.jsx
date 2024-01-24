@@ -24,7 +24,7 @@ const GastosPendientes = () => {
                     setLoading(false);
                 });
         };
-    
+
         fetchGastosPersona();
     }, [dispatch]);
 
@@ -44,7 +44,7 @@ const GastosPendientes = () => {
                 console.error('Error al actualizar el estado del gasto persona:', error);
             });
     };
-        
+
     return (
         <Modal
             isOpen={isOpen ?? false}
@@ -88,13 +88,17 @@ const GastosPendientes = () => {
                                             <p>No hay gastos pendientes para este usuario.</p>
                                         </div>
                                     )}
+                                    {!todosGastosPagados && gastosPersonaListAsync.every(gasto => gasto.estado) && (
+                                        <div className="col-md-12 mb-3" key="noGastosPendientes">
+                                            <p>No hay gastos pendientes.</p>
+                                        </div>
+                                    )}
                                 </>
                             ) : (
                                 <div className="col-md-12 mb-3" key="noGastosAsignados">
                                     <p>No hay gastos asignados al usuario.</p>
                                 </div>
                             )}
-
                         </div>
                     )}
                 </div>
