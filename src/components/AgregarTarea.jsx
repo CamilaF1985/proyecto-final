@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
 import { saveNewTaskData } from '../flux/taskActions';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 // Componente funcional para agregar una tarea
 const AgregarTarea = () => {
@@ -26,13 +27,34 @@ const AgregarTarea = () => {
             const idUnidad = localStorage.getItem('id_unidad');
 
             // Dispatch de la acción para agregar tarea con id_unidad
-            dispatch(saveNewTaskData({ nombre: nombreTarea, id_unidad: idUnidad }));
+            dispatch(saveNewTaskData({ nombre: nombreTarea, id_unidad: idUnidad }))
+                .then(() => {
+                    // Cerrar el modal y redirigir después de que la acción sea completada
+                    handleCloseModal();
 
-            // Cerrar el modal y redirigir
-            handleCloseModal();
+                    // Mostrar mensaje de éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Tarea Agregada!',
+                        text: 'La nueva tarea se ha agregado correctamente.',
+                    });
+                })
+                .catch((error) => {
+                    // Mostrar mensaje de error
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error al Agregar Tarea!',
+                        text: error.message || 'Ocurrió un error al agregar la tarea.',
+                    });
+                    console.error('Error al agregar la tarea:', error);
+                });
         } else {
-            // Manejar caso donde no se ingresó el valor de la tarea
-            alert('Por favor, ingrese el nombre de la tarea.');
+            // Mostrar mensaje en caso de que no se ingrese el nombre de la tarea
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error al Agregar Tarea!',
+                text: 'Por favor, ingrese el nombre de la tarea.',
+            });
         }
     };
 
