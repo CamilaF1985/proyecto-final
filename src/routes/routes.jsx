@@ -14,6 +14,7 @@ import TareasPendientes from '../components/TareasPendientes.jsx';
 import AgregarGasto from '../components/AgregarGasto.jsx';
 import EliminarGasto from '../components/EliminarGasto.jsx';
 import GastosPendientes from '../components/GastosPendientes.jsx';
+import EditarDireccion from '../components/EditarDireccion.jsx';
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const AppRoutes = () => {
         '/gastos-pendientes',
         '/agregar-gasto',
         '/eliminar-gasto',
+        '/editar-direccion',
         '/perfil'
       ];
 
@@ -77,6 +79,7 @@ const AppRoutes = () => {
       <Route path="/tareas-pendientes" element={<TareasPendientes />} />
       <Route path="/agregar-gasto" element={<AgregarGasto />} />
       <Route path="/eliminar-gasto" element={<EliminarGasto />} />
+      <Route path="/editar-direccion" element={<EditarDireccion />} />
       <Route path="/gastos-pendientes" element={<GastosPendientes />} />
 
       {/* Ruta para cerrar sesión */}

@@ -49,6 +49,7 @@ import {
   SAVE_COMUNAS_DATA,
   SAVE_REGIONES_DATA,
   CREATE_DIRECCION,
+  UPDATE_DIRECCION,
 } from './addressActions.js';
 
 // Importar acciones relacionas con tarea persona desde personTaskActions.js
@@ -97,6 +98,7 @@ const initialState = {
   comunas: [],
   regiones: [],
   direcciones: [],
+  direccionesBD: [],
   unit: {},
   tareasAsignadas: [],
   gastoPersonaList: [],
@@ -311,6 +313,12 @@ const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         direcciones: [...state.direcciones, action.payload],
+      };
+
+    case UPDATE_DIRECCION:
+      return {
+        ...state,
+        direccionesBD: [...state.direccionesBD, action.payload], 
       };
 
     case UPDATE_USER_EMAIL:

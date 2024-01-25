@@ -149,6 +149,11 @@ const RegistroForm = () => {
     }
   };
 
+  const handleRegresarClick = () => {
+    // Navegar a la ruta /
+    navigate('/');
+  };
+
   return (
     <div className="contenedor mt-4 mb-1 p-3 formulario-registro">
       <div className="row"> <div className="col-10 text-center">
@@ -229,9 +234,14 @@ const RegistroForm = () => {
                     value={formData.contrasena} onChange={handleChange} placeholder="Ingresa tu contraseña" required />
                   <div className="invalid-feedback">Por favor, ingresa tu contraseña.</div>
                 </div>
-                <div className="col-md-12 mt-2 d-flex justify-content-end">
-                  <button className="btn btn-primary" type="submit"> Registrarse </button>
-                </div>
+                <div className="col-md-12 mt-2">
+                  <div className="d-flex justify-content-between">
+                    <button className="btn btn-primary" type="button" onClick={handleRegresarClick}>
+                      Regresar
+                    </button>
+                    <button className="btn btn-primary" type="submit"> Registrarse </button>
+                  </div>
+                  </div>
               </form>
             </div>
           </div>

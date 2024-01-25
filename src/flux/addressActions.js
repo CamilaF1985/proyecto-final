@@ -4,6 +4,7 @@ import axios from 'axios';
 export const CREATE_DIRECCION = 'CREATE_DIRECCION';
 export const SAVE_COMUNAS_DATA = 'SAVE_COMUNAS_DATA';
 export const SAVE_REGIONES_DATA = 'SAVE_REGIONES_DATA';
+export const UPDATE_DIRECCION = 'UPDATE_DIRECCION';
 
 // Acción para guardar las comunas en el estado global
 export const saveComunasData = (comunasData) => ({
@@ -73,11 +74,50 @@ export const createDireccionDB = (direccionData) => {
     };
 };
 
+// Acción para obtener una dirección por ID de unidad
+export const fetchDireccionByUnidad = () => {
+    return async (dispatch, getState) => {
+        try {
+            // Obtén el id de la unidad desde localStorage
+            const id_unidad = localStorage.getItem('id_unidad');
+
+            if (!id_unidad) {
+                console.error('No se encontró el id de la unidad en localStorage');
+                throw new Error('No se encontró el id de la unidad en localStorage');
+            }
+
+            // Realiza la solicitud GET para obtener la dirección por ID de unidad
+            const response = await axios.get(`http://localhost:5000/direccion/${id_unidad}`);
+
+            // Despacha la acción que actualiza la dirección en el estado global
+            dispatch(updateDireccion(response.data));
+
+            // Agrega console.log para la data obtenida desde la base de datos
+            console.log('Data obtenida desde la base de datos:', response.data);
+
+            // Agrega console.log para el estado después de actualizarlo
+            console.log('Estado después de actualizar:', getState());
+
+            return response.data;
+        } catch (error) {
+            console.error('Error al obtener la dirección:', error);
+            throw error; // Propaga el error para que pueda ser manejado en otro lugar si es necesario
+        }
+    };
+};
+
+// Acción para actualizar la dirección en el estado global
+export const updateDireccion = (direccionBDData) => ({
+    type: UPDATE_DIRECCION,
+    payload: direccionBDData,
+});
+
 // Acción para guardar la dirección en el estado global
 export const createDireccion = (direccionData) => ({
     type: CREATE_DIRECCION,
     payload: direccionData,
 });
+
 
 
 
