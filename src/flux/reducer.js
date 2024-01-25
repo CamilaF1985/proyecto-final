@@ -96,12 +96,13 @@ const initialState = {
   comunas: [],
   regiones: [],
   direcciones: [],
-  unit: {}, 
+  unit: {},
   tareasAsignadas: [],
   gastoPersonaList: [],
   gastosPersonaListAsync: [],
+  gastosPersonaListActualizado: [],
   idsGastos: [],
-  gastoDetails: {},  
+  gastoDetails: {},
   gastoDetailsError: null,
   updatedExpenses: []
 };
@@ -258,21 +259,25 @@ const rootReducer = (state = initialState, action) => {
     case SAVE_GASTOS_PERSONA:
       return {
         ...state,
-        gastosPersonaListAsync: action.payload, 
+        gastosPersonaListAsync: action.payload,
       };
 
     case UPDATE_ESTADO_GASTO_PERSONA:
       const { idGasto, estadoActualizado } = action.payload;
 
+      console.log('idGasto:', idGasto);
+      console.log('estadoActualizado:', estadoActualizado);
+
       const gastosPersonaListActualizado = state.gastosPersonaListAsync.map((gasto) =>
         gasto.id_gasto === idGasto ? { ...gasto, estado: estadoActualizado } : gasto
       );
 
+      console.log('gastosPersonaListActualizado:', gastosPersonaListActualizado);
+
       return {
         ...state,
-        gastosPersonaListAsync: gastosPersonaListActualizado,
+        gastosPersonaListActualizado: gastosPersonaListActualizado,
       };
-
 
     case SAVE_IDS_GASTOS:
       return {
