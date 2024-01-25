@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { clearUserData, getUserByRut, updateEmail } from '../flux/userActions';
+import { getUserByRut, updateEmail, logoutUser } from '../flux/userActions';
 import { fetchUnitById } from '../flux/unitActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
@@ -21,24 +21,28 @@ const Perfil = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [newEmail, setNewEmail] = useState('');
 
-    // Acción para obtener los datos del usuario por su RUT al montar el componente
     useEffect(() => {
-        const fetchData = async () => {
-            await dispatch(getUserByRut());
-
-            if (userData.id_unidad) {
-                try {
-                    const unitData = await dispatch(fetchUnitById(userData.id_unidad));
-
+        const fetchData = () => {
+            dispatch(getUserByRut())
+                .then(() => {
+                    // La acción getUserByRut se completó, ahora puedes realizar otras operaciones
+                    if (userData.id_unidad) {
+                        return dispatch(fetchUnitById(userData.id_unidad));
+                    } else {
+                        // Si no hay id_unidad, puedes devolver una promesa resuelta
+                        return Promise.resolve(null);
+                    }
+                })
+                .then((unitData) => {
                     if (unitData) {
                         console.log('Unidad encontrada - ID:', unitData.id, 'Nombre:', unitData.nombre);
                     } else {
                         console.log('No se encontraron datos de unidad');
                     }
-                } catch (error) {
-                    console.error('Error al obtener la unidad:', error);
-                }
-            }
+                })
+                .catch((error) => {
+                    console.error('Error en useEffect:', error);
+                });
         };
 
         fetchData();
@@ -50,9 +54,13 @@ const Perfil = () => {
     };
 
     const handleLogout = () => {
-        dispatch(clearUserData());
+        // Llama a la acción logoutUser
+        dispatch(logoutUser());
+
+        // Después de cerrar sesión, puedes navegar a la página de logout o a donde desees
         navigate('/logout');
     };
+
 
     const handleEditEmail = () => {
         setIsEditing(true);
@@ -66,13 +74,23 @@ const Perfil = () => {
     const handleUpdateEmail = async () => {
         try {
             // Dispatch de la acción para actualizar el email
-            await dispatch(updateEmail(userData.id, newEmail));
-
+            const updateEmailResult = dispatch(updateEmail(userData.id, newEmail));
+    
+            // Asegurarte de que updateEmailResult es una promesa si es necesario
+            if (updateEmailResult instanceof Promise) {
+                await updateEmailResult;
+            }
+    
             // Actualizar el estado local con el nuevo valor de correo electrónico
             setNewEmail('');
-
+    
             // Refrescar los datos del usuario para obtener el nuevo valor
-            await dispatch(getUserByRut());
+            const getUserResult = dispatch(getUserByRut());
+    
+            // Asegurarte de que getUserResult es una promesa si es necesario
+            if (getUserResult instanceof Promise) {
+                await getUserResult;
+            }
         } catch (error) {
             console.error('Error durante la actualización del correo electrónico:', error);
         } finally {
@@ -80,7 +98,7 @@ const Perfil = () => {
             setIsEditing(false);
         }
     };
-
+    
     return (
         <Modal
             isOpen={modalIsOpen}

@@ -10,6 +10,14 @@ export const SAVE_NEW_USER_DATA = 'SAVE_NEW_USER_DATA';
 export const SAVE_NEW_INQUILINO_DATA = 'SAVE_NEW_INQUILINO_DATA';
 export const UPDATE_USER_EMAIL = 'UPDATE_USER_EMAIL';
 export const SAVE_USERS_DATA = 'SAVE_USERS_DATA';
+export const CLEAR_ENTIRE_STATE = 'CLEAR_ENTIRE_STATE';
+
+// Acción para limpiar el estado
+export const clearEntireState = () => {
+  return {
+    type: CLEAR_ENTIRE_STATE,
+  };
+};
 
 // Acción para guardar datos de usuario en el estado global
 export const saveUserData = (userData) => {
@@ -21,7 +29,7 @@ export const saveUserData = (userData) => {
 
 // Acción para guardar datos de usuarios en el estado global
 export const saveUsersData = (usersData) => {
-  console.log('Guardando datos de usuarios en el estado global:', usersData); 
+  console.log('Guardando datos de usuarios en el estado global:', usersData);
   return {
     type: SAVE_USERS_DATA,
     payload: usersData,
@@ -106,18 +114,45 @@ export const saveToLocalStorage = (userData) => {
   localStorage.setItem('id_unidad', userData.id_unidad);
   localStorage.setItem('userType', userData.userType);
   localStorage.setItem('rut', userData.rut);
+  sessionStorage.setItem('miToken', userData.token);
 };
 
-// Acción para realizar el inicio de sesión del usuario
 export const loginUser = (formData, closeModal, navigate) => {
   return async (dispatch) => {
     try {
+      // Verificar si hay un token en sessionStorage
+      const existingToken = sessionStorage.getItem('miToken');
+
+      if (existingToken) {
+        // Si ya hay un token almacenado, redirigir al usuario según el userType en localStorage
+        const userType = localStorage.getItem('userType');
+        if (userType === 'Administrador') {
+          navigate(`/home-administrador`);
+        } else if (userType === 'Inquilino') {
+          navigate(`/home-inquilino`);
+        }
+
+        // No es necesario continuar con el inicio de sesión
+        return;
+      }
+
+      // Si no hay un token en sessionStorage, proceder con el inicio de sesión normal
       const response = await axios.post('http://localhost:5000/auth/login', {
         rut: formData.rut,
         contrasena: formData.password,
       });
 
-      const userData = response.data;
+      // Modificación para asegurarse de que userData esté bien definido
+      const userData = response.data || {};
+
+      // Agregar el token a una variable separada (sin guardarlo en localStorage)
+      const miToken = userData.token;
+
+      // Imprimir la data de la respuesta del servidor
+      console.log('Respuesta del servidor:', response.data);
+
+      // Guardar el token en sessionStorage
+      sessionStorage.setItem('miToken', miToken);
 
       // Acceder a id_unidad directamente desde userData
       const idUnidad = userData.id_unidad;
@@ -132,7 +167,8 @@ export const loginUser = (formData, closeModal, navigate) => {
       // Guardar los datos del usuario en el estado global
       dispatch(saveUserData(userData));
 
-      // Guardar los datos del usuario en el localStorage
+      // Guardar los datos del usuario en localStorage
+      localStorage.setItem('userType', userType);
       saveToLocalStorage(userData);
 
       // Cerrar el modal de inicio de sesión
@@ -163,10 +199,24 @@ export const loginUser = (formData, closeModal, navigate) => {
 export const getUserByRut = () => {
   return async (dispatch) => {
     try {
+      // Verificar si hay un token en sessionStorage
+      const token = sessionStorage.getItem('miToken');
+
+      if (!token) {
+        console.error('Error: Token no encontrado en el sessionStorage');
+        return; // No continúes si no hay token
+      }
+
       const rut = localStorage.getItem('rut');
 
       if (rut) {
-        const response = await axios.get(`http://localhost:5000/get_persona_by_rut/${rut}`);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`, // Incluir el token en la cabecera de la solicitud
+          },
+        };
+
+        const response = await axios.get(`http://localhost:5000/get_persona_by_rut/${rut}`, config);
 
         if (response.status === 200) {
           const userData = response.data;
@@ -284,6 +334,25 @@ export const clearUserData = () => {
     type: CLEAR_USER_DATA,
   };
 };
+
+// Acción para cerrar sesión y limpiar los datos del usuario
+export const logoutUser = () => {
+  return async (dispatch) => {
+    try {
+      // Limpiar el token en sessionStorage
+      sessionStorage.removeItem('miToken');
+
+      // Limpiar los datos del usuario en el estado global
+      dispatch(clearUserData());
+
+      // Limpiar el estado completo de la aplicación
+      dispatch(clearEntireState());
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+};
+
 
 
 

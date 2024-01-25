@@ -8,6 +8,7 @@ import {
   SAVE_NEW_INQUILINO_DATA,
   UPDATE_USER_EMAIL,
   SAVE_USERS_DATA,
+  CLEAR_ENTIRE_STATE,
 } from './userActions.js';
 
 // Importar acciones relacionadas con unidades desde unitActions.js
@@ -327,9 +328,14 @@ const rootReducer = (state = initialState, action) => {
         usersData: action.payload,
       };
 
+    case CLEAR_ENTIRE_STATE:
+      return initialState;
+
     default:
       return state;
+
   }
+
 };
 
 export default rootReducer;
