@@ -6,7 +6,6 @@ import { getUserByRut, updateEmail, logoutUser } from '../flux/userActions';
 import { fetchUnitById } from '../flux/unitActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
-import perfilImage from '../assets/img/perfil.png';
 import logoutIcon from '../assets/img/logout.png';
 
 const Perfil = () => {
@@ -57,7 +56,7 @@ const Perfil = () => {
         // Llama a la acción logoutUser
         dispatch(logoutUser());
 
-        // Después de cerrar sesión, puedes navegar a la página de logout o a donde desees
+        // Después de cerrar sesión, navega a /logout
         navigate('/logout');
     };
 
@@ -75,18 +74,18 @@ const Perfil = () => {
         try {
             // Dispatch de la acción para actualizar el email
             const updateEmailResult = dispatch(updateEmail(userData.id, newEmail));
-    
+
             // Asegurarte de que updateEmailResult es una promesa si es necesario
             if (updateEmailResult instanceof Promise) {
                 await updateEmailResult;
             }
-    
+
             // Actualizar el estado local con el nuevo valor de correo electrónico
             setNewEmail('');
-    
+
             // Refrescar los datos del usuario para obtener el nuevo valor
             const getUserResult = dispatch(getUserByRut());
-    
+
             // Asegurarte de que getUserResult es una promesa si es necesario
             if (getUserResult instanceof Promise) {
                 await getUserResult;
@@ -98,7 +97,7 @@ const Perfil = () => {
             setIsEditing(false);
         }
     };
-    
+
     return (
         <Modal
             isOpen={modalIsOpen}
@@ -115,48 +114,61 @@ const Perfil = () => {
 
             <div className="modal-body">
                 <div className="perfil-container row">
-                    <div className="col-md-4 mb-3 text-center">
-                        <img src={perfilImage} alt="Perfil" className="img-fluid img-perfil" />
+                    <div className="col-md-12 mb-3 text-center">
+                        <h1>Mi Perfil</h1>
                     </div>
 
-                    <div className="col-md-8 mb-3">
-                        <div className="row">
-                            <label htmlFor="username" className="form-label col-md-3">
-                                Nombre de usuario:
-                            </label>
-                            <div className="col-md-9">
+                    <div className="col-md-8 offset-md-2 mb-3">
+                        <div className="row mb-3">
+                            <div className="col-6">
+                                <label htmlFor="username" className="form-label">
+                                    Nombre:
+                                </label>
+                            </div>
+                            <div className="col-6">
                                 <p className="form-text">{userData.nombre}</p>
                             </div>
                         </div>
 
-                        <div className="row">
-                            <label htmlFor="unidad" className="form-label col-md-3">
-                                Unidad:
-                            </label>
-                            <div className="col-md-9">
+                        <div className="row mb-3">
+                            <div className="col-md-6">
+                                <label htmlFor="unidad" className="form-label">
+                                    Unidad:
+                                </label>
+                            </div>
+                            <div className="col-md-6">
                                 <p className="form-text">{unit && unit.nombre ? unit.nombre : 'No asignada'}</p>
                             </div>
                         </div>
 
-                        <div className="row">
-                            <label htmlFor="rut" className="form-label col-md-3">RUT:</label>
-                            <div className="col-md-9">
+                        <div className="row mb-3">
+                            <div className="col-md-6">
+                                <label htmlFor="rut" className="form-label">
+                                    RUT:
+                                </label>
+                            </div>
+                            <div className="col-md-6">
                                 <p className="form-text">{userData.rut}</p>
                             </div>
                         </div>
 
+                        <div className="row mb-3">
+                            <div className="col-md-6">
+                                <label htmlFor="email" className="form-label">
+                                    E-mail:
+                                </label>
+                            </div>
+                            <div className="col-md-6">
+                                <p className="form-text">{userData.email}</p>
+                            </div>
+                        </div>
+
                         <div className="row">
-                            <label htmlFor="email" className="form-label col-md-3">
-                                Correo electrónico:
-                            </label>
-                            <div className="col-md-9 d-flex justify-content-between align-items-center">
+                            <div className="col-md-12 offset-md-3">
                                 {!isEditing ? (
-                                    <>
-                                        <p className="form-text">{userData.email}</p>
-                                        <button className="btn btn-secondary" type="button" onClick={handleEditEmail}>
-                                            Editar
-                                        </button>
-                                    </>
+                                    <button className="btn btn-secondary" type="button" onClick={handleEditEmail}>
+                                        Editar correo
+                                    </button>
                                 ) : (
                                     <>
                                         <input
@@ -178,15 +190,16 @@ const Perfil = () => {
                             </div>
                         </div>
 
-                        <div className="row mt-3">
-                            <div className="col-md-9 offset-md-3 d-flex justify-content-end">
-                                <button className="btn btn-primary" type="button">Cambiar contraseña</button>
+                        <div className="row mt-4">
+                            <div className="d-flex justify-content-between align-items-center">
+                                <button className="btn btn-primary me-2" type="button">
+                                    Cambiar contraseña
+                                </button>
+                                <div onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                                    <img src={logoutIcon} alt="Cerrar sesión" className="img-fluid ms-5" style={{ width: '30px', height: '30px' }} />
+                                    <p className="form-text img-fluid ms-5">Cerrar sesión</p>
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="mt-3 d-flex justify-content-end" onClick={handleLogout} style={{ cursor: 'pointer' }}>
-                            <img src={logoutIcon} alt="Cerrar sesión" className="img-fluid" style={{ width: '30px', height: '30px' }} />
-                            <p className="form-text">Cerrar sesión</p>
                         </div>
                     </div>
                 </div>

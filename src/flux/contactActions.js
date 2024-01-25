@@ -8,11 +8,11 @@ const sendContactForm = async (formData) => {
     // Manejar la respuesta si es necesario
     console.log('Respuesta del servidor:', response.data);
 
-    return response.data;  // Puedes devolver la respuesta si lo necesitas en el componente
+    return response.data;  //Devuelve la respuesta si lo necesitas en el componente
   } catch (error) {
     // Manejar errores si la solicitud falla
     console.error('Error al enviar el formulario de contacto:', error);
-    throw error;  // Puedes propagar el error para manejarlo en el componente
+    throw error;  
   }
 };
 
