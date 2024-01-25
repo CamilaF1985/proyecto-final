@@ -9,8 +9,8 @@ import {
   fetchComunasByRegionId,
   createDireccionDB,
 } from '../flux/addressActions';
-import '../assets/css/App.css';
 import Swal from 'sweetalert2';
+import '../assets/css/App.css';
 
 const RegistroForm = () => {
   // Hooks y selectores
