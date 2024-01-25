@@ -5,10 +5,10 @@ const sendContactForm = async (formData) => {
     // Realizar la solicitud al endpoint /send_mail del backend
     const response = await axios.post('http://localhost:5000/send_mail', formData);
 
-    // Manejar la respuesta si es necesario
+    // Imprimir la respuesta en la consola
     console.log('Respuesta del servidor:', response.data);
 
-    return response.data;  //Devuelve la respuesta si lo necesitas en el componente
+    return response.data;  
   } catch (error) {
     // Manejar errores si la solicitud falla
     console.error('Error al enviar el formulario de contacto:', error);
