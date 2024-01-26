@@ -1,5 +1,6 @@
 from flask import jsonify, Blueprint, request
 from models import Direccion, db
+from flask_cors import cross_origin
 
 create_direccion_bp = Blueprint('create_direccion', __name__)
 
@@ -59,8 +60,16 @@ def get_direccion_by_unidad(id_unidad):
 
 editar_direccion_bp = Blueprint('editar_direccion', __name__)
 
-@editar_direccion_bp.route('/direccion/<int:id_direccion>', methods=['PUT'])
+@editar_direccion_bp.route('/direccion/<int:id_direccion>', methods=['PUT', 'OPTIONS'])
 def editar_direccion(id_direccion):
+    if request.method == 'OPTIONS':
+        # Responde a las solicitudes OPTIONS directamente
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response, 200
+
     try:
         direccion = Direccion.query.get(id_direccion)
 

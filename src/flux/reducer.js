@@ -318,7 +318,7 @@ const rootReducer = (state = initialState, action) => {
     case UPDATE_DIRECCION:
       return {
         ...state,
-        direccionesBD: [...state.direccionesBD, action.payload], 
+        direccionesBD: [...state.direccionesBD, action.payload],
       };
 
     case UPDATE_USER_EMAIL:

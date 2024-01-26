@@ -4,7 +4,7 @@ import axios from 'axios';
 export const CREATE_DIRECCION = 'CREATE_DIRECCION';
 export const SAVE_COMUNAS_DATA = 'SAVE_COMUNAS_DATA';
 export const SAVE_REGIONES_DATA = 'SAVE_REGIONES_DATA';
-export const UPDATE_DIRECCION = 'UPDATE_DIRECCION';
+export const UPDATE_DIRECCION = 'UPDATE_DIRECCION'
 
 // Acción para guardar las comunas en el estado global
 export const saveComunasData = (comunasData) => ({
@@ -40,18 +40,18 @@ export const fetchAllRegiones = () => {
 export const fetchComunasByRegionId = (regionId) => {
     return async (dispatch) => {
         try {
-            // Espera solicitud de la promesa antes de asignar el valor
-            const resolvedRegionId = await regionId;
-            // Asigna el valor del ID de región a la solicitud get
-            const response = await axios.get(`http://localhost:5000/get_comunas_by_region/${resolvedRegionId}`);
+            console.log('Region ID:', regionId);
 
-            // Guarda los datos de las comunas en el estado global usando la acción saveComunasData
+            const response = await axios.get(`http://localhost:5000/get_comunas_by_region/${regionId}`);
+            
+            console.log('Comunas Response:', response);
+
             dispatch(saveComunasData(response.data.comunas));
 
             return response.data.comunas;
         } catch (error) {
             console.error('Error al obtener las comunas:', error);
-            throw error; // Propaga el error para que pueda ser manejado en userActions.js
+            throw error;
         }
     };
 };
@@ -104,6 +104,31 @@ export const fetchDireccionByUnidad = () => {
             throw error; // Propaga el error para que pueda ser manejado en otro lugar si es necesario
         }
     };
+};
+
+export const updateDireccionDB = (idDireccion, nuevaDireccionData) => async (dispatch) => {
+    try {
+        // Ajustar los nombres de las claves antes de realizar la solicitud
+        const datosParaEnviar = {
+            id_comuna: nuevaDireccionData.idComuna,
+            id_region: nuevaDireccionData.idRegion,
+            depto_casa: nuevaDireccionData.deptoCasa,
+            numero: nuevaDireccionData.numero, 
+            calle: nuevaDireccionData.calle,
+        };
+
+        // Realizar la solicitud PUT a la API para actualizar la dirección
+        console.log('Realizando solicitud PUT a la API...');
+        console.log('Datos que se enviarán a la API:', datosParaEnviar);
+
+        const response = await axios.put(`http://localhost:5000/direccion/${idDireccion}`, datosParaEnviar);
+
+        // Devolver la dirección actualizada para su uso posterior si es necesario
+        return response.data;
+    } catch (error) {
+        console.error('Error al actualizar la dirección en la base de datos:', error);
+        throw error; // Puedes manejar el error según tus necesidades
+    }
 };
 
 // Acción para actualizar la dirección en el estado global
