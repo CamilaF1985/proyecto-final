@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import configuracionIcon from '../assets/img/configuracion.png';
 import gastosIcon from '../assets/img/administracion-gastos.png';
 import tareasIcon from '../assets/img/administracion-tareas.png';
+import direccionIcon from '../assets/img/direccion.png';
 import perfilImage from '../assets/img/perfil.png';
 
 // Importar los selectores desde el archivo selectors.js
@@ -52,6 +53,11 @@ const PanelAdministracion = () => {
   const handleOpenEliminarGastoModal = () => {
     dispatch(openModal());
     navigate('/eliminar-gasto');
+  };
+
+  const handleEditarDireccionClick = () => {
+    // Redirige a la ruta /editar-direccion cuando se hace clic en "Editar dirección"
+    navigate('/editar-direccion');
   };
 
   // Función para cerrar el modal
@@ -139,7 +145,7 @@ const PanelAdministracion = () => {
               Eliminar tarea</p>
           </div>
 
-          {/* Texto "Administrar Inquilinos" */}
+          {/* Icono y texto "Administrar Inquilinos" */}
           <div className="col-6 col-md-4 mb-md-3">
             <div className="contenedor-imagen contenedor-imagen-debajo">
               <img src={perfilImage} alt="Administrar Inquilinos" className="img-fluid" />
@@ -151,6 +157,15 @@ const PanelAdministracion = () => {
             <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarInquilinoModal} style={{ cursor: 'pointer' }}>
               Eliminar Inquilino</p>
           </div>
+
+          {/* Icono y texto "Editar dirección" */}
+          <div className="col-6 col-md-4 mb-md-3" style={{ cursor: 'pointer' }} onClick={handleEditarDireccionClick}>
+            <div className="contenedor-imagen contenedor-imagen-debajo">
+              <img src={direccionIcon} alt="Editar dirección" className="img-fluid" />
+            </div>
+            <p className="texto-debajo-imagen">Editar dirección</p>
+          </div>
+
         </div>
       </div>
 

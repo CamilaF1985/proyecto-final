@@ -110,7 +110,9 @@ img {
 /* Fonts para los listados de tareas y pagos pendientes */
 p,
 input,
-label {
+label,
+h3,
+ul {
     font-family: 'Roboto', sans-serif;
     font-weight: 100;
 }

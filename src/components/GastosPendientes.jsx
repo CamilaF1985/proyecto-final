@@ -1,8 +1,11 @@
+// GastosPendientes.jsx
+
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getGastosPersona, updateEstadoGastoPersona } from '../flux/personExpenseActions';
+import { getGastosPersona, updateEstadoGastoPersona, updateEstadoGastoPersonaEnBD } from '../flux/personExpenseActions';
+import Swal from 'sweetalert2';
 import '../assets/css/App.css';
 
 const GastosPendientes = () => {
@@ -10,39 +13,82 @@ const GastosPendientes = () => {
     const navigate = useNavigate();
     const isOpen = useSelector((state) => state.modalIsOpen);
     const gastosPersonaListAsync = useSelector((state) => state.gastosPersonaListAsync);
+    const gastosPersonaListActualizado = useSelector((state) => state.gastosPersonaListActualizado);
+    const [selectedGastos, setSelectedGastos] = useState([]);
+    const [dataLoaded, setDataLoaded] = useState(true);
 
     useEffect(() => {
-        // Función para obtener los gastos asignados cuando el componente se monta
-        const fetchGastosPersona = () => {
-            dispatch(getGastosPersona())
-                .catch((error) => {
-                    console.error('Error al obtener los gastos persona:', error);
-                });
+        const fetchData = async () => {
+            try {
+                dispatch(getGastosPersona());
+                setDataLoaded(true);
+            } catch (error) {
+                console.error('Error al obtener los gastos persona:', error);
+            }
         };
-        // Llama a la función de obtener gastos al montar el componente
-        fetchGastosPersona();
+
+        fetchData();
     }, [dispatch]);
 
     const handleCloseModal = () => {
         navigate('/');
     };
 
-    const handlePagoClick = (gastoPersona) => {
-        // Llamar a la acción para actualizar el estado en la base de datos
-        dispatch(updateEstadoGastoPersona(gastoPersona))
-            .then(() => {
-                // Actualizar el estado directamente después de la acción exitosa
-                // Utilizamos el nuevo estado después de la actualización
-                const updatedGastosList = gastosPersonaListAsync.filter((gasto) => gasto.id !== gastoPersona.id);
-                dispatch({ type: 'SET_GASTOS_PERSONA_LIST', payload: updatedGastosList });
-            })
-            .catch((error) => {
-                console.error('Error al actualizar el estado del gasto persona:', error);
-            });
+    const handlePagoClick = async (gastoPersona) => {
+        if ('id_gasto' in gastoPersona && 'id_persona' in gastoPersona) {
+            try {
+                const isSelected = selectedGastos.includes(gastoPersona.id_gasto);
+
+                dispatch(updateEstadoGastoPersona(gastoPersona));
+
+                setSelectedGastos((prevSelected) => {
+                    if (isSelected) {
+                        return prevSelected.filter((id) => id !== gastoPersona.id_gasto);
+                    } else {
+                        return [...prevSelected, gastoPersona.id_gasto];
+                    }
+                });
+            } catch (error) {
+                console.error('Error al actualizar el estado de los gastos:', error);
+            }
+        } else {
+            console.error('Objeto seleccionado no tiene los valores necesarios.');
+        }
     };
 
-    // Verifica si todos los gastos están pagados
-    const todosGastosPagados = gastosPersonaListAsync.every((gasto) => gasto.estado);
+    const handleEnviarGastosSeleccionados = async () => {
+        try {
+            // Obtén el id_persona de la lista actualizada de gastos
+            const idPersona = gastosPersonaListActualizado.length > 0 ? gastosPersonaListActualizado[0].id_persona : null;
+
+            // Envía los datos al hacer clic en el botón
+            const promises = selectedGastos.map((gastoId) => {
+                return dispatch(updateEstadoGastoPersonaEnBD({
+                    id_gasto: gastoId,
+                    id_persona: idPersona
+                }));
+            });
+            await Promise.all(promises);
+
+            // Espera un breve momento antes de actualizar los datos
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Actualiza los datos después del envío
+            dispatch(getGastosPersona());
+
+            // Ahora, los datos deberían estar actualizados
+            setDataLoaded(false);
+            setSelectedGastos([]);
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Los gastos han sido actualizados correctamente.',
+            });
+        } catch (error) {
+            console.error('Error al actualizar los estados de los gastos:', error);
+        }
+    };
 
     return (
         <Modal
@@ -61,36 +107,47 @@ const GastosPendientes = () => {
             <div className="modal-body">
                 <div className="form-container">
                     <h2 className="form-titulo">Gastos Pendientes</h2>
-                    <p className="subtitulo"> Marca los pagos que ya hayas realizado </p>
+                    <p className="subtitulo">Marca los pagos que ya hayas realizado</p>
                     <div className="row g-3">
                         {gastosPersonaListAsync && gastosPersonaListAsync.length > 0 ? (
-                            <div className="col-md-12 mb-3">
-                                {gastosPersonaListAsync
-                                    .filter((gastoPersona) => !gastoPersona.estado) // Filtra solo los no pagados
-                                    .map((gastoPersona, index) => (
-                                        <div className="d-flex align-items-center" key={index}>
-                                            <label>
-                                                {`Concepto: ${gastoPersona.descripcion_gasto || "Sin nombre"} `}
-                                                {`| Monto a pagar: ${gastoPersona.monto_prorrateado || 0}`}
-                                                <input
-                                                    type="checkbox"
-                                                    onChange={() => handlePagoClick(gastoPersona)}
-                                                    disabled={gastoPersona.estado}
-                                                    defaultChecked={gastoPersona.estado}
-                                                />
-
-                                            </label>
-                                        </div>
-                                    ))}
-                                {todosGastosPagados && (
-                                    <p>No hay gastos pendientes.</p>
+                            <>
+                                {gastosPersonaListAsync.every((gastoPersona) => gastoPersona.estado) ? (
+                                    <div key="noGastosPendientes" className="col-md-12 mb-3">
+                                        <p>No hay gastos pendientes.</p>
+                                    </div>
+                                ) : (
+                                    gastosPersonaListAsync
+                                        .filter((gastoPersona) => !gastoPersona.estado)
+                                        .map((gastoPersona) => (
+                                            <div key={gastoPersona.id_gasto} className="col-md-12 mb-3">
+                                                <label>
+                                                    {`Concepto: ${gastoPersona.descripcion_gasto || 'Sin nombre'} `}
+                                                    {`| Monto a pagar: ${gastoPersona.monto_prorrateado || 0}`}
+                                                    <input
+                                                        type="checkbox"
+                                                        onChange={() => handlePagoClick(gastoPersona)}
+                                                        checked={selectedGastos.includes(gastoPersona.id_gasto)}
+                                                    />
+                                                </label>
+                                            </div>
+                                        ))
                                 )}
-                            </div>
+                            </>
                         ) : (
-                            <div className="col-md-12 mb-3" key="noGastosAsignados">
+                            <div key="noGastosAsignados" className="col-md-12 mb-3">
                                 <p>No hay gastos asignados al usuario.</p>
                             </div>
                         )}
+                        {/* Botón siempre visible para enviar gastos seleccionados */}
+                        <div className="col-md-12 mb-3">
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleEnviarGastosSeleccionados}
+                                disabled={selectedGastos.length === 0}
+                            >
+                                Enviar Gastos Seleccionados
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -99,6 +156,24 @@ const GastosPendientes = () => {
 };
 
 export default GastosPendientes;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

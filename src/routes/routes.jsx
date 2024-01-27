@@ -14,20 +14,16 @@ import TareasPendientes from '../components/TareasPendientes.jsx';
 import AgregarGasto from '../components/AgregarGasto.jsx';
 import EliminarGasto from '../components/EliminarGasto.jsx';
 import GastosPendientes from '../components/GastosPendientes.jsx';
+import EditarDireccion from '../components/EditarDireccion.jsx';
 
-// Componente funcional para manejar las rutas de la aplicación
 const AppRoutes = () => {
-  // Obtiene la función de navegación mediante el hook useNavigate
   const navigate = useNavigate();
 
-  // Efecto que se ejecuta al cargar el componente para gestionar las rutas según el tipo de usuario almacenado
   useEffect(() => {
-    // Obtiene el tipo de usuario almacenado en el localStorage
     const storedUserType = localStorage.getItem('userType');
+    const existingToken = sessionStorage.getItem('miToken');
 
-    // Verifica si el tipo de usuario está presente
-    if (storedUserType) {
-      // Define las rutas permitidas para el usuario administrador
+    if (storedUserType && existingToken && window.location.pathname !== '/login') {
       const allowedPathsForAdministrador = [
         '/administrar-panel',
         '/registro-inquilino',
@@ -38,25 +34,22 @@ const AppRoutes = () => {
         '/gastos-pendientes',
         '/agregar-gasto',
         '/eliminar-gasto',
+        '/editar-direccion',
         '/perfil'
       ];
 
-      // Define las rutas permitidas para el usuario inquilino
       const allowedPathsForInquilino = [
         '/tareas-pendientes',
         '/gastos-pendientes',
         '/perfil'
       ];
 
-      // Verifica el tipo de usuario y redirige según las rutas permitidas
       if (storedUserType.toLowerCase() === 'administrador') {
-        // Permite el acceso a /registro-inquilino para usuarios administradores
         if (allowedPathsForAdministrador.some(path => window.location.pathname.includes(path))) {
           return;
         }
         navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
       } else if (storedUserType.toLowerCase() === 'inquilino') {
-        // Permite el acceso a /tareas-pendientes, /gastos-pendientes y /perfil para usuarios inquilinos
         if (allowedPathsForInquilino.some(path => window.location.pathname.includes(path))) {
           return;
         }
@@ -64,7 +57,7 @@ const AppRoutes = () => {
       }
     }
   }, [navigate]);
-
+  
   // Estructura JSX para definir las rutas de la aplicación
   return (
     <Routes>
@@ -86,6 +79,7 @@ const AppRoutes = () => {
       <Route path="/tareas-pendientes" element={<TareasPendientes />} />
       <Route path="/agregar-gasto" element={<AgregarGasto />} />
       <Route path="/eliminar-gasto" element={<EliminarGasto />} />
+      <Route path="/editar-direccion" element={<EditarDireccion />} />
       <Route path="/gastos-pendientes" element={<GastosPendientes />} />
 
       {/* Ruta para cerrar sesión */}

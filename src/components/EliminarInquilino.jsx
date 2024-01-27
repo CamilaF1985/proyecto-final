@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
 import { deletePersonaByRut, getUsersByUnit } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';  // Importa SweetAlert2
 import '../assets/css/App.css';
 
 // Importa el selector de datos de usuarios
@@ -62,13 +63,35 @@ const EliminarInquilino = () => {
     dispatch(deletePersonaByRut(rut, unidadId))
       .then((updatedUsers) => {
         if (updatedUsers !== null) {
-          // Consola logs para exito y error
-          console.log('Inquilino eliminado correctamente');
+          // Mostrar mensaje de éxito
+          Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'Inquilino eliminado correctamente.',
+            confirmButtonText: 'OK',
+          }).then(() => {
+            console.log('Inquilino eliminado correctamente');
+            handleCloseModal();  // Cerrar el modal
+          });
         } else {
+          // Mostrar mensaje de error
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al eliminar el inquilino. Por favor, intenta de nuevo.',
+            confirmButtonText: 'OK',
+          });
           console.error('Error al eliminar el inquilino');
         }
       })
       .catch((error) => {
+        // Mostrar mensaje de error
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un problema al eliminar el inquilino. Por favor, intenta de nuevo.',
+          confirmButtonText: 'OK',
+        });
         console.error('Error al eliminar el inquilino:', error);
       });
   };
@@ -122,6 +145,7 @@ const EliminarInquilino = () => {
 };
 
 export default EliminarInquilino;
+
 
 
 

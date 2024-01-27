@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
 import { deleteExpenseFromDatabase, getExpensesByUnit } from '../flux/expenseActions';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const EliminarGasto = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const EliminarGasto = () => {
           });
       }
     };
-  
+
     fetchData();
   }, [dispatch]);
 
@@ -40,6 +41,13 @@ const EliminarGasto = () => {
           .then(({ gastos }) => {
             // Actualizar el estado local con la lista actualizada
             setUpdatedExpenses(gastos);
+
+            // Mostrar mensaje de éxito
+            Swal.fire({
+              icon: 'success',
+              title: '¡Gasto Eliminado!',
+              text: 'El gasto se ha eliminado correctamente.',
+            });
           })
           .catch((error) => {
             console.error('Error al obtener la lista actualizada de gastos:', error);
@@ -47,9 +55,16 @@ const EliminarGasto = () => {
       })
       .catch((error) => {
         console.error('Error al procesar la eliminación del gasto:', error);
+
+        // Mostrar mensaje de error
+        Swal.fire({
+          icon: 'error',
+          title: '¡Error al Eliminar Gasto!',
+          text: error.message || 'Ocurrió un error al eliminar el gasto.',
+        });
       });
   };
-  
+
   const handleCloseModal = () => {
     const path = '/administrar-panel';
     dispatch(closeModalAndRedirect(path, navigate));
@@ -80,7 +95,7 @@ const EliminarGasto = () => {
               {/* Muestra la lista de gastos */}
               {updatedExpenses && updatedExpenses.length > 0 ? (
                 updatedExpenses.map((expense) => (
-                  <div key={expense.id} className="col-md-12 mb-3">
+                  <div key={expense.id} className="col-md-12" style={{ marginRight: '10px !important' }}>
                     <p>{`Monto: ${expense.monto || 'No disponible'}, Descripción: ${expense.descripcion || 'No disponible'}`}</p>
                     <button
                       type="button"
@@ -96,6 +111,7 @@ const EliminarGasto = () => {
               )}
             </div>
           )}
+
         </div>
       </div>
     </Modal>

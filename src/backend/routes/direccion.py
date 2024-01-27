@@ -1,5 +1,6 @@
 from flask import jsonify, Blueprint, request
 from models import Direccion, db
+from flask_cors import cross_origin
 
 create_direccion_bp = Blueprint('create_direccion', __name__)
 
@@ -32,5 +33,59 @@ def create_direccion():
         return jsonify({"error": "Error al crear la dirección", "details": str(e)}), 500
 
 
+direccion_bp = Blueprint('direccion', __name__)
 
-# endpoint para actualizar direccion PUT
+@direccion_bp.route('/direccion/<int:id_unidad>', methods=['GET'])
+def get_direccion_by_unidad(id_unidad):
+    try:
+        direccion = Direccion.query.filter_by(id_unidad=id_unidad).first()
+
+        if direccion:
+            return jsonify({
+                "id": direccion.id,
+                "id_pais": direccion.id_pais,
+                "id_region": direccion.id_region,
+                "id_comuna": direccion.id_comuna,
+                "calle": direccion.calle,
+                "numero": direccion.numero,
+                "depto_casa": direccion.depto_casa,
+                "id_unidad": direccion.id_unidad
+            }), 200
+        else:
+            return jsonify({"error": "No se encontró la dirección para la unidad especificada"}), 404
+
+    except Exception as e:
+        return jsonify({"error": "Error al obtener la dirección", "details": str(e)}), 500
+
+
+editar_direccion_bp = Blueprint('editar_direccion', __name__)
+
+@editar_direccion_bp.route('/direccion/<int:id_direccion>', methods=['PUT', 'OPTIONS'])
+def editar_direccion(id_direccion):
+    if request.method == 'OPTIONS':
+        # Responde a las solicitudes OPTIONS directamente
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response, 200
+
+    try:
+        direccion = Direccion.query.get(id_direccion)
+
+        if not direccion:
+            return jsonify({"error": "No se encontró la dirección especificada"}), 404
+
+        data = request.json
+
+        # Actualizar los campos que se proporcionan en la solicitud JSON
+        for key, value in data.items():
+            setattr(direccion, key, value)
+
+        db.session.commit()
+
+        return jsonify({"message": "Dirección actualizada exitosamente"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al actualizar la dirección", "details": str(e)}), 500

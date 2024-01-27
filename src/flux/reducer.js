@@ -8,6 +8,7 @@ import {
   SAVE_NEW_INQUILINO_DATA,
   UPDATE_USER_EMAIL,
   SAVE_USERS_DATA,
+  CLEAR_ENTIRE_STATE,
 } from './userActions.js';
 
 // Importar acciones relacionadas con unidades desde unitActions.js
@@ -48,6 +49,7 @@ import {
   SAVE_COMUNAS_DATA,
   SAVE_REGIONES_DATA,
   CREATE_DIRECCION,
+  UPDATE_DIRECCION,
 } from './addressActions.js';
 
 // Importar acciones relacionas con tarea persona desde personTaskActions.js
@@ -96,12 +98,14 @@ const initialState = {
   comunas: [],
   regiones: [],
   direcciones: [],
-  unit: {}, 
+  direccionesBD: [],
+  unit: {},
   tareasAsignadas: [],
   gastoPersonaList: [],
   gastosPersonaListAsync: [],
+  gastosPersonaListActualizado: [],
   idsGastos: [],
-  gastoDetails: {},  
+  gastoDetails: {},
   gastoDetailsError: null,
   updatedExpenses: []
 };
@@ -258,21 +262,25 @@ const rootReducer = (state = initialState, action) => {
     case SAVE_GASTOS_PERSONA:
       return {
         ...state,
-        gastosPersonaListAsync: action.payload, 
+        gastosPersonaListAsync: action.payload,
       };
 
     case UPDATE_ESTADO_GASTO_PERSONA:
       const { idGasto, estadoActualizado } = action.payload;
 
+      console.log('idGasto:', idGasto);
+      console.log('estadoActualizado:', estadoActualizado);
+
       const gastosPersonaListActualizado = state.gastosPersonaListAsync.map((gasto) =>
         gasto.id_gasto === idGasto ? { ...gasto, estado: estadoActualizado } : gasto
       );
 
+      console.log('gastosPersonaListActualizado:', gastosPersonaListActualizado);
+
       return {
         ...state,
-        gastosPersonaListAsync: gastosPersonaListActualizado,
+        gastosPersonaListActualizado: gastosPersonaListActualizado,
       };
-
 
     case SAVE_IDS_GASTOS:
       return {
@@ -307,6 +315,12 @@ const rootReducer = (state = initialState, action) => {
         direcciones: [...state.direcciones, action.payload],
       };
 
+    case UPDATE_DIRECCION:
+      return {
+        ...state,
+        direccionesBD: [...state.direccionesBD, action.payload],
+      };
+
     case UPDATE_USER_EMAIL:
       return {
         ...state,
@@ -322,9 +336,14 @@ const rootReducer = (state = initialState, action) => {
         usersData: action.payload,
       };
 
+    case CLEAR_ENTIRE_STATE:
+      return initialState;
+
     default:
       return state;
+
   }
+
 };
 
 export default rootReducer;

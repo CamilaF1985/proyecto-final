@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
 import { deleteTaskFromDatabase, getTasksByUnit } from '../flux/taskActions';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const EliminarTarea = () => {
   const dispatch = useDispatch();
@@ -41,11 +42,25 @@ const EliminarTarea = () => {
   const handleEliminarTarea = (taskId) => {
     dispatch(deleteTaskFromDatabase(taskId))
       .then(() => {
+        // Muestra SweetAlert de éxito
+        Swal.fire({
+          icon: 'success',
+          title: 'Tarea Eliminada',
+          text: 'La tarea se ha eliminado correctamente.',
+        });
+
         // Cerrar el modal y redirigir
         handleCloseModal();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error al eliminar la tarea:', error);
+
+        // Muestra SweetAlert de error
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al Eliminar Tarea',
+          text: 'Ocurrió un error al intentar eliminar la tarea.',
+        });
       });
   };
 
@@ -77,7 +92,7 @@ const EliminarTarea = () => {
                       <li key={task.id}>
                         {task.nombre}
                         <button
-                          className="btn btn-danger ms-2"
+                          className="btn btn-danger ms-3 mt-2 mb-3"
                           onClick={() => handleEliminarTarea(task.id)}
                         >
                           Eliminar
