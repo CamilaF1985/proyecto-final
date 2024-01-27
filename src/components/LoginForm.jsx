@@ -5,8 +5,7 @@ import { loginUser } from '../flux/userActions';
 import { closeModal, closeModalAndRedirect } from '../flux/modalActions';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { validarLogin } from '../assets/js/validarLogin';
-import { format } from '../assets/js/format';
+import { validarLogin } from '../assets/js/validarLogin'; //importar el js de validaciones
 
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -27,7 +26,7 @@ const LoginForm = () => {
       [id]: value,
     });
   
-    // Validar el RUT y la contraseña en tiempo real
+    // Validar el RUT y la contraseña en tiempo real, muestra mensajes de error
     if (id === 'rut') {
       const isRutValid = validarLogin.rut(value);
       setRutError(isRutValid ? '' : 'El RUT no es válido');
@@ -43,7 +42,7 @@ const LoginForm = () => {
 
     // Validar el RUT antes de enviar el formulario
     if (rutError) {
-      // Si hay un error en el RUT, puedes mostrar un mensaje de error o realizar alguna acción
+      // mensaje de error por consola para el rut
       console.error('El RUT no es válido');
       return;
     }

@@ -11,6 +11,7 @@ import {
 } from '../flux/addressActions';
 import Swal from 'sweetalert2';
 import '../assets/css/App.css';
+import { validarRegistro } from '../assets/js/validarRegistro';//importar el js de validaciones
 
 const RegistroForm = () => {
   // Hooks y selectores
@@ -37,15 +38,61 @@ const RegistroForm = () => {
     idComuna: '',
     calle: '',
     numero: '',
+    correoElectronico: '',
+    deptoCasa: '',
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    rut: '',
+    contrasena: '',
+    email: '',
+    nombre: '',
+    nombreUnidad: '',
+    calle: '',
+    numero: '',
     deptoCasa: '',
   });
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Validaciones
+    const isValid = validarRegistro[name](value);
+
+    setFormErrors({
+      ...formErrors,
+      [name]: isValid ? '' : getErrorMessage(name),
+    });
+
     // Manejo de cambios en el formulario
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+  };
+
+  const getErrorMessage = (fieldName) => {
+    // Mensajes de error personalizados para cada campo, como es un formulario largo usamos un switch
+    switch (fieldName) {
+      case 'rut':
+        return 'Por favor, ingresa un RUT válido.';
+      case 'contrasena':
+        return 'Mínimo 8 caracteres, al menos una letra, un número y un carácter especial.';
+      case 'email':
+        return 'Por favor, ingresa un correo electrónico válido.';
+      case 'nombre':
+        return 'Minimo 4 caracteres, máximo 15.';
+      case 'nombreUnidad':
+        return 'Minimo 4 caracteres, máximo 15.';
+      case 'calle':
+        return 'Minimo 4 caracteres, máximo 30';
+      case 'numero':
+        return 'Máximo 10 caracteres.';
+      case 'deptoCasa':
+        return 'Máximo 10 caracteres.';
+      default:
+        return 'Campo inválido.';
+    }
   };
 
   const handleRegionChange = (e) => {
@@ -156,9 +203,10 @@ const RegistroForm = () => {
 
   return (
     <div className="contenedor mt-4 mb-1 p-3 formulario-registro">
-      <div className="row"> <div className="col-10 text-center">
-        <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
-      </div>
+      <div className="row">
+        <div className="col-10 text-center">
+          <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
+        </div>
         <div className="row col-12 justify-content-center">
           <div className="row">
             <div className="col-md-12 mb-3">
@@ -167,81 +215,205 @@ const RegistroForm = () => {
             <div className="form-container-contacto">
               <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="rut" className="form-label"> RUT: </label>
-                  <input type="text" className="form-control" id="rut" name="rut" value={formData.rut}
-                    onChange={handleChange} placeholder="Ingresa tu RUT" required />
-                  <div className="invalid-feedback">Por favor, ingresa tu RUT.</div>
+                  <label htmlFor="rut" className="form-label">
+                    RUT:
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.rut ? 'is-invalid' : ''}`}
+                    id="rut"
+                    name="rut"
+                    value={formData.rut}
+                    onChange={handleChange}
+                    placeholder="Ingresa tu RUT"
+                    required
+                  />
+                  {formErrors.rut && <div className="invalid-feedback">{formErrors.rut}</div>}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="nombreUnidad" className="form-label"> Nombre de la Unidad: </label>
-                  <input type="text" className="form-control" id="nombreUnidad" name="nombreUnidad"
-                    value={formData.nombreUnidad} onChange={handleChange} placeholder="Ingresa el nombre de la Unidad" required />
-                  <div className="invalid-feedback"> Por favor, ingresa el nombre de la Unidad. </div>
+                  <label htmlFor="nombreUnidad" className="form-label">
+                    Nombre de la Unidad:
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.nombreUnidad ? 'is-invalid' : ''}`}
+                    id="nombreUnidad"
+                    name="nombreUnidad"
+                    value={formData.nombreUnidad}
+                    onChange={handleChange}
+                    placeholder="Ingresa el nombre de la Unidad"
+                    required
+                  />
+                  {formErrors.nombreUnidad && (
+                    <div className="invalid-feedback">{formErrors.nombreUnidad}</div>
+                  )}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="idRegion" className="form-label"> Región: </label>
-                  <select className="form-select" id="idRegion" name="idRegion" value={formData.idRegion}
-                    onChange={handleRegionChange} required>
-                    <option value="" disabled> Selecciona una región </option>
-                    {regiones && regiones.map((region) => (<option key={region.id} value={region.id}> {region.nombre}
-                    </option>))}
+                  <label htmlFor="idRegion" className="form-label">
+                    Región:
+                  </label>
+                  <select
+                    className={`form-select ${formErrors.idRegion ? 'is-invalid' : ''}`}
+                    id="idRegion"
+                    name="idRegion"
+                    value={formData.idRegion}
+                    onChange={handleRegionChange}
+                    required
+                  >
+                    <option value="" disabled>
+                      Selecciona una región
+                    </option>
+                    {regiones &&
+                      regiones.map((region) => (
+                        <option key={region.id} value={region.id}>
+                          {region.nombre}
+                        </option>
+                      ))}
                   </select>
-                  <div className="invalid-feedback">Por favor, selecciona una región.</div>
+                  {formErrors.idRegion && (
+                    <div className="invalid-feedback">{formErrors.idRegion}</div>
+                  )}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="idComuna" className="form-label"> Comuna: </label>
-                  <select className="form-select" id="idComuna" name="idComuna" value={formData.idComuna}
-                    onChange={handleComunaChange} required>
-                    <option value="" disabled> Selecciona una comuna </option>
-                    {comunas && comunas.map((comuna) => (<option key={comuna.id} value={comuna.id}> {comuna.nombre}
-                    </option>))}
+                  <label htmlFor="idComuna" className="form-label">
+                    Comuna:
+                  </label>
+                  <select
+                    className={`form-select ${formErrors.idComuna ? 'is-invalid' : ''}`}
+                    id="idComuna"
+                    name="idComuna"
+                    value={formData.idComuna}
+                    onChange={handleComunaChange}
+                    required
+                  >
+                    <option value="" disabled>
+                      Selecciona una comuna
+                    </option>
+                    {comunas &&
+                      comunas.map((comuna) => (
+                        <option key={comuna.id} value={comuna.id}>
+                          {comuna.nombre}
+                        </option>
+                      ))}
                   </select>
-                  <div className="invalid-feedback">Por favor, selecciona una comuna.</div>
+                  {formErrors.idComuna && (
+                    <div className="invalid-feedback">{formErrors.idComuna}</div>
+                  )}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="calle" className="form-label"> Calle: </label>
-                  <input type="text" className="form-control" id="calle" name="calle" value={formData.calle}
-                    onChange={handleChange} placeholder="Ingresa la calle" required />
-                  <div className="invalid-feedback">Por favor, ingresa la calle.</div>
+                  <label htmlFor="calle" className="form-label">
+                    Calle:
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.calle ? 'is-invalid' : ''}`}
+                    id="calle"
+                    name="calle"
+                    value={formData.calle}
+                    onChange={handleChange}
+                    placeholder="Ingresa la calle"
+                    required
+                  />
+                  {formErrors.calle && <div className="invalid-feedback">{formErrors.calle}</div>}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="numero" className="form-label"> Número: </label>
-                  <input type="text" className="form-control" id="numero" name="numero" value={formData.numero}
-                    onChange={handleChange} placeholder="Ingresa el número" required />
-                  <div className="invalid-feedback">Por favor, ingresa el número.</div>
+                  <label htmlFor="numero" className="form-label">
+                    Número:
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.numero ? 'is-invalid' : ''}`}
+                    id="numero"
+                    name="numero"
+                    value={formData.numero}
+                    onChange={handleChange}
+                    placeholder="Ingresa el número"
+                    required
+                  />
+                  {formErrors.numero && <div className="invalid-feedback">{formErrors.numero}</div>}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="deptoCasa" className="form-label"> Depto/Casa: </label>
-                  <input type="text" className="form-control" id="deptoCasa" name="deptoCasa"
-                    value={formData.deptoCasa} onChange={handleChange} placeholder="Ingresa el departamento/casa" required />
-                  <div className="invalid-feedback"> Por favor, ingresa el departamento/casa. </div>
+                  <label htmlFor="deptoCasa" className="form-label">
+                    Depto/Casa:
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.deptoCasa ? 'is-invalid' : ''}`}
+                    id="deptoCasa"
+                    name="deptoCasa"
+                    value={formData.deptoCasa}
+                    onChange={handleChange}
+                    placeholder="Ingresa el departamento/casa"
+                    required
+                  />
+                  {formErrors.deptoCasa && (
+                    <div className="invalid-feedback">{formErrors.deptoCasa}</div>
+                  )}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="email" className="form-label"> Correo Electrónico: </label>
-                  <input type="email" className="form-control" id="email" name="email"
-                    value={formData.email} onChange={handleChange} placeholder="Ingresa tu correo electrónico" required />
-                  <div className="invalid-feedback"> Por favor, ingresa un correo electrónico válido. </div>
+                  <label htmlFor="email" className="form-label">
+                    Correo Electrónico:
+                  </label>
+                  <input
+                    type="email"
+                    className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Ingresa tu correo electrónico"
+                    required
+                  />
+                  {formErrors.email && <div className="invalid-feedback">{formErrors.email}</div>}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="nombre" className="form-label"> Nombre: </label>
-                  <input type="text" className="form-control" id="nombre" name="nombre"
-                    value={formData.nombre} onChange={handleChange} placeholder="Ingresa tu nombre" required />
-                  <div className="invalid-feedback">Por favor, ingresa tu nombre.</div>
+                  <label htmlFor="nombre" className="form-label">
+                    Nombre:
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${formErrors.nombre ? 'is-invalid' : ''}`}
+                    id="nombre"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    placeholder="Ingresa tu nombre"
+                    required
+                  />
+                  {formErrors.nombre && <div className="invalid-feedback">{formErrors.nombre}</div>}
                 </div>
                 <div className="col-md-3 mb-3">
-                  <label htmlFor="contrasena" className="form-label"> Contraseña: </label>
-                  <input type="password" className="form-control" id="contrasena" name="contrasena"
-                    value={formData.contrasena} onChange={handleChange} placeholder="Ingresa tu contraseña" required />
-                  <div className="invalid-feedback">Por favor, ingresa tu contraseña.</div>
+                  <label htmlFor="contrasena" className="form-label">
+                    Contraseña:
+                  </label>
+                  <input
+                    type="password"
+                    className={`form-control ${formErrors.contrasena ? 'is-invalid' : ''}`}
+                    id="contrasena"
+                    name="contrasena"
+                    value={formData.contrasena}
+                    onChange={handleChange}
+                    placeholder="Ingresa tu contraseña"
+                    required
+                  />
+                  {formErrors.contrasena && (
+                    <div className="invalid-feedback">{formErrors.contrasena}</div>
+                  )}
                 </div>
                 <div className="col-md-12 mt-2">
                   <div className="d-flex justify-content-between">
-                    <button className="btn btn-primary" type="button" onClick={handleRegresarClick}>
+                    <button
+                      className="btn btn-primary"
+                      type="button"
+                      onClick={handleRegresarClick}
+                    >
                       Regresar
                     </button>
-                    <button className="btn btn-primary" type="submit"> Registrarse </button>
+                    <button className="btn btn-primary" type="submit">
+                      Registrarse
+                    </button>
                   </div>
-                  </div>
+                </div>
               </form>
             </div>
           </div>
@@ -252,6 +424,7 @@ const RegistroForm = () => {
 };
 
 export default RegistroForm;
+
 
 
 
