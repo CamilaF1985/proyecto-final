@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
 import { saveNewInquilinoData } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
+import { validarRegistro } from '../assets/js/validarRegistro';//importar el js de validaciones
 
 // Componente funcional para el formulario de registro de inquilinos
 const RegistroInquilino = () => {
@@ -22,17 +23,56 @@ const RegistroInquilino = () => {
     contrasena: '',
     id_unidad: '',
   });
+  const [formErrors, setFormErrors] = useState({
+    rut: '',
+    contrasena: '',
+    email: '',
+    nombre: '',
+    nombreUnidad: '',
+    calle: '',
+    numero: '',
+    deptoCasa: '',
+  });
 
   // Obtener el id_unidad desde el localStorage
   const idUnidad = localStorage.getItem('id_unidad');
 
   // Función para manejar cambios en los campos del formulario
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Validaciones
+    const isValid = validarRegistro[name](value);
+
+    setFormErrors({
+      ...formErrors,
+      [name]: isValid ? '' : getErrorMessage(name),
+    });
+
+    // Manejo de cambios en el formulario
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
+  const getErrorMessage = (fieldName) => {
+    // Mensajes de error personalizados para cada campo, como es un formulario largo usamos un switch
+    switch (fieldName) {
+      case 'rut':
+        return 'Por favor, ingresa un RUT válido.';
+      case 'contrasena':
+        return 'Mínimo 8 caracteres, al menos una letra, un número y un carácter especial.';
+      case 'email':
+        return 'Por favor, ingresa un correo electrónico válido.';
+      case 'nombre':
+        return 'Minimo 4 caracteres, máximo 15.';
+
+      default:
+        return 'Campo inválido.';
+    }
+  };
+
+
 
   // Función para manejar el envío del formulario
   const handleSubmit = (e) => {
@@ -100,7 +140,7 @@ const RegistroInquilino = () => {
               <label htmlFor="rut" className="form-label">RUT:</label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${formErrors.rut ? 'is-invalid' : ''}`}
                 id="rut"
                 name="rut"
                 value={formData.rut}
@@ -108,6 +148,7 @@ const RegistroInquilino = () => {
                 placeholder="Ingresa el rut del inquilino"
                 required
               />
+              {formErrors.rut && <div className="invalid-feedback">{formErrors.rut}</div>}
               <div className="invalid-feedback">
                 Por favor, ingresa tu RUT.
               </div>
@@ -118,7 +159,7 @@ const RegistroInquilino = () => {
               <label htmlFor="email" className="form-label">Correo Electrónico:</label>
               <input
                 type="email"
-                className="form-control"
+                className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
                 id="email"
                 name="email"
                 value={formData.email}
@@ -126,6 +167,7 @@ const RegistroInquilino = () => {
                 placeholder="Ingresa el correo del inquilino"
                 required
               />
+              {formErrors.email && <div className="invalid-feedback">{formErrors.email}</div>}
               <div className="invalid-feedback">
                 Por favor, ingresa un correo electrónico válido.
               </div>
@@ -136,7 +178,7 @@ const RegistroInquilino = () => {
               <label htmlFor="nombre" className="form-label">Nombre:</label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${formErrors.nombre ? 'is-invalid' : ''}`}
                 id="nombre"
                 name="nombre"
                 value={formData.nombre}
@@ -144,6 +186,7 @@ const RegistroInquilino = () => {
                 placeholder="Ingresa el nombre del inquilino"
                 required
               />
+              {formErrors.nombre && <div className="invalid-feedback">{formErrors.nombre}</div>}
               <div className="invalid-feedback">
                 Por favor, ingresa tu nombre.
               </div>
@@ -154,7 +197,7 @@ const RegistroInquilino = () => {
               <label htmlFor="contrasena" className="form-label">Contraseña:</label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control ${formErrors.contrasena ? 'is-invalid' : ''}`}
                 id="contrasena"
                 name="contrasena"
                 value={formData.contrasena}
@@ -162,6 +205,7 @@ const RegistroInquilino = () => {
                 placeholder="Ingresa una contraseña para el inquilino"
                 required
               />
+              {formErrors.contrasena && <div className="invalid-feedback">{formErrors.contrasena}</div>}
               <div className="invalid-feedback">
                 Por favor, ingresa tu contraseña.
               </div>
