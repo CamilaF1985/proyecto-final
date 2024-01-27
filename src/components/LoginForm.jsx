@@ -5,26 +5,48 @@ import { loginUser } from '../flux/userActions';
 import { closeModal, closeModalAndRedirect } from '../flux/modalActions';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { validarLogin } from '../assets/js/validarLogin';
+import { format } from '../assets/js/format';
 
 const LoginForm = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-      rut: '',
-      password: '',
-    });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    rut: '',
+    password: '',
+  });
+  const [rutError, setRutError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const handleInputChange = (e) => {
+    const { id, value } = e.target;
+  
     // Manejo de cambios en el formulario
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value,
+      [id]: value,
     });
+  
+    // Validar el RUT y la contraseña en tiempo real
+    if (id === 'rut') {
+      const isRutValid = validarLogin.rut(value);
+      setRutError(isRutValid ? '' : 'El RUT no es válido');
+    } else if (id === 'password') {
+      const isPasswordValid = validarLogin.password(value);
+      setPasswordError(isPasswordValid ? '' : 'La contraseña no puede quedar nula');
+    }
   };
-
+    
   const handleLogin = (e) => {
-    // No enviar el formulario hasta que este completo
+    // No enviar el formulario hasta que esté completo
     e.preventDefault();
+
+    // Validar el RUT antes de enviar el formulario
+    if (rutError) {
+      // Si hay un error en el RUT, puedes mostrar un mensaje de error o realizar alguna acción
+      console.error('El RUT no es válido');
+      return;
+    }
 
     dispatch(loginUser(formData, closeModal, navigate))
       .then(() => {
@@ -50,6 +72,7 @@ const LoginForm = () => {
         });
       });
   };
+
   const handleCloseModal = () => {
     // Cierre de modal y redirección
     dispatch(closeModal());
@@ -80,13 +103,14 @@ const LoginForm = () => {
               </label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${rutError ? 'is-invalid' : ''}`}
                 id="rut"
                 placeholder="Ingresa tu RUT"
                 required
                 onChange={handleInputChange}
                 autoComplete="off"
               />
+              {rutError && <div className="invalid-feedback">{rutError}</div>}
             </div>
 
             {/* Campo para la contraseña */}
@@ -96,13 +120,15 @@ const LoginForm = () => {
               </label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control ${passwordError ? 'is-invalid' : ''}`}
                 id="password"
                 placeholder="Ingresa tu contraseña"
                 required
                 onChange={handleInputChange}
               />
+              {passwordError && <div className="invalid-feedback">{passwordError}</div>}
             </div>
+
             {/* Botón "Ingresar" */}
             <div className="col-md-12 d-flex justify-content-end">
               <button className="btn btn-primary" type="submit">
@@ -117,6 +143,8 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
+
 
 
 

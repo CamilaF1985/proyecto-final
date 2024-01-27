@@ -18,7 +18,7 @@ const validateRut = (rut) => {
     //La K corresponde a 10
     if (rut.charAt(rut.length - 1).toUpperCase() === 'K') {
         nDvReal = 10;
-    } else if (rut.charAt(rut.length - 1) === 0) { // el 0 corresponde a 11
+    } else if (rut.charAt(rut.length - 1) === '0') { // el 0 corresponde a 11
         nDvReal = 11;
     } else {
         nDvReal = rut.charAt(rut.length - 1);
@@ -38,8 +38,17 @@ const validateRut = (rut) => {
     }
 }
 
-const validate = {
-    rut: validateRut
-}
-
-export default validate;
+const validatePassword = (password) => {
+    // Verificar que la contraseña no sea nula o indefinida
+    if (password === null || password === undefined) {
+      return false;
+    }
+    // Verificar que la contraseña no contenga solo espacios en blanco
+    return password.trim() !== '';
+  };
+    
+  export const validarLogin = {
+    rut: validateRut,
+    password: validatePassword,
+  };
+  
