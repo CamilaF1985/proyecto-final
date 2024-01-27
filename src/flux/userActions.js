@@ -135,7 +135,6 @@ export const loginUser = (formData, closeModal, navigate) => {
         // No es necesario continuar con el inicio de sesión
         return;
       }
-
       // Si no hay un token en sessionStorage, proceder con el inicio de sesión normal
       const response = await axios.post('http://localhost:5000/auth/login', {
         rut: formData.rut,
@@ -352,6 +351,25 @@ export const logoutUser = () => {
     }
   };
 };
+
+// Función para manejar la expiración del token después de 10 minutos
+const handleTokenExpiration = () => {
+  // Realizar la acción de cerrar sesión al expirar el token
+  dispatch(logoutUser());
+  console.log('El token ha expirado. Cerrando sesión...');
+  window.alert('El token ha expirado. Cerrando sesión...');
+};
+
+// Inicia el temporizador cuando el usuario inicia sesión
+const startTokenExpirationTimer = () => {
+  const tokenExpirationTime = 10 * 60 * 1000; // 10 minutos en milisegundos
+
+  // Configura el temporizador para ejecutar la función cuando el token expire
+  setTimeout(handleTokenExpiration, tokenExpirationTime);
+};
+
+// Cuando el usuario inicia sesión, inicia el temporizador
+startTokenExpirationTimer();
 
 
 
