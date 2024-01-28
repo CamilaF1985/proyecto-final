@@ -15,18 +15,14 @@ export const saveUnitData = (unitData) => ({
 export const fetchUnitById = (unitId) => {
   return async (dispatch) => {  
     try {
-      // Esperar solicitud de la promesa antes de asignar el valor
-      const resolvedUnitId = await unitId;
+      const resolvedUnitId = await unitId; // Esperar solicitud de la promesa antes de asignar el valor
       // Asignar el valor del id de la unidad a la solicitud get
       const response = await axios.get(`http://localhost:5000/unidad/${resolvedUnitId}`);
-
-      // Guardar los datos de la unidad en el estado global usando la acción saveUnitData
-      dispatch(saveUnitData(response.data));
-
-      return response.data;
+      dispatch(saveUnitData(response.data)); // Guardar los datos de la unidad en el estado global usando la acción saveUnitData
+      return response.data; //Retorna la data
     } catch (error) {
-      console.error('Error al obtener la unidad:', error);
-      throw error; 
+      console.error('Error al obtener la unidad:', error); //Mensaje en caso de error
+      throw error; //Propaga el error
     }
   };
 };
@@ -37,18 +33,14 @@ export const saveNewUnitData = (unitData) => {
     try {
       // Realizar la solicitud POST al endpoint correspondiente
       const response = await axios.post('http://localhost:5000/create_unidad', unitData);
-
       if (response.status === 201) {
-        // Si la solicitud es exitosa, devolver el ID de la unidad creada directamente
-        return response.data.id;
-      } else {
-        // Manejar otros casos de respuesta 
-        console.error('Error al guardar la unidad:', response.data);
+        return response.data.id; // Si la solicitud es exitosa, devolver el ID de la unidad creada directamente
+      } else { 
+        console.error('Error al guardar la unidad:', response.data); // Manejar otros casos de respuesta
         return null;
       }
     } catch (error) {
-      // Manejo de errores
-      console.error('Error al guardar la unidad:', error);
+      console.error('Error al guardar la unidad:', error); // Manejo de errores
       return null;
     }
   };
