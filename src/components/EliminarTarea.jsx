@@ -5,6 +5,7 @@ import { closeModalAndRedirect } from '../flux/modalActions';
 import { deleteTaskFromDatabase, getTasksByUnit } from '../flux/taskActions';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 const EliminarTarea = () => {
   const dispatch = useDispatch();
@@ -80,6 +81,8 @@ const EliminarTarea = () => {
 
       <div className="modal-body">
         <div className="form-container">
+          {/* Componente CronometroSesion */}
+          <CronometroSesion />
           <h2 className="form-titulo">Eliminar Tarea</h2>
 
           {!loading && (

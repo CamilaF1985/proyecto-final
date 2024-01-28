@@ -5,6 +5,7 @@ import { closeModalAndRedirect } from '../flux/modalActions';
 import { deleteExpenseFromDatabase, getExpensesByUnit } from '../flux/expenseActions';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 const EliminarGasto = () => {
   const dispatch = useDispatch();
@@ -86,6 +87,8 @@ const EliminarGasto = () => {
 
       <div className="modal-body">
         <div className="form-container">
+          {/* Componente CronometroSesion */}
+          <CronometroSesion />
           <h2 className="form-titulo">Eliminar Gasto</h2>
 
           {loading ? (

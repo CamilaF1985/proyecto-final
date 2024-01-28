@@ -7,6 +7,7 @@ import { saveNewInquilinoData } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { validarRegistro } from '../assets/js/validarRegistro';//importar el js de validaciones
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 // Componente funcional para el formulario de registro de inquilinos
 const RegistroInquilino = () => {
@@ -55,7 +56,7 @@ const RegistroInquilino = () => {
       [name]: value,
     });
   };
-  
+
   const getErrorMessage = (fieldName) => {
     // Mensajes de error personalizados para cada campo, como es un formulario largo usamos un switch
     switch (fieldName) {
@@ -131,6 +132,8 @@ const RegistroInquilino = () => {
       {/* Cuerpo de la ventana modal */}
       <div className="modal-body">
         <div className="form-container">
+          {/* Componente CronometroSesion */}
+          <CronometroSesion />
           <h2 className="form-titulo">Registro de Inquilino</h2>
           {/* Formulario de registro */}
           <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>

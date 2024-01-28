@@ -3,8 +3,9 @@ import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getTareasAsignadas, updateFechaTermino } from '../flux/personTaskActions';
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 import '../assets/css/App.css';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 const TareasPendientes = () => {
     const dispatch = useDispatch();
@@ -82,6 +83,8 @@ const TareasPendientes = () => {
 
             <div className="modal-body">
                 <div className="form-container">
+                    {/* Componente CronometroSesion */}
+                    <CronometroSesion />
                     <h2 className="form-titulo">Tareas Pendientes</h2>
                     <p className="subtitulo"> Marca las tareas que ya has realizado </p>
                     {loading ? (

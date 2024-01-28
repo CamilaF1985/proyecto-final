@@ -151,6 +151,11 @@ input[type="checkbox"] {
     margin-top: 5px;
 }
 
+.cronometro-container {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    color: red;
+}
+
 /* Estilos para el botón del formulario */
 .btn-primary {
     background-color: #76f887 !important;

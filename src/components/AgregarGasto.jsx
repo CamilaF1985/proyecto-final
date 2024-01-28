@@ -6,6 +6,7 @@ import { saveNewExpenseData } from '../flux/expenseActions';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { validarGasto } from '../assets/js/validarGasto';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 const AgregarGasto = () => {
   const dispatch = useDispatch();
@@ -122,6 +123,8 @@ const AgregarGasto = () => {
 
       <div className="modal-body">
         <div className="form-container">
+          {/* Componente CronometroSesion */}
+          <CronometroSesion />
           <h2 className="form-titulo">Agregar Gasto</h2>
           <form className="row g-3 needs-validation" noValidate>
             <div className="col-md-12 mb-3">

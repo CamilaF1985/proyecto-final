@@ -6,6 +6,7 @@ import { deletePersonaByRut, getUsersByUnit } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';  // Importa SweetAlert2
 import '../assets/css/App.css';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 // Importa el selector de datos de usuarios
 import { selectUsersDataSelector } from '../flux/selectors';
@@ -112,6 +113,8 @@ const EliminarInquilino = () => {
 
       <div className="modal-body">
         <div className="form-container">
+          {/* Componente CronometroSesion */}
+          <CronometroSesion />
           <h2 className="form-titulo">Eliminar Inquilino</h2>
           {loading ? (
             <p>Cargando...</p>

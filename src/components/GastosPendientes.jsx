@@ -1,5 +1,3 @@
-// GastosPendientes.jsx
-
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { getGastosPersona, updateEstadoGastoPersona, updateEstadoGastoPersonaEnBD } from '../flux/personExpenseActions';
 import Swal from 'sweetalert2';
 import '../assets/css/App.css';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 const GastosPendientes = () => {
     const dispatch = useDispatch();
@@ -106,6 +105,8 @@ const GastosPendientes = () => {
 
             <div className="modal-body">
                 <div className="form-container">
+                    {/* Componente CronometroSesion */}
+                    <CronometroSesion />
                     <h2 className="form-titulo">Gastos Pendientes</h2>
                     <p className="subtitulo">Marca los pagos que ya hayas realizado</p>
                     <div className="row g-3">

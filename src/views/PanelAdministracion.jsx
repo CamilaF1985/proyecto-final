@@ -13,6 +13,7 @@ import gastosIcon from '../assets/img/administracion-gastos.png';
 import tareasIcon from '../assets/img/administracion-tareas.png';
 import direccionIcon from '../assets/img/direccion.png';
 import perfilImage from '../assets/img/perfil.png';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 // Importar los selectores desde el archivo selectors.js
 import selectors from '../flux/selectors';
@@ -110,6 +111,8 @@ const PanelAdministracion = () => {
   // Estructura JSX para la vista del panel de administración
   return (
     <div className="contenedor mt-4 mb-4 p-4">
+      {/* Componente CronometroSesion */}
+      <CronometroSesion />
       <div className="row">
         {/* Sección del icono de configuración */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">

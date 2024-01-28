@@ -13,6 +13,7 @@ import configuracionImage from '../assets/img/configuracion.png';
 import Perfil from '../components/Perfil.jsx';
 import TareasPendientes from '../components/TareasPendientes.jsx';
 import GastosPendientes from '../components/GastosPendientes.jsx';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 // Importar los selectores desde el archivo selectors.js
 import selectors from '../flux/selectors';
@@ -74,6 +75,8 @@ const HomeAdministrador = () => {
   // Estructura JSX para la vista del administrador
   return (
     <div className="contenedor mt-4 mb-4 p-4">
+      {/* Componente CronometroSesion */}
+      <CronometroSesion />
       <div className="row">
         {/* Sección del logo y nombre de usuario */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">

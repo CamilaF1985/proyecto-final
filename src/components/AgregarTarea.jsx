@@ -5,6 +5,7 @@ import { closeModalAndRedirect } from '../flux/modalActions';
 import { saveNewTaskData } from '../flux/taskActions';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 // Componente funcional para agregar una tarea
 const AgregarTarea = () => {
@@ -74,6 +75,8 @@ const AgregarTarea = () => {
 
             <div className="modal-body">
                 <div className="form-container">
+                    {/* Componente CronometroSesion */}
+                    <CronometroSesion />
                     <h2 className="form-titulo">Agregar Tarea</h2>
                     <form className="row g-3 needs-validation" noValidate>
                         <div className="col-md-12 mb-3">

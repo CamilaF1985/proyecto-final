@@ -5,6 +5,7 @@ import { fetchAllRegiones, fetchComunasByRegionId, fetchDireccionByUnidad, updat
 import logo from '../assets/img/logo.png';
 import Swal from 'sweetalert2';
 import { validarRegistro } from '../assets/js/validarRegistro';//importar el js de validaciones
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 const EditarDireccion = () => {
     // Componente funcional para editar la dirección de la unidad
@@ -207,6 +208,8 @@ const EditarDireccion = () => {
 
     return (
         <div className="contenedor mt-4 mb-1 p-3 formulario-registro">
+            {/* Componente CronometroSesion */}
+            <CronometroSesion />
             <div className="row">
                 <div className="col-10 text-center">
                     <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
@@ -310,7 +313,7 @@ const EditarDireccion = () => {
                             required />
                         <div className="invalid-feedback">{formErrors.deptoCasa}</div>
                     </div>
-                    
+
                     <div className="col-md-12 mt-2">
                         <div className="d-flex justify-content-between">
                             <button className="btn btn-primary" type="button" onClick={handleRegresarClick}>

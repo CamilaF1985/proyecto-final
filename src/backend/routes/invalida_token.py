@@ -14,7 +14,7 @@ def logout():
     # Imprimir en la consola para verificar lo que está sucediendo
     print(f"Usuario {current_user} ha solicitado cerrar sesión.")
 
-    # Crea un nuevo token con un tiempo de expiración muy corto (por ejemplo, 1 segundo)
+    # Crea un nuevo token con un tiempo de expiración muy corto (por ejemplo, 1 minuto)
     new_token = create_access_token(identity=current_user, expires_delta=timedelta(minutes=1))
 
     # Elimina el token actual del cliente
