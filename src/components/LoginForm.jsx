@@ -109,7 +109,7 @@ const LoginForm = () => {
                 onChange={handleInputChange}
                 autoComplete="off"
               />
-              {rutError && <div className="invalid-feedback">{rutError}</div>}
+              {rutError && <div className="invalid-feedback error-message">{rutError}</div>}
             </div>
 
             {/* Campo para la contraseña */}
@@ -125,7 +125,7 @@ const LoginForm = () => {
                 required
                 onChange={handleInputChange}
               />
-              {passwordError && <div className="invalid-feedback">{passwordError}</div>}
+              {passwordError && <div className="invalid-feedback error-message">{passwordError}</div>}
             </div>
 
             {/* Botón "Ingresar" */}

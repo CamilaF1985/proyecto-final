@@ -123,7 +123,7 @@ ul {
 }
 
 .formulario-registro img.img-logo {
-   margin-right: 200px;
+    margin-right: 200px;
     /* Ajusta la cantidad de margen derecho según tus necesidades */
 }
 
@@ -137,6 +137,18 @@ input[type="checkbox"] {
 /* Estilos para los campos de entrada del formulario */
 .form-control {
     margin-bottom: 5px;
+}
+
+/* Estilos para .error-message */
+.error-message {
+    text-align: left;
+    margin-top: 5px;
+}
+
+/* Estilos para .invalid-feedback */
+.invalid-feedback {
+    text-align: left;
+    margin-top: 5px;
 }
 
 /* Estilos para el botón del formulario */

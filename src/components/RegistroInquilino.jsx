@@ -197,6 +197,7 @@ const RegistroInquilino = () => {
                 required
               />
               {formErrors.contrasena && <div className="invalid-feedback">{formErrors.contrasena}</div>}
+
             </div>
 
             {/* Botón de registro */}
