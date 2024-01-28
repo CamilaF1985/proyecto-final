@@ -14,7 +14,7 @@ def logout():
     print(f"Usuario {current_user} ha solicitado cerrar sesión.")
 
     # Crea un nuevo token con un tiempo de expiración muy corto (por ejemplo, 1 segundo)
-    new_token = create_access_token(identity=current_user, expires_delta=timedelta(seconds=1))
+    new_token = create_access_token(identity=current_user, expires_delta=timedelta(False))
 
     # Elimina el token actual del cliente
     resp = jsonify({"message": "Logged out", "new_token": new_token})
