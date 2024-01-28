@@ -24,10 +24,8 @@ export const fetchAllRegiones = () => {
         try {
             // Realiza la solicitud GET para obtener todas las regiones
             const response = await axios.get('http://localhost:5000/get_all_region_bp');
-
             // Guarda los datos de las regiones en el estado global usando la acción saveRegionesData
             dispatch(saveRegionesData(response.data.regiones));
-
             return response.data.regiones;
         } catch (error) {
             console.error('Error al obtener todas las regiones:', error);
@@ -40,18 +38,14 @@ export const fetchAllRegiones = () => {
 export const fetchComunasByRegionId = (regionId) => {
     return async (dispatch) => {
         try {
-            console.log('Region ID:', regionId);
-
+            console.log('Region ID:', regionId); //mensaje para verificar el id de la region
             const response = await axios.get(`http://localhost:5000/get_comunas_by_region/${regionId}`);
-            
-            console.log('Comunas Response:', response);
-
-            dispatch(saveComunasData(response.data.comunas));
-
-            return response.data.comunas;
+            console.log('Comunas Response:', response); //verificar la respuesta del servidor
+            dispatch(saveComunasData(response.data.comunas)); //Guarda la data en el estado local
+            return response.data.comunas; //retorna la data
         } catch (error) {
-            console.error('Error al obtener las comunas:', error);
-            throw error;
+            console.error('Error al obtener las comunas:', error); //mensaje en caso de error
+            throw error; //Devuelve el error para que pueda ser usado en el componente
         }
     };
 };
@@ -60,16 +54,13 @@ export const fetchComunasByRegionId = (regionId) => {
 export const createDireccionDB = (direccionData) => {
     return async (dispatch) => {
         try {
+            // Solicitud a la api para crear la dirección
             const response = await axios.post('http://localhost:5000/create_direccion', direccionData);
-
-            // Despacha la acción que guarda la dirección en el estado global
-            dispatch(createDireccion(response.data));
-
-            // Puedes manejar la respuesta en tu componente si es necesario
+            dispatch(createDireccion(response.data)); // Guarda la data en el estado local
             return response.data;
         } catch (error) {
-            console.error('Error al crear la dirección:', error);
-            throw error;
+            console.error('Error al crear la dirección:', error); //Mensaje en caso de error
+            throw error; //Devuelve el error
         }
     };
 };
@@ -78,58 +69,48 @@ export const createDireccionDB = (direccionData) => {
 export const fetchDireccionByUnidad = () => {
     return async (dispatch, getState) => {
         try {
-            // Obtén el id de la unidad desde localStorage
-            const id_unidad = localStorage.getItem('id_unidad');
-
+            const id_unidad = localStorage.getItem('id_unidad');  // Obtener el id de la unidad desde localStorage
             if (!id_unidad) {
+                // Arroja error y mensaje correspondiente si no se encontró el id de la unidad
                 console.error('No se encontró el id de la unidad en localStorage');
                 throw new Error('No se encontró el id de la unidad en localStorage');
             }
-
             // Realiza la solicitud GET para obtener la dirección por ID de unidad
             const response = await axios.get(`http://localhost:5000/direccion/${id_unidad}`);
-
-            // Despacha la acción que actualiza la dirección en el estado global
-            dispatch(updateDireccion(response.data));
-
-            // Agrega console.log para la data obtenida desde la base de datos
+            dispatch(updateDireccion(response.data));  // Despacha la acción que actualiza la dirección en el estado global
             console.log('Data obtenida desde la base de datos:', response.data);
-
-            // Agrega console.log para el estado después de actualizarlo
             console.log('Estado después de actualizar:', getState());
-
             return response.data;
         } catch (error) {
             console.error('Error al obtener la dirección:', error);
-            throw error; // Propaga el error para que pueda ser manejado en otro lugar si es necesario
+            throw error; // Propaga el error para que pueda ser manejado en el componente
         }
     };
 };
 
-export const updateDireccionDB = (idDireccion, nuevaDireccionData) => async (dispatch) => {
+// Acción para actualizar la dirección en la BD
+export const updateDireccionDB = (idDireccion, nuevaDireccionData) => async () => {
     try {
         // Ajustar los nombres de las claves antes de realizar la solicitud
         const datosParaEnviar = {
             id_comuna: nuevaDireccionData.idComuna,
             id_region: nuevaDireccionData.idRegion,
             depto_casa: nuevaDireccionData.deptoCasa,
-            numero: nuevaDireccionData.numero, 
+            numero: nuevaDireccionData.numero,
             calle: nuevaDireccionData.calle,
         };
-
         // Realizar la solicitud PUT a la API para actualizar la dirección
         console.log('Realizando solicitud PUT a la API...');
         console.log('Datos que se enviarán a la API:', datosParaEnviar);
-
         const response = await axios.put(`http://localhost:5000/direccion/${idDireccion}`, datosParaEnviar);
-
-        // Devolver la dirección actualizada para su uso posterior si es necesario
+        // Devolver la dirección actualizada para su uso posterior 
         return response.data;
     } catch (error) {
         console.error('Error al actualizar la dirección en la base de datos:', error);
-        throw error; // Puedes manejar el error según tus necesidades
+        throw error; // Propagación del error
     }
 };
+
 
 // Acción para actualizar la dirección en el estado global
 export const updateDireccion = (direccionBDData) => ({
