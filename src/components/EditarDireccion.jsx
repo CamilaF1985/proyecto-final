@@ -310,6 +310,7 @@ const EditarDireccion = () => {
                             required />
                         <div className="invalid-feedback">{formErrors.deptoCasa}</div>
                     </div>
+                    
                     <div className="col-md-12 mt-2">
                         <div className="d-flex justify-content-between">
                             <button className="btn btn-primary" type="button" onClick={handleRegresarClick}>
