@@ -149,9 +149,6 @@ const RegistroInquilino = () => {
                 required
               />
               {formErrors.rut && <div className="invalid-feedback">{formErrors.rut}</div>}
-              <div className="invalid-feedback">
-                Por favor, ingresa tu RUT.
-              </div>
             </div>
 
             {/* Campo de Correo Electrónico */}
@@ -168,9 +165,6 @@ const RegistroInquilino = () => {
                 required
               />
               {formErrors.email && <div className="invalid-feedback">{formErrors.email}</div>}
-              <div className="invalid-feedback">
-                Por favor, ingresa un correo electrónico válido.
-              </div>
             </div>
 
             {/* Campo de Nombre */}
@@ -187,9 +181,6 @@ const RegistroInquilino = () => {
                 required
               />
               {formErrors.nombre && <div className="invalid-feedback">{formErrors.nombre}</div>}
-              <div className="invalid-feedback">
-                Por favor, ingresa tu nombre.
-              </div>
             </div>
 
             {/* Campo de Contraseña */}
@@ -206,9 +197,6 @@ const RegistroInquilino = () => {
                 required
               />
               {formErrors.contrasena && <div className="invalid-feedback">{formErrors.contrasena}</div>}
-              <div className="invalid-feedback">
-                Por favor, ingresa tu contraseña.
-              </div>
             </div>
 
             {/* Botón de registro */}

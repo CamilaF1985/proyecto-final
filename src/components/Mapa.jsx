@@ -1,26 +1,29 @@
-import React from 'react';
-import { useGeolocated } from 'react-geolocated';
+import React, { useRef, useEffect } from 'react';
 
-// Componente funcional para mostrar un mapa de Google
 const Mapa = () => {
-  // Obtiene las coordenadas actuales del usuario utilizando el hook useGeolocated
-  const { coords } = useGeolocated();
-  // Clave de la API de Google Maps
-  const apiKey = 'AIzaSyAZmMpwdOFx6kNgtzVo9ckmcJAnnxviLU4';
+  const iframeRef = useRef(null);
 
-  // URL base para la incrustación del mapa de Google
-  let mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}`;
+  const loadMap = () => {
+    const location = {
+      latitude: -33.374064,
+      longitude: -70.503642,
+    };
 
-  // Agrega las coordenadas del usuario al URL si están disponibles
-  if (coords && coords.latitude && coords.longitude) {
-    const { latitude, longitude } = coords;
-    mapUrl += `&q=${latitude},${longitude}&zoom=15`;
-  } else {
-    // Agrega un valor de ejemplo si las coordenadas no están disponibles
-    mapUrl += `&q=ExampleLocation&zoom=15`;
-  }
+    const apiKey = 'AIzaSyAZmMpwdOFx6kNgtzVo9ckmcJAnnxviLU4';
 
-  // Retorna un contenedor con un iframe que muestra el mapa de Google
+    let mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}`;
+    mapUrl += `&q=${location.latitude},${location.longitude}&zoom=15`;
+
+    if (iframeRef.current) {
+      iframeRef.current.src = mapUrl;
+    }
+  };
+
+  useEffect(() => {
+    // Cargar el mapa cuando el componente se monta
+    loadMap();
+  }, []);
+
   return (
     <div className="google-maps-iframe">
       <iframe
@@ -28,16 +31,31 @@ const Mapa = () => {
         width="100%"
         height="100%"
         style={{ border: '0' }}
-        loading="lazy"
         allowFullScreen
         referrerPolicy="no-referrer-when-downgrade"
-        src={mapUrl}
+        ref={iframeRef}
       />
     </div>
   );
 };
 
 export default Mapa;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
