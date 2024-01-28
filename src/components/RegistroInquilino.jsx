@@ -55,6 +55,7 @@ const RegistroInquilino = () => {
       [name]: value,
     });
   };
+  
   const getErrorMessage = (fieldName) => {
     // Mensajes de error personalizados para cada campo, como es un formulario largo usamos un switch
     switch (fieldName) {
@@ -71,8 +72,6 @@ const RegistroInquilino = () => {
         return 'Campo inválido.';
     }
   };
-
-
 
   // Función para manejar el envío del formulario
   const handleSubmit = (e) => {

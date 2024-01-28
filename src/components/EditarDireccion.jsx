@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchAllRegiones, fetchComunasByRegionId, fetchDireccionByUnidad, updateDireccionDB } from '../flux/addressActions';
 import logo from '../assets/img/logo.png';
 import Swal from 'sweetalert2';
+import { validarRegistro } from '../assets/js/validarRegistro';//importar el js de validaciones
 
 const EditarDireccion = () => {
     // Componente funcional para editar la dirección de la unidad
@@ -17,6 +18,12 @@ const EditarDireccion = () => {
     const [formData, setFormData] = useState({
         idRegion: '',
         idComuna: '',
+        calle: '',
+        numero: '',
+        deptoCasa: '',
+    });
+
+    const [formErrors, setFormErrors] = useState({
         calle: '',
         numero: '',
         deptoCasa: '',
@@ -63,11 +70,40 @@ const EditarDireccion = () => {
             });
     }, [dispatch, regiones]);
 
+    // Función para manejar cambios en los campos del formulario
     const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        // Validaciones
+        console.log(`Validando ${name}: ${value}`);
+        const isValid = validarRegistro[name](value);
+
+        console.log('isValid:', isValid);
+
+        setFormErrors({
+            ...formErrors,
+            [name]: isValid ? '' : getErrorMessage(name),
+        });
+
+        // Manejo de cambios en el formulario
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
+    };
+
+    const getErrorMessage = (fieldName) => {
+        // Mensajes de error personalizados para cada campo, como es un formulario largo usamos un switch
+        switch (fieldName) {
+            case 'calle':
+                return 'Minimo 4 caracteres, máximo 30';
+            case 'numero':
+                return 'Máximo 10 caracteres.';
+            case 'deptoCasa':
+                return 'Máximo 10 caracteres.';
+            default:
+                return 'Campo inválido.';
+        }
     };
 
     const handleRegionChange = (e) => {
@@ -176,12 +212,14 @@ const EditarDireccion = () => {
                     <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
                 </div>
             </div>
+
             <div className="row col-12 justify-content-center">
                 <div className="row">
                     <div className="col-md-12 mb-3">
                         <h2 className="form-titulo-registro">Editar dirección</h2>
                     </div>
                 </div>
+
                 <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
                     <div className="col-md-3 mb-3">
                         <label htmlFor="idRegion" className="form-label">
@@ -202,9 +240,8 @@ const EditarDireccion = () => {
                             ))}
                         </select>
                         <div className="invalid-feedback">Por favor, selecciona una región.</div>
-
-
                     </div>
+
                     <div className="col-md-3 mb-3">
                         <label htmlFor="idComuna" className="form-label">
                             Comuna:
@@ -228,26 +265,50 @@ const EditarDireccion = () => {
                         </select>
                         <div className="invalid-feedback">Por favor, selecciona una comuna.</div>
                     </div>
+
                     <div className="col-md-3 mb-3">
                         <label htmlFor="calle" className="form-label">
                             Calle:
                         </label>
-                        <input type="text" className="form-control" id="calle" name="calle" value={formData.calle} onChange={handleChange} placeholder="Ingresa la calle" required />
-                        <div className="invalid-feedback">Por favor, ingresa la calle.</div>
+                        <input type="text"
+                            className={`form-control ${formErrors.calle ? 'is-invalid' : ''}`}
+                            id="calle"
+                            name="calle"
+                            value={formData.calle}
+                            onChange={handleChange}
+                            placeholder="Ingresa la calle"
+                            required />
+                        {formErrors.calle && <div className="invalid-feedback">{formErrors.calle}</div>}
                     </div>
+
                     <div className="col-md-3 mb-3">
                         <label htmlFor="numero" className="form-label">
                             Número:
                         </label>
-                        <input type="text" className="form-control" id="numero" name="numero" value={formData.numero} onChange={handleChange} placeholder="Ingresa el número" required />
-                        <div className="invalid-feedback">Por favor, ingresa el número.</div>
+                        <input type="text"
+                            className={`form-control ${formErrors.numero ? 'is-invalid' : ''}`}
+                            id="numero"
+                            name="numero"
+                            value={formData.numero}
+                            onChange={handleChange}
+                            placeholder="Ingresa el número"
+                            required />
+                        {formErrors.numero && <div className="invalid-feedback">{formErrors.numero}</div>}
                     </div>
+
                     <div className="col-md-3 mb-3">
                         <label htmlFor="deptoCasa" className="form-label">
                             Depto/Casa:
                         </label>
-                        <input type="text" className="form-control" id="deptoCasa" name="deptoCasa" value={formData.deptoCasa} onChange={handleChange} placeholder="Ingresa el departamento/casa" required />
-                        <div className="invalid-feedback"> Por favor, ingresa el departamento/casa. </div>
+                        <input type="text"
+                            className={`form-control ${formErrors.deptoCasa ? 'is-invalid' : ''}`}
+                            id="deptoCasa"
+                            name="deptoCasa"
+                            value={formData.deptoCasa}
+                            onChange={handleChange}
+                            placeholder="Ingresa el departamento/casa"
+                            required />
+                        <div className="invalid-feedback">{formErrors.deptoCasa}</div>
                     </div>
                     <div className="col-md-12 mt-2">
                         <div className="d-flex justify-content-between">
