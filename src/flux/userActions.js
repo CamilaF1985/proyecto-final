@@ -120,6 +120,9 @@ export const loginUser = (formData, closeModal, navigate) => {
       });
       const userData = response.data || {}; // Asegurarse de que userData esté bien definido 
       const miToken = userData.token; // Agregar el token a una variable separada
+      const expirationTimestamp = getJwtExpirationTimestamp(miToken); //Obtener la fecha de expiración del token
+      userData.tokenExpiration = expirationTimestamp; // Incluir la fecha de expiración en userData
+      sessionStorage.setItem('tokenExpiration', expirationTimestamp); // Almacena la fecha de expiración en sessionStorage 
       console.log('Respuesta del servidor:', response.data); // Imprimir la data de la respuesta del servidor
       sessionStorage.setItem('miToken', miToken); // Guardar el token en sessionStorage
       const idUnidad = userData.id_unidad; // Acceder a id_unidad desde userData
@@ -131,11 +134,13 @@ export const loginUser = (formData, closeModal, navigate) => {
       saveToLocalStorage(userData); // Guardar los datos del usuario en localStorage
       closeModal();
       // Redirigir a la página correspondiente según el tipo de usuario
-      if (userType === 'Administrador') {
-        navigate(`/home-administrador`);
-      } else if (userType === 'Inquilino') {
-        navigate(`/home-inquilino`);
-      }
+      setTimeout(() => {
+        if (userType === 'Administrador') {
+          navigate(`/home-administrador`);
+        } else if (userType === 'Inquilino') {
+          navigate(`/home-inquilino`);
+        }
+      }, 100);
     } catch (error) {
       console.error('Error durante el inicio de sesión:', error); // En caso de error, mostrar un mensaje 
       if (error.response && error.response.status === 401) {
@@ -264,6 +269,7 @@ export const logoutUser = () => {
   return async (dispatch) => {
     try {
       sessionStorage.removeItem('miToken'); // Limpiar el token en sessionStorage
+      sessionStorage.removeItem('tokenExpiration'); // Limpiar el token en sessionStorage
       dispatch(clearUserData()); // Limpiar los datos del usuario en el estado global
       dispatch(clearEntireState()); // Limpiar los datos del usuario en el estado global
     } catch (error) {
@@ -271,6 +277,38 @@ export const logoutUser = () => {
     }
   };
 };
+
+// Función para obtener la marca de tiempo de expiración del token JWT
+function getJwtExpirationTimestamp(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    console.log('Payload:', payload);
+
+    const expirationTimestamp = payload.exp * 1000; // La marca de tiempo está en segundos, así que se multiplica por 1000 para convertirla a milisegundos
+    const expirationDate = new Date(expirationTimestamp);
+
+    console.log('Expiration Date:', expirationDate.toLocaleString()); // Imprimir la fecha en formato legible
+    return expirationTimestamp;
+  } catch (error) {
+    console.error('Error al analizar el token JWT:', error);
+    return null;
+  }
+}
+
+// Verificar si el token ha expirado
+function isTokenExpired() {
+  const expirationTimestamp = sessionStorage.getItem('tokenExpiration');
+  if (!expirationTimestamp) {
+    // No hay información sobre la expiración del token
+    return true;
+  }
+  const currentTimestamp = new Date().getTime();
+  return currentTimestamp > parseInt(expirationTimestamp, 10);
+}
+
+
+
+
 
 
 

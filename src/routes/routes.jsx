@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { isTokenExpired, handleLogout } from '../services/tokenService';
 import App from '../App.jsx';
 import HomeAdministrador from '../views/HomeAdministrador.jsx';
 import HomeInquilino from '../views/HomeInquilino.jsx';
@@ -46,18 +47,28 @@ const AppRoutes = () => {
 
       if (storedUserType.toLowerCase() === 'administrador') {
         if (allowedPathsForAdministrador.some(path => window.location.pathname.includes(path))) {
+          checkTokenExpiration(); // Verifica el token antes de cargar la página protegida
           return;
         }
         navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
       } else if (storedUserType.toLowerCase() === 'inquilino') {
         if (allowedPathsForInquilino.some(path => window.location.pathname.includes(path))) {
+          checkTokenExpiration(); // Verifica el token antes de cargar la página protegida
           return;
         }
         navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
       }
     }
   }, [navigate]);
-  
+
+  // Función para verificar el token al cargar una ruta protegida
+  const checkTokenExpiration = () => {
+    if (isTokenExpired()) {
+      // Token expirado, realiza acciones de cierre de sesión
+      handleLogout(navigate);
+    }
+  };
+
   // Estructura JSX para definir las rutas de la aplicación
   return (
     <Routes>
@@ -68,28 +79,34 @@ const AppRoutes = () => {
       <Route path="/registro" element={<RegistroForm />} />
 
       {/* Rutas para vistas y componentes específicos */}
-      <Route path="/home-administrador" element={<HomeAdministrador />} />
-      <Route path="/home-inquilino" element={<HomeInquilino />} />
-      <Route path="/perfil" element={<Perfil />} />
-      <Route path="/administrar-panel" element={<PanelAdministracion />} />
-      <Route path="/registro-inquilino" element={<RegistroInquilino />} />
-      <Route path="/eliminar-inquilino" element={<EliminarInquilino />} />
-      <Route path="/agregar-tarea" element={<AgregarTarea />} />
-      <Route path="/eliminar-tarea" element={<EliminarTarea />} />
-      <Route path="/tareas-pendientes" element={<TareasPendientes />} />
-      <Route path="/agregar-gasto" element={<AgregarGasto />} />
-      <Route path="/eliminar-gasto" element={<EliminarGasto />} />
-      <Route path="/editar-direccion" element={<EditarDireccion />} />
-      <Route path="/gastos-pendientes" element={<GastosPendientes />} />
+      <Route
+        path="/home-administrador"
+        element={<HomeAdministrador onEnter={checkTokenExpiration} />}
+      />
+      <Route
+        path="/home-inquilino"
+        element={<HomeInquilino onEnter={checkTokenExpiration} />}
+      />
+      <Route path="/perfil" element={<Perfil onEnter={checkTokenExpiration} />} />
+      <Route path="/administrar-panel" element={<PanelAdministracion onEnter={checkTokenExpiration} />} />
+      <Route path="/registro-inquilino" element={<RegistroInquilino onEnter={checkTokenExpiration} />} />
+      <Route path="/eliminar-inquilino" element={<EliminarInquilino onEnter={checkTokenExpiration} />} />
+      <Route path="/agregar-tarea" element={<AgregarTarea onEnter={checkTokenExpiration} />} />
+      <Route path="/eliminar-tarea" element={<EliminarTarea onEnter={checkTokenExpiration} />} />
+      <Route path="/tareas-pendientes" element={<TareasPendientes onEnter={checkTokenExpiration} />} />
+      <Route path="/agregar-gasto" element={<AgregarGasto onEnter={checkTokenExpiration} />} />
+      <Route path="/eliminar-gasto" element={<EliminarGasto onEnter={checkTokenExpiration} />} />
+      <Route path="/editar-direccion" element={<EditarDireccion onEnter={checkTokenExpiration} />} />
+      <Route path="/gastos-pendientes" element={<GastosPendientes onEnter={checkTokenExpiration} />} />
 
       {/* Ruta para cerrar sesión */}
       <Route path="/logout" element={<Navigate to="/" replace={true} state={{ from: '/' }} />} />
-
     </Routes>
   );
 };
 
 export default AppRoutes;
+
 
 
 
