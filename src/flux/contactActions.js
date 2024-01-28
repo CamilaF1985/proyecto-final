@@ -2,18 +2,13 @@ import axios from 'axios';
 
 const sendContactForm = async (formData) => {
   try {
-    // Realizar la solicitud al endpoint /send_mail del backend
+    // Realizar la solicitud a la api
     const response = await axios.post('http://localhost:5000/send_mail', formData);
-
-    // Imprimir la respuesta en la consola
-    console.log('Respuesta del servidor:', response.data);
-
+    console.log('Respuesta del servidor:', response.data); // Imprimir la respuesta en la consola
     return response.data;  
   } catch (error) {
-    // Manejar errores si la solicitud falla
-    console.error('Error al enviar el formulario de contacto:', error);
+    console.error('Error al enviar el formulario de contacto:', error); // Manejar errores si la solicitud falla
     throw error;  
   }
 };
-
 export { sendContactForm };
