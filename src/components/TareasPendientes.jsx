@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getTareasAsignadas, updateFechaTermino } from '../flux/personTaskActions';
-import Swal from 'sweetalert2'; // Importar SweetAlert2
+import Swal from 'sweetalert2'; 
 import '../assets/css/App.css';
 
 const TareasPendientes = () => {
@@ -46,7 +46,6 @@ const TareasPendientes = () => {
 
     const handleEnviarTareasSeleccionadas = () => {
         const promises = tareasSeleccionadas.map((tareaId) => dispatch(updateFechaTermino(tareaId)));
-
         Promise.all(promises)
             .then(() => {
                 // Utilizar la función fetchTareas en lugar de copiar el código
@@ -84,7 +83,7 @@ const TareasPendientes = () => {
             <div className="modal-body">
                 <div className="form-container">
                     <h2 className="form-titulo">Tareas Pendientes</h2>
-                    <p ClassName="subtitulo"> Marca las tareas que ya has realizado </p>
+                    <p className="subtitulo"> Marca las tareas que ya has realizado </p>
                     {loading ? (
                         <p>Cargando...</p>
                     ) : (

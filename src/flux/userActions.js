@@ -42,16 +42,12 @@ export const saveNewUserData = (userData) => {
     try {
       // Realizar una solicitud GET para obtener la unidad por su ID
       const unitData = await dispatch(fetchUnitById(userData.id_unidad));
-
       // Verificar si unitData tiene datos antes de continuar
       if (unitData) {
-        // Actualizar el ID de la unidad en userData
-        userData.id_unidad = unitData.id;
-
+        userData.id_unidad = unitData.id; // Actualizar el ID de la unidad en userData
         // Realizar la solicitud POST al endpoint para crear el administrador
         const response = await axios.post('http://localhost:5000/create_persona_admin', userData);
-
-        // Verificar si la respuesta tiene un código de estado exitoso (por ejemplo, 2xx)
+        // Verificar si la respuesta tiene un código de estado exitoso 
         if (response.status >= 200 && response.status < 300) {
           console.log('Usuario creado exitosamente:', response.data);
         } else {
@@ -62,8 +58,7 @@ export const saveNewUserData = (userData) => {
         console.error('Error al obtener la unidad:', unitData);
       }
     } catch (error) {
-      // Lanzar la excepción para ser capturada por el componente
-      throw error;
+      throw error;  // Lanzar la excepción para ser capturada por el componente
     }
   };
 };
@@ -73,27 +68,18 @@ export const saveNewInquilinoData = (userData) => {
   return async (dispatch) => {
     return new Promise(async (resolve, reject) => {
       try {
-        // Obtener el id_unidad desde el localStorage
-        const idUnidad = localStorage.getItem('id_unidad');
-
+        const idUnidad = localStorage.getItem('id_unidad'); // Obtener el id_unidad desde el localStorage
         // Verificar si id_unidad tiene un valor antes de continuar
         if (idUnidad) {
-          // Actualizar el ID de la unidad en userData
-          userData.id_unidad = idUnidad;
+          userData.id_unidad = idUnidad;  // Actualizar el ID de la unidad en userData
           console.log('ID de unidad desde localStorage:', idUnidad);
-
-          // Verificar que userData tenga todos los campos necesarios y esté bien formado
-          console.log('Datos del inquilino a enviar:', userData);
-
+          console.log('Datos del inquilino a enviar:', userData);  // Verificar contenido de UserData
           // Realizar la solicitud POST al endpoint para crear el inquilino
           const response = await axios.post('http://localhost:5000/create_persona_inquilino', userData);
           console.log('Respuesta del servidor:', response);
-
           // Despachar la acción para guardar los nuevos datos del inquilino en el estado global
           dispatch(saveUserData(response.data));
-
-          // Resolver la promesa con el resultado de la solicitud
-          resolve(response.data);
+          resolve(response.data);  // Resolver la promesa con el resultado de la solicitud
         } else {
           console.error('Error: id_unidad no encontrado en el localStorage');
           // Rechazar la promesa con un mensaje de error
@@ -101,9 +87,7 @@ export const saveNewInquilinoData = (userData) => {
         }
       } catch (error) {
         console.error('Error al guardar el inquilino:', error);
-
-        // Rechazar la promesa con el error obtenido
-        reject(error);
+        reject(error); // Rechazar la promesa con el error obtenido
       }
     });
   };
@@ -120,59 +104,32 @@ export const saveToLocalStorage = (userData) => {
 export const loginUser = (formData, closeModal, navigate) => {
   return async (dispatch) => {
     try {
-      // Verificar si hay un token en sessionStorage
-      const existingToken = sessionStorage.getItem('miToken');
-
+      const existingToken = sessionStorage.getItem('miToken');// Verificar si hay un token en sessionStorage
       if (existingToken) {
-        // Si ya hay un token almacenado, redirigir al usuario según el userType en localStorage
-        const userType = localStorage.getItem('userType');
+        const userType = localStorage.getItem('userType');// Si ya hay un token almacenado, redirigir al usuario
         if (userType === 'Administrador') {
           navigate(`/home-administrador`);
         } else if (userType === 'Inquilino') {
           navigate(`/home-inquilino`);
         }
-
-        // No es necesario continuar con el inicio de sesión
         return;
       }
-      // Si no hay un token en sessionStorage, proceder con el inicio de sesión normal
       const response = await axios.post('http://localhost:5000/auth/login', {
         rut: formData.rut,
         contrasena: formData.password,
       });
-
-      // Modificación para asegurarse de que userData esté bien definido
-      const userData = response.data || {};
-
-      // Agregar el token a una variable separada (sin guardarlo en localStorage)
-      const miToken = userData.token;
-
-      // Imprimir la data de la respuesta del servidor
-      console.log('Respuesta del servidor:', response.data);
-
-      // Guardar el token en sessionStorage
-      sessionStorage.setItem('miToken', miToken);
-
-      // Acceder a id_unidad directamente desde userData
-      const idUnidad = userData.id_unidad;
+      const userData = response.data || {}; // Asegurarse de que userData esté bien definido 
+      const miToken = userData.token; // Agregar el token a una variable separada
+      console.log('Respuesta del servidor:', response.data); // Imprimir la data de la respuesta del servidor
+      sessionStorage.setItem('miToken', miToken); // Guardar el token en sessionStorage
+      const idUnidad = userData.id_unidad; // Acceder a id_unidad desde userData
       console.log('Valor de id_unidad:', idUnidad);
-
-      // Determinar el tipo de usuario basado en el id_perfil obtenido
-      const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';
-
-      // Agregar el tipo de usuario a los datos del usuario
-      userData.userType = userType;
-
-      // Guardar los datos del usuario en el estado global
-      dispatch(saveUserData(userData));
-
-      // Guardar los datos del usuario en localStorage
+      const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';  // Determinar el tipo de usuario 
+      userData.userType = userType; // Agregar el tipo de usuario a los datos del usuario
+      dispatch(saveUserData(userData)); // Guardar los datos del usuario en el estado global
       localStorage.setItem('userType', userType);
-      saveToLocalStorage(userData);
-
-      // Cerrar el modal de inicio de sesión
+      saveToLocalStorage(userData); // Guardar los datos del usuario en localStorage
       closeModal();
-
       // Redirigir a la página correspondiente según el tipo de usuario
       if (userType === 'Administrador') {
         navigate(`/home-administrador`);
@@ -180,15 +137,10 @@ export const loginUser = (formData, closeModal, navigate) => {
         navigate(`/home-inquilino`);
       }
     } catch (error) {
-      // En caso de error durante la solicitud, mostrar un mensaje de error
-      console.error('Error durante el inicio de sesión:', error);
-
-      // Si el error proviene del servidor (por ejemplo, código 401), lanzar una excepción
+      console.error('Error durante el inicio de sesión:', error); // En caso de error, mostrar un mensaje 
       if (error.response && error.response.status === 401) {
         throw new Error('Credenciales inválidas. Por favor, inténtalo de nuevo.');
       }
-
-      // Si el error no es del servidor, mostrar un mensaje de error genérico
       throw new Error('Se produjo un error inesperado. Por favor, inténtalo de nuevo más tarde.');
     }
   };
@@ -198,32 +150,26 @@ export const loginUser = (formData, closeModal, navigate) => {
 export const getUserByRut = () => {
   return async (dispatch) => {
     try {
-      // Verificar si hay un token en sessionStorage
-      const token = sessionStorage.getItem('miToken');
+      const token = sessionStorage.getItem('miToken'); // Verificar si hay un token en sessionStorage
 
       if (!token) {
         console.error('Error: Token no encontrado en el sessionStorage');
-        return; // No continúes si no hay token
+        return; // No continuar si no hay token
       }
-
       const rut = localStorage.getItem('rut');
-
       if (rut) {
         const config = {
           headers: {
             Authorization: `Bearer ${token}`, // Incluir el token en la cabecera de la solicitud
           },
         };
-
         const response = await axios.get(`http://localhost:5000/get_persona_by_rut/${rut}`, config);
-
         if (response.status === 200) {
           const userData = response.data;
           const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';
           userData.userType = userType;
-
-          // Utilizar una promesa para esperar a que el estado se actualice antes de resolver
           return new Promise((resolve) => {
+            // Utilizar una promesa para esperar a que el estado se actualice antes de resolver
             dispatch(saveUserData(userData));
             resolve();
           });
@@ -248,16 +194,12 @@ export const updateEmail = (userId, newEmail) => {
       const response = await axios.put(`http://localhost:5000/update_email_persona/${userId}`, {
         email: newEmail,
       });
-
       if (response.status === 200) {
-        // Muestra un mensaje de éxito si la actualización del correo electrónico fue exitosa
-        console.log('Correo electrónico actualizado exitosamente');
+        console.log('Correo electrónico actualizado exitosamente');  // Mensaje en caso de éxito
       } else {
-        // Muestra un mensaje de error si la solicitud no fue exitosa
-        console.error('Error al actualizar el correo electrónico:', response.data.error);
+        console.error('Error al actualizar el correo electrónico:', response.data.error); //Mensaje en caso de error
       }
     } catch (error) {
-      // Muestra un mensaje de error si ocurre un error durante la actualización del correo electrónico
       console.error('Error durante la actualización del correo electrónico:', error);
     }
   };
@@ -269,21 +211,17 @@ export const getUsersByUnit = (unitId) => {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await axios.get(`http://localhost:5000/get_person_by_unidad/${unitId}`);
-
         if (response.status === 200) {
           // Guardar los usuarios en el estado global antes de devolver la respuesta
           dispatch(saveUsersData(response.data));
-          // Resolver la Promesa con los datos
-          resolve(response.data);
+          resolve(response.data); // Resolver la Promesa con los datos
         } else {
           console.error('Error en la respuesta del servidor:', response);
-          // Rechazar la Promesa con el error
-          reject({ error: `Error: ${response.data.error}` });
+          reject({ error: `Error: ${response.data.error}` });  // Rechazar la Promesa con el error
         }
       } catch (error) {
         console.error('Error en la solicitud:', error);
-        // Rechazar la Promesa con el error
-        reject({ error: `Error al obtener usuarios por unidad: ${error.message}` });
+        reject({ error: `Error al obtener usuarios por unidad: ${error.message}` }); // Rechazar la Promesa con el error
       }
     });
   };
@@ -295,42 +233,29 @@ export const deletePersonaByRut = (rut, id_unidad) => {
     try {
       // Realiza la solicitud DELETE al endpoint para eliminar la persona por su RUT
       const response = await axios.delete(`http://localhost:5000/delete_persona_by_rut/${rut}/${id_unidad}`);
-
       if (response.status === 200) {
-        // Muestra un mensaje de éxito si la persona fue eliminada correctamente
-        console.log('Persona eliminada exitosamente');
-
+        console.log('Persona eliminada exitosamente'); // Mensaje de éxito si la persona fue eliminada correctamente
         // Despacha la acción para obtener y guardar los datos actualizados de usuarios
         const updatedUsers = await dispatch(getUsersByUnit(id_unidad));
         dispatch(saveUsersData(updatedUsers));
-
-        // Devolvemos los datos actualizados de usuarios después de la eliminación
-        return updatedUsers;
+        return updatedUsers; // Devolvemos los datos actualizados de usuarios después de la eliminación
       } else {
-        // Muestra un mensaje de error si la solicitud no fue exitosa
-        console.error('Error al eliminar la persona:', response.data.error);
-        // Devolvemos null si la eliminación falló
-        return null;
+        throw new Error(`Error al eliminar la persona: ${response.data.error}`); //manejo de error
       }
     } catch (error) {
-      // Muestra un mensaje de error si ocurre un error durante la eliminación de la persona
-      console.error('Error durante la eliminación de la persona:', error);
-      // Devolvemos null si la eliminación falló
-      return null;
+      console.error('Error durante la eliminación de la persona:', error); //Mensaje de error
+      return null; // Devolver null si la eliminación falló
     }
   };
 };
 
-// Acción para limpiar los datos del usuario almacenados localmente
 export const clearUserData = () => {
-  // Eliminar ciertos elementos del localStorage asociados a los datos del usuario
+  // Acción para limpiar los datos del usuario almacenados localmente
   localStorage.removeItem('userType');
   localStorage.removeItem('rut');
   localStorage.removeItem('id_unidad');
-
-  // Retornar la acción para indicar la limpieza de los datos del usuario
   return {
-    type: CLEAR_USER_DATA,
+    type: CLEAR_USER_DATA,  // Retornar la acción para indicar la limpieza de los datos del usuario
   };
 };
 
@@ -338,38 +263,18 @@ export const clearUserData = () => {
 export const logoutUser = () => {
   return async (dispatch) => {
     try {
-      // Limpiar el token en sessionStorage
-      sessionStorage.removeItem('miToken');
-
-      // Limpiar los datos del usuario en el estado global
-      dispatch(clearUserData());
-
-      // Limpiar el estado completo de la aplicación
-      dispatch(clearEntireState());
+      sessionStorage.removeItem('miToken'); // Limpiar el token en sessionStorage
+      dispatch(clearUserData()); // Limpiar los datos del usuario en el estado global
+      dispatch(clearEntireState()); // Limpiar los datos del usuario en el estado global
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
   };
 };
 
-// Función para manejar la expiración del token después de 10 minutos
-const handleTokenExpiration = () => {
-  // Realizar la acción de cerrar sesión al expirar el token
-  dispatch(logoutUser());
-  console.log('El token ha expirado. Cerrando sesión...');
-  window.alert('El token ha expirado. Cerrando sesión...');
-};
 
-// Inicia el temporizador cuando el usuario inicia sesión
-const startTokenExpirationTimer = () => {
-  const tokenExpirationTime = 10 * 60 * 1000; // 10 minutos en milisegundos
 
-  // Configura el temporizador para ejecutar la función cuando el token expire
-  setTimeout(handleTokenExpiration, tokenExpirationTime);
-};
 
-// Cuando el usuario inicia sesión, inicia el temporizador
-startTokenExpirationTimer();
 
 
 
