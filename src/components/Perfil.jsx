@@ -19,16 +19,15 @@ const Perfil = () => {
     // Estado local para controlar la visibilidad del input y el botón
     const [isEditing, setIsEditing] = useState(false);
     const [newEmail, setNewEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
 
     useEffect(() => {
         const fetchData = () => {
             dispatch(getUserByRut())
                 .then(() => {
-                    // La acción getUserByRut se completó, ahora puedes realizar otras operaciones
                     if (userData.id_unidad) {
                         return dispatch(fetchUnitById(userData.id_unidad));
                     } else {
-                        // Si no hay id_unidad, puedes devolver una promesa resuelta
                         return Promise.resolve(null);
                     }
                 })
@@ -53,13 +52,9 @@ const Perfil = () => {
     };
 
     const handleLogout = () => {
-        // Llama a la acción logoutUser
         dispatch(logoutUser());
-
-        // Después de cerrar sesión, navega a /logout
         navigate('/logout');
     };
-
 
     const handleEditEmail = () => {
         setIsEditing(true);
@@ -68,10 +63,16 @@ const Perfil = () => {
     const handleCancelEdit = () => {
         setIsEditing(false);
         setNewEmail('');
+        setEmailError(''); // Limpiar el mensaje de error al cancelar la edición
     };
 
     const handleUpdateEmail = async () => {
         try {
+            // Verificar si hay un error antes de enviar la actualización
+            if (emailError) {
+                return;
+            }
+
             // Dispatch de la acción para actualizar el email
             const updateEmailResult = dispatch(updateEmail(userData.id, newEmail));
 
@@ -95,7 +96,25 @@ const Perfil = () => {
         } finally {
             // Salir del modo de edición
             setIsEditing(false);
+            setEmailError(''); // Limpiar el mensaje de error después de la actualización
         }
+    };
+
+    const handleEmailChange = (value) => {
+        // Validar el nuevo correo electrónico en tiempo real
+        if (!validateEmail(value)) {
+            setEmailError('Por favor, ingresa un correo electrónico válido.');
+        } else {
+            setEmailError('');
+        }
+
+        // Actualizar el estado del correo electrónico
+        setNewEmail(value);
+    };
+
+    const validateEmail = (email) => {
+        // Validar que el correo tenga @ y un dominio
+        return email.includes('@') && email.split('@')[1].includes('.');
     };
 
     return (
@@ -173,10 +192,11 @@ const Perfil = () => {
                                     <>
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className={`form-control ${emailError ? 'is-invalid' : ''}`}
                                             value={newEmail}
-                                            onChange={(e) => setNewEmail(e.target.value)}
+                                            onChange={(e) => handleEmailChange(e.target.value)}
                                         />
+                                        {emailError && <div className="invalid-feedback mb-2">{emailError}</div>}
                                         <div className="d-flex justify-content-between align-items-center">
                                             <button className="btn btn-success" type="button" onClick={handleUpdateEmail}>
                                                 Guardar
@@ -209,6 +229,8 @@ const Perfil = () => {
 };
 
 export default Perfil;
+
+
 
 
 
