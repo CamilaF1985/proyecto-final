@@ -15,6 +15,9 @@ export function isTokenExpired() {
 export function handleLogout(navigate) {
     sessionStorage.removeItem('miToken');
     sessionStorage.removeItem('tokenExpiration');
+    localStorage.removeItem('userType');
+    localStorage.removeItem('rut');
+    localStorage.removeItem('id_unidad');
 
     // Muestra una alerta al usuario
     Swal.fire({

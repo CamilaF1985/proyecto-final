@@ -34,7 +34,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000", "methods": ["OP
 app.config["JWT_SECRET_KEY"] = "505f2af45d4a0e161a7dd2d12fdae47f"
 
 # Configurar el tiempo de expiración predeterminado para los tokens (opcional)
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=10)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=3)
 
 jwt = JWTManager(app)
 
