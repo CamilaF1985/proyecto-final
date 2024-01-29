@@ -1,30 +1,45 @@
-from flask import Blueprint, jsonify
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask import Blueprint, jsonify, current_app, request
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
 from datetime import timedelta
-from flask_jwt_extended import unset_jwt_cookies
+import json
 
 elimina_token_bp = Blueprint('elimina_token', __name__)
 
-@elimina_token_bp.route('/elimina_token', methods=['POST'])
-@jwt_required()
+# Variable para almacenar el estado de renovación del token
+token_renewed = {}
+
+@elimina_token_bp.route('/elimina_token', methods=['POST', 'OPTIONS'])
+@jwt_required(optional=True)
 def logout():
-    # Obtiene la identidad del usuario del token
+    # Si es una solicitud OPTIONS, simplemente responde sin verificar el token
+    if request.method == 'OPTIONS':
+        response = current_app.response_class(
+            response=json.dumps({}),
+            status=200,
+            mimetype='application/json'
+        )
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        return response
+
+    # Si es una solicitud POST, entonces verifica el token y realiza las acciones necesarias
     current_user = get_jwt_identity()
+    
+    # Verificar si el token ha sido renovado previamente
+    if token_renewed.get(current_user):
+        return jsonify({"message": "Token already renewed"}), 400
 
-    # Imprimir en la consola para verificar lo que está sucediendo
     print(f"Usuario {current_user} ha solicitado cerrar sesión.")
+    
+    # Crear un nuevo token de acceso
+    new_token = create_access_token(identity=current_user, expires_delta=timedelta(minutes=3))
+    print(f"Sesión extendida para el usuario {current_user}.")
 
-    # Crea un nuevo token con un tiempo de expiración muy corto (por ejemplo, 1 minuto)
-    new_token = create_access_token(identity=current_user, expires_delta=timedelta(minutes=1))
+    # Crear un nuevo token de actualización
+    new_refresh_token = create_refresh_token(identity=current_user)
 
-    # Elimina el token actual del cliente
-    resp = jsonify({"message": "Logged out", "new_token": new_token})
-    unset_jwt_cookies(resp)
+    # Marcar el token como renovado para este usuario
+    token_renewed[current_user] = True
 
-    # Imprimir en la consola para verificar lo que está sucediendo
-    print(f"Sesión cerrada para el usuario {current_user}.")
-
-    return resp, 200
-
+    return jsonify({"message": "Token renewed", "new_token": new_token, "new_refresh_token": new_refresh_token}), 200
 
  

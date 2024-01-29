@@ -126,7 +126,9 @@ const EditarPassword = () => {
                             className={`form-control`}
                             id="confirmarContrasena"
                             value={confirmarContrasena}
-                            onChange={(e) => setConfirmarContrasena(e.target.value)}
+                            onChange={(e) => {
+                                setConfirmarContrasena(e.target.value);
+                            }}
                             placeholder="Confirma la nueva contraseña"
                             required
                         />
