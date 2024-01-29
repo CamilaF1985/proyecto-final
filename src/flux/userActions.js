@@ -158,8 +158,7 @@ export const getUserByRut = () => {
       const token = sessionStorage.getItem('miToken'); // Verificar si hay un token en sessionStorage
 
       if (!token) {
-        console.error('Error: Token no encontrado en el sessionStorage');
-        return; // No continuar si no hay token
+        return;
       }
       const rut = localStorage.getItem('rut');
       if (rut) {
@@ -281,30 +280,47 @@ export const logoutUser = () => {
 // Función para obtener la marca de tiempo de expiración del token JWT
 function getJwtExpirationTimestamp(token) {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    console.log('Payload:', payload);
+    const payload = JSON.parse(atob(token.split('.')[1])); //Extraer la marca de tpo del objeto json
+    console.log('Payload:', payload); //console.log para el payload retornado por el servidor
 
-    const expirationTimestamp = payload.exp * 1000; // La marca de tiempo está en segundos, así que se multiplica por 1000 para convertirla a milisegundos
+    const expirationTimestamp = payload.exp * 1000; // Convertir la marca de tpo a milisegundos
     const expirationDate = new Date(expirationTimestamp);
 
     console.log('Expiration Date:', expirationDate.toLocaleString()); // Imprimir la fecha en formato legible
-    return expirationTimestamp;
+    return expirationTimestamp; //devuelve la marca de tpo en caso de exito
   } catch (error) {
+    //manejo de errores
     console.error('Error al analizar el token JWT:', error);
     return null;
   }
 }
 
-// Verificar si el token ha expirado
-function isTokenExpired() {
-  const expirationTimestamp = sessionStorage.getItem('tokenExpiration');
-  if (!expirationTimestamp) {
-    // No hay información sobre la expiración del token
-    return true;
-  }
-  const currentTimestamp = new Date().getTime();
-  return currentTimestamp > parseInt(expirationTimestamp, 10);
-}
+// Acción para actualizar la contraseña
+export const updatePassword = (formData) => {
+  return async () => {
+    try {
+      const rut = localStorage.getItem('rut'); // Obtener el rut desde el localStorage
+      if (!rut) {
+        console.error('Error: Rut no encontrado en el localStorage');//si no se encuentra el rut, imprimir el error
+        return;
+      }
+      const url = `http://localhost:5000/contrasena/${rut}`; //construir la url antes de la solicitud para poder revisarla
+      console.log('URL de la solicitud:', url); // Mostrar la URL antes de la solicitud con motivos de depuracion
+      const convertedFormData = {
+        contrasena: formData.nuevaContrasena,// Realizar la conversión de la clave
+      };
+      const response = await axios.put(url, convertedFormData); //solicitud a la api para cambiar la contraseña en la BD
+      console.log('Contraseña actualizada:', response.data); //console.log con la respuesta
+    } catch (error) {
+      console.error('Error al actualizar la contraseña:', error); //si hay un error, se imprime por consola
+    }
+  };
+};
+
+
+
+
+
 
 
 

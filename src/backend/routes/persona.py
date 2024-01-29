@@ -2,6 +2,7 @@ from flask import Flask, jsonify, Blueprint, request
 from flask_jwt_extended import JWTManager, jwt_required
 from flask_cors import CORS
 from models import Persona, db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 persona_bp = Blueprint('persona_bp', __name__)
 CORS(persona_bp)
@@ -95,4 +96,31 @@ def delete_persona_by_rut(rut, id_unidad):
             return jsonify({"error": "Persona no encontrada"}), 404
     except Exception as e:
         return jsonify({"error": "Error al eliminar la persona", "details": str(e)}), 500
+    
+contrasena_bp = Blueprint('contrasena_bp', __name__)
+
+@contrasena_bp.route('/contrasena/<string:rut>', methods=['PUT'])
+def editar_contrasena(rut):
+    try:
+        persona = Persona.query.filter_by(rut=rut).first()
+        if persona:
+            data = request.json
+            nueva_contrasena = data.get('contrasena')
+
+            if not nueva_contrasena:
+                return jsonify({"error": "La nueva contraseña es requerida"}), 400
+
+            # Hashear la nueva contraseña
+            persona.contrasena = generate_password_hash(nueva_contrasena, method='pbkdf2:sha256')
+
+            try:
+                db.session.commit()
+                return jsonify({"message": "Contraseña actualizada exitosamente"}), 200
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({"error": "Error al actualizar la contraseña", "details": str(e)}), 500
+        else:
+            return jsonify({"error": "Persona no encontrada"}), 404
+    except Exception as e:
+        return jsonify({"error": "Error al procesar la solicitud", "details": str(e)}), 500    
 

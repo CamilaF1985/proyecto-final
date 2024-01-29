@@ -16,6 +16,7 @@ import AgregarGasto from '../components/AgregarGasto.jsx';
 import EliminarGasto from '../components/EliminarGasto.jsx';
 import GastosPendientes from '../components/GastosPendientes.jsx';
 import EditarDireccion from '../components/EditarDireccion.jsx';
+import EditarPassword from '../components/EditarPassword.jsx';
 
 const AppRoutes = () => {
   const navigate = useNavigate();
@@ -36,13 +37,15 @@ const AppRoutes = () => {
         '/agregar-gasto',
         '/eliminar-gasto',
         '/editar-direccion',
-        '/perfil'
+        '/perfil',
+        '/editar-password'
       ];
 
       const allowedPathsForInquilino = [
         '/tareas-pendientes',
         '/gastos-pendientes',
-        '/perfil'
+        '/perfil',
+        '/editar-password'
       ];
 
       if (storedUserType.toLowerCase() === 'administrador') {
@@ -97,6 +100,7 @@ const AppRoutes = () => {
       <Route path="/agregar-gasto" element={<AgregarGasto onEnter={checkTokenExpiration} />} />
       <Route path="/eliminar-gasto" element={<EliminarGasto onEnter={checkTokenExpiration} />} />
       <Route path="/editar-direccion" element={<EditarDireccion onEnter={checkTokenExpiration} />} />
+      <Route path="/editar-password" element={<EditarPassword onEnter={checkTokenExpiration} />} />
       <Route path="/gastos-pendientes" element={<GastosPendientes onEnter={checkTokenExpiration} />} />
 
       {/* Ruta para cerrar sesión */}

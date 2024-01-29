@@ -7,32 +7,35 @@ import { fetchUnitById } from '../flux/unitActions';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/App.css';
 import logoutIcon from '../assets/img/logout.png';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 const Perfil = () => {
+    // Componente funcional para gestionar data personal del usuario
     const dispatch = useDispatch();
     const modalIsOpen = useSelector((state) => state.modalIsOpen);
     const user = useSelector((state) => state.user);
     const navigate = useNavigate();
     const userData = user || {};
     const unit = useSelector((state) => state.unit);
-
-    // Estado local para controlar la visibilidad del input y el botón
+    // Estado local para controlar la visibilidad del input y el botón para editar el email
     const [isEditing, setIsEditing] = useState(false);
     const [newEmail, setNewEmail] = useState('');
-    const [emailError, setEmailError] = useState('');
+    const [emailError, setEmailError] = useState(''); // Estado para validación en tpo real
 
     useEffect(() => {
+        // Obtiene la data actualizada del usuario desde el servidor despachando getUserByRut
         const fetchData = () => {
             dispatch(getUserByRut())
                 .then(() => {
                     if (userData.id_unidad) {
-                        return dispatch(fetchUnitById(userData.id_unidad));
+                        return dispatch(fetchUnitById(userData.id_unidad)); //Si la promesa se resuelve trae la data
                     } else {
-                        return Promise.resolve(null);
+                        return Promise.resolve(null); //Sino devuelve nuloS
                     }
                 })
                 .then((unitData) => {
                     if (unitData) {
+                        //Manejo de errores al traer la data 
                         console.log('Unidad encontrada - ID:', unitData.id, 'Nombre:', unitData.nombre);
                     } else {
                         console.log('No se encontraron datos de unidad');
@@ -47,22 +50,30 @@ const Perfil = () => {
     }, [dispatch, userData.id_unidad]);
 
     const handleCloseModal = () => {
+        //Cerrar el modal y redirigir al home correspodiente al tipo de usuario
         const path = user.userType === 'Administrador' ? '/home-administrador' : '/home-inquilino';
         dispatch(closeModalAndRedirect(path, navigate));
     };
 
+    const handleEditarPasswordClick = () => {
+        // Redirige a la ruta /editar-direccion cuando se hace clic en "Editar dirección"
+        navigate('/editar-password');
+    };
+
     const handleLogout = () => {
+        //Dispatch para el cierre de la sesión
         dispatch(logoutUser());
         navigate('/logout');
     };
 
     const handleEditEmail = () => {
+        //Función para activar la edición del mail
         setIsEditing(true);
     };
 
     const handleCancelEdit = () => {
-        setIsEditing(false);
-        setNewEmail('');
+        setIsEditing(false); //Si el usuario cancela la edición del mail, desactiva el modo de edición
+        setNewEmail(''); //Limpia el input para el nuevo mail
         setEmailError(''); // Limpiar el mensaje de error al cancelar la edición
     };
 
@@ -133,6 +144,8 @@ const Perfil = () => {
 
             <div className="modal-body">
                 <div className="perfil-container row">
+                    {/* Componente CronometroSesion */}
+                    <CronometroSesion />
                     <div className="col-md-12 mb-3 text-center">
                         <h1>Mi Perfil</h1>
                     </div>
@@ -212,9 +225,10 @@ const Perfil = () => {
 
                         <div className="row mt-4">
                             <div className="d-flex justify-content-between align-items-center">
-                                <button className="btn btn-primary me-2" type="button">
+                                <button className="btn btn-primary me-2" type="button" onClick={handleEditarPasswordClick}>
                                     Cambiar contraseña
                                 </button>
+
                                 <div onClick={handleLogout} style={{ cursor: 'pointer' }}>
                                     <img src={logoutIcon} alt="Cerrar sesión" className="img-fluid ms-5" style={{ width: '30px', height: '30px' }} />
                                     <p className="form-text img-fluid ms-5">Cerrar sesión</p>
