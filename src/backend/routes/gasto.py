@@ -14,8 +14,15 @@ def create_gasto():
         monto_original = data.get('monto_original')
         descripcion = data.get('descripcion')
 
-        if not (id_unidad and factura and monto_original and descripcion):
-            return jsonify({"error": "El id de la unidad, numero de factura, monto y descripcion es requerido"}), 400     
+        if not id_unidad:
+            return jsonify({"error": "El id de la unidad es requerido"}), 400
+        if not factura:
+            return jsonify({"error": "El número de factura es requerido"}), 400
+        if not monto_original or monto_original <= 0:
+            return jsonify({"error": "El monto original debe ser mayor que cero"}), 400
+        if not descripcion:
+            return jsonify({"error": "La descripción es requerida"}), 400
+  
 
         nuevo_gasto = Gasto(
             id_unidad=id_unidad,
