@@ -34,7 +34,6 @@ const EliminarInquilino = () => {
           responsePromise.then((responseData) => {
             // Verificar si responseData es un array (los datos reales)
             if (Array.isArray(responseData)) {
-              console.log('Datos de usuarios actualizados:', responseData);
               setLoading(false);
             } else if (responseData && responseData.error) {
               console.error('Error al obtener usuarios por unidad:', responseData.error);
@@ -71,7 +70,6 @@ const EliminarInquilino = () => {
             text: 'Inquilino eliminado correctamente.',
             confirmButtonText: 'OK',
           }).then(() => {
-            console.log('Inquilino eliminado correctamente');
             handleCloseModal();  // Cerrar el modal
           });
         } else {

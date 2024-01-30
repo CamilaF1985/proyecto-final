@@ -1,31 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 
 const Mapa = () => {
-  const iframeRef = useRef(null);
-
-  const loadMap = () => {
-    const location = {
-      latitude: -33.374064,
-      longitude: -70.503642,
-    };
-
-    const apiKey = 'AIzaSyAZmMpwdOFx6kNgtzVo9ckmcJAnnxviLU4';
-
-    let mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}`;
-    mapUrl += `&q=${location.latitude},${location.longitude}&zoom=15`;
-
-    if (iframeRef.current) {
-      iframeRef.current.src = mapUrl;
-    }
-  };
-
-  useEffect(() => {
-    // Cargar el mapa cuando el componente se monta
-    loadMap();
-  }, []);
-
   return (
-    <div className="google-maps-iframe">
+    <div className="google-maps-iframe" style={{ height: '300px' }}>
       <iframe
         title="Incrustación de Google Maps"
         width="100%"
@@ -33,13 +10,21 @@ const Mapa = () => {
         style={{ border: '0' }}
         allowFullScreen
         referrerPolicy="no-referrer-when-downgrade"
-        ref={iframeRef}
+        src="https://www.google.com/maps/embed/v1/place?q=-33.374064%2C-70.503642&key=AIzaSyAZmMpwdOFx6kNgtzVo9ckmcJAnnxviLU4"
       />
     </div>
   );
 };
 
 export default Mapa;
+
+
+
+
+
+
+
+
 
 
 
