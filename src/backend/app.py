@@ -34,11 +34,11 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000", "methods": ["OP
 app.config["JWT_SECRET_KEY"] = "505f2af45d4a0e161a7dd2d12fdae47f"
 
 # Configurar el tiempo de expiración predeterminado para los tokens (opcional)
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=3)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=10)
 
 jwt = JWTManager(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:10644@localhost:5434/cuentas_claras_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:12345@localhost:5434/cuentas_claras_db'
 db.init_app(app)
   
 migrate = Migrate(app, db)

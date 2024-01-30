@@ -30,6 +30,7 @@ export const assignTaskToRandomPerson = (taskData) => async (dispatch) => {
             });
             return;
         }
+
         const users = await dispatch(getUsersByUnit(unitId));  // Obtener la lista de usuarios de la unidad
         // Verificar si hay usuarios en la unidad
         if (users.length === 0) {
@@ -40,6 +41,7 @@ export const assignTaskToRandomPerson = (taskData) => async (dispatch) => {
             });
             return;
         }
+
         const randomUser = users[Math.floor(Math.random() * users.length)]; // Seleccionar un usuario aleatorio
         // Asignar el id_persona y id_unidad seleccionados a taskData
         taskData.id_persona = randomUser.id;
@@ -47,15 +49,16 @@ export const assignTaskToRandomPerson = (taskData) => async (dispatch) => {
         // Establecer la fecha de inicio con la fecha actual
         const currentDate = new Date();
         taskData.fecha_inicio = currentDate.toISOString(); // Convierte la fecha a formato ISO
-        console.log('Datos de la asignación de tarea a persona:', taskData); // Imprimir la data que se está enviando
         // Realizar la asignación de la tarea al usuario seleccionado
         const response = await axios.post('http://localhost:5000/create_tarea_persona', taskData);
+
         if (response.status === 201) {
             // Despacha la acción para agregar la asignación al estado
             dispatch({
                 type: ADD_PERSON_TASK,
                 payload: response.data,
             });
+
         } else {
             // Manejar posibles errores en la respuesta del servidor
             console.error('Error al asignar tarea a persona:', response.data.error || 'Error desconocido');
@@ -64,6 +67,7 @@ export const assignTaskToRandomPerson = (taskData) => async (dispatch) => {
                 payload: response.data.error || 'Error desconocido',
             });
         }
+
     } catch (error) {
         console.error('Error durante la asignación de tarea a persona:', error.message || 'Error desconocido');
         dispatch({
@@ -76,21 +80,20 @@ export const assignTaskToRandomPerson = (taskData) => async (dispatch) => {
 // Acción asincrónica para obtener las tareas asignadas al usuario
 export const getTareasAsignadas = () => {
     return async (dispatch, getState) => {
+
         try {
             await dispatch(getUserByRut()); // Utilizar la acción getUserByRut y esperar a que se resuelva
             // Obtener el ID del usuario almacenado en el estado después de llamar a getUserByRut
             const idUsuario = getState().user.id;
-            console.log('ID del Usuario:', idUsuario); // Console.log para imprimir el ID del usuario
             // Realizar una solicitud al servidor para obtener las tareas asignadas al usuario por su ID
             const response = await axios.get(`http://localhost:5000/tarea_persona_by_id_persona/${idUsuario}`);
             if (response.status === 200) {
                 const tareasAsignadas = response.data.tarea_persona_list; // Extraer tarea_persona_list de la respuesta
                 dispatch(saveTareasAsignadas(tareasAsignadas)); // Despachar la acción para guardar las tareas asignadas en el estado
-                console.log('Tareas asignadas:', tareasAsignadas); // Console.log para las tareas asignadas
                 // Imprimir el nombre de la primera tarea
                 if (tareasAsignadas.length > 0) {
-                    console.log('Nombre de la primera tarea:', tareasAsignadas[0].nombre_tarea);
                 }
+
             } else {
                 // Mostrar un mensaje de error si la solicitud no fue exitosa
                 const errorData = response.data;
@@ -112,6 +115,7 @@ export const updateFechaTermino = (tareaPersonaId) => async (dispatch) => {
         const response = await axios.put(`http://localhost:5000/update_tarea_persona/${tareaPersonaId}`, {
             fecha_termino: nuevaFechaTermino,
         });
+
         if (response.status === 200) {
             // Despachar la acción para actualizar la fecha de término en el estado
             dispatch({
@@ -121,6 +125,7 @@ export const updateFechaTermino = (tareaPersonaId) => async (dispatch) => {
                     nuevaFechaTermino,
                 },
             });
+
         } else {
             // Manejar posibles errores en la respuesta del servidor
             console.error('Error al actualizar fecha de término:', response.data.error || 'Error desconocido');
@@ -137,6 +142,7 @@ export const deleteTareaPersona = (taskId) => async (dispatch) => {
         console.error('Error: El ID de tarea debe ser un número.');
         return;
     }
+    
     try {
         // Realizar la solicitud al servidor para eliminar la tarea_persona
         const response = await axios.delete(`http://localhost:5000/delete_tarea_persona_by_task/${taskId}`, {

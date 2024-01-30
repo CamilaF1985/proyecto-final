@@ -50,17 +50,20 @@ export const assignGastoPersona = () => async (dispatch, getState) => {
             return;
         }
         const users = await dispatch(getUsersByUnit(unitId)); // Obtener la lista de usuarios de la unidad
+
         // Verificar si hay usuarios en la unidad
         if (users.length === 0) {
             console.error('Error: No hay usuarios en la unidad para asignar el gasto_persona.');
             return;
         }
+
         const gastoDetails = getState().gastoDetails; // Obtener los detalles del gasto del estado global
         // Verificar si los detalles del gasto existen
         if (!gastoDetails?.id) {
             console.error('Error: Detalles del gasto no encontrados en el estado global.');
             return;
         }
+
         // Calcular el monto prorrateado dividido entre los usuarios de la unidad
         const montoProrrateadoPorUsuario = Math.floor(gastoDetails.monto / users.length);
         // Construir la data para asignar a gasto_persona
@@ -72,12 +75,13 @@ export const assignGastoPersona = () => async (dispatch, getState) => {
                 monto_prorrateado: montoProrrateadoPorUsuario,
             };
         });
+
         // Despachar la acción para agregar gasto_persona al estado global
         gastoPersonaDataArray.forEach((gastoPersonaData) => {
             dispatch(addGastoPersona(gastoPersonaData));
         });
+
         // Realizar la solicitud POST para crear los registros en la tabla gasto_persona
-        console.log('Data enviada a create_gasto_persona:', gastoPersonaDataArray);
         const responses = await Promise.all(
             gastoPersonaDataArray.map((gastoPersonaData) =>
                 axios.post('http://localhost:5000/create_gasto_persona', gastoPersonaData)
@@ -86,14 +90,12 @@ export const assignGastoPersona = () => async (dispatch, getState) => {
         // Verificar si todas las respuestas son exitosas
         const allResponsesSuccessful = responses.every((response) => response.status === 201);
         if (allResponsesSuccessful) {
-            console.log('Gastos Persona creados exitosamente:', responses.map((response) => response.data));
         } else {
             console.error('Error al crear los registros en gasto_persona:', responses);
         }
     } catch (error) {
         // Manejar los errores de la solicitud
         console.error('Error al asignar gasto_persona:', error);
-        console.log('Respuesta completa:', error.response); // Imprimir toda la respuesta
         if (error.response) {
             console.error('Detalles de la respuesta:', error.response.data); // Imprimir respuesta de error
         }
@@ -103,29 +105,26 @@ export const assignGastoPersona = () => async (dispatch, getState) => {
 // Acción para obtener los gastos persona desde la base de datos
 export const getGastosPersona = () => {
     return async (dispatch, getState) => {
+
         try {
-            console.log('Antes de getUserByRut');
             await dispatch(getUserByRut()); // Obtiene la data de la persona llamando a getUserByRut
-            console.log('Después de getUserByRut');
             const idUsuario = getState().user.id; //extrae el id del usuario
-            console.log('Haciendo la solicitud al servidor para obtener los gastos persona...');
             //Solicitud a la api para obtener los gastos persona del usuario
             const response = await axios.get(`http://localhost:5000/gasto_persona_by_id_persona/${idUsuario}`);
-            console.log('Respuesta del servidor:', response);
+
             if (response.status === 200) {
-                console.log('Tipo de response.data:', typeof response.data); //Log para el tipo de respuesta
                 if (response.data && response.data.gastos_persona_list) {
                     const gastosPersona = response.data.gastos_persona_list; //agrega la respuesta a la lista local
-                    console.log('Datos obtenidos desde la base de datos:', gastosPersona);
                     // Extrae ids de gasto y de la persona
                     const idsGastos = gastosPersona.map(gastoPersona => ({
                         idGasto: gastoPersona.id_gasto,
                         idPersona: gastoPersona.id_persona
                     }));
+
                     dispatch(saveIdsGastos(idsGastos)); //Guardar los ids en el estado local
                     dispatch(saveGastosPersona(gastosPersona)); //Guardar los gastos persona en el estado local
-                    console.log('Datos de gastos persona guardados en el estado:', gastosPersona);
                     return gastosPersona;
+
                 } else {
                     console.error('Error: La respuesta del servidor no contiene la propiedad gastos_persona_list.');
                 }
@@ -133,7 +132,7 @@ export const getGastosPersona = () => {
                 const errorData = response.data;
                 console.error(`Error al obtener los gastos persona: ${errorData.error}`);
             }
-            console.log('Estado global después de la acción:', getState());
+
         } catch (error) {
             console.error('Error en la acción getGastosPersona:', error);
             throw error;
@@ -151,14 +150,15 @@ export const updateEstadoGastoPersonaEnBD = (selectedGasto) => {
                 console.error('Objeto seleccionado no tiene los valores necesarios.');
                 throw new Error('Objeto seleccionado no tiene los valores necesarios.');
             }
+
             // Realizar la solicitud para actualizar el estado de gasto persona
             const response = await axios.put(`http://localhost:5000/update_estado_gasto_persona/${id_gasto}/${id_persona}`);
             if (response.status === 200) {
-                console.log('Estado de gasto persona actualizado exitosamente:', response.data);
             } else {
                 console.error('Error al actualizar el estado de gasto persona:', response.data);
                 throw new Error('Error al actualizar el estado de gasto persona.');
             }
+
         } catch (error) {
             console.error('Error en la acción updateEstadoGastoPersonaEnBD:', error);
             throw error;

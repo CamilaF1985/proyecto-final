@@ -14,12 +14,14 @@ export const saveUnitData = (unitData) => ({
 // Acción para buscar la unidad por su Id en la base de datos
 export const fetchUnitById = (unitId) => {
   return async (dispatch) => {  
+
     try {
       const resolvedUnitId = await unitId; // Esperar solicitud de la promesa antes de asignar el valor
       // Asignar el valor del id de la unidad a la solicitud get
       const response = await axios.get(`http://localhost:5000/unidad/${resolvedUnitId}`);
       dispatch(saveUnitData(response.data)); // Guardar los datos de la unidad en el estado global usando la acción saveUnitData
       return response.data; //Retorna la data
+
     } catch (error) {
       console.error('Error al obtener la unidad:', error); //Mensaje en caso de error
       throw error; //Propaga el error
@@ -39,6 +41,7 @@ export const saveNewUnitData = (unitData) => {
         console.error('Error al guardar la unidad:', response.data); // Manejar otros casos de respuesta
         return null;
       }
+      
     } catch (error) {
       console.error('Error al guardar la unidad:', error); // Manejo de errores
       return null;

@@ -268,14 +268,9 @@ const rootReducer = (state = initialState, action) => {
     case UPDATE_ESTADO_GASTO_PERSONA:
       const { idGasto, estadoActualizado } = action.payload;
 
-      console.log('idGasto:', idGasto);
-      console.log('estadoActualizado:', estadoActualizado);
-
       const gastosPersonaListActualizado = state.gastosPersonaListAsync.map((gasto) =>
         gasto.id_gasto === idGasto ? { ...gasto, estado: estadoActualizado } : gasto
       );
-
-      console.log('gastosPersonaListActualizado:', gastosPersonaListActualizado);
 
       return {
         ...state,

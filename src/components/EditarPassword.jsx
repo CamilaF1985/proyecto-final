@@ -49,9 +49,6 @@ const EditarPassword = () => {
             // Puedes agregar otros campos del formulario si es necesario
         };
 
-        // Mostrar la data antes de la solicitud
-        console.log('Data del formulario:', formData);
-
         // Realizar la solicitud para actualizar la contraseña
         dispatch(updatePassword(formData))
             .then(() => {

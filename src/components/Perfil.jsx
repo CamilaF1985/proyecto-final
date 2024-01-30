@@ -33,10 +33,9 @@ const Perfil = () => {
                         return Promise.resolve(null); //Sino devuelve nuloS
                     }
                 })
+                
                 .then((unitData) => {
                     if (unitData) {
-                        //Manejo de errores al traer la data 
-                        console.log('Unidad encontrada - ID:', unitData.id, 'Nombre:', unitData.nombre);
                     } else {
                         console.log('No se encontraron datos de unidad');
                     }

@@ -29,7 +29,6 @@ export const saveUserData = (userData) => {
 
 // Acción para guardar datos de usuarios en el estado global
 export const saveUsersData = (usersData) => {
-  console.log('Guardando datos de usuarios en el estado global:', usersData);
   return {
     type: SAVE_USERS_DATA,
     payload: usersData,
@@ -49,7 +48,6 @@ export const saveNewUserData = (userData) => {
         const response = await axios.post('http://localhost:5000/create_persona_admin', userData);
         // Verificar si la respuesta tiene un código de estado exitoso 
         if (response.status >= 200 && response.status < 300) {
-          console.log('Usuario creado exitosamente:', response.data);
         } else {
           // Si la respuesta no es exitosa, lanzar una excepción con el mensaje del servidor
           throw new Error(`Error al crear el usuario: ${response.data.msg}`);
@@ -72,11 +70,8 @@ export const saveNewInquilinoData = (userData) => {
         // Verificar si id_unidad tiene un valor antes de continuar
         if (idUnidad) {
           userData.id_unidad = idUnidad;  // Actualizar el ID de la unidad en userData
-          console.log('ID de unidad desde localStorage:', idUnidad);
-          console.log('Datos del inquilino a enviar:', userData);  // Verificar contenido de UserData
           // Realizar la solicitud POST al endpoint para crear el inquilino
           const response = await axios.post('http://localhost:5000/create_persona_inquilino', userData);
-          console.log('Respuesta del servidor:', response);
           // Despachar la acción para guardar los nuevos datos del inquilino en el estado global
           dispatch(saveUserData(response.data));
           resolve(response.data);  // Resolver la promesa con el resultado de la solicitud
@@ -101,12 +96,14 @@ export const saveToLocalStorage = (userData) => {
   sessionStorage.setItem('miToken', userData.token);
 };
 
+// Acción para iniciar sesión
 export const loginUser = (formData, closeModal, navigate) => {
   return async (dispatch) => {
     try {
-      const existingToken = sessionStorage.getItem('miToken');// Verificar si hay un token en sessionStorage
+      //Verifica si ya hay un token en sessionStorage antes de proceder
+      const existingToken = sessionStorage.getItem('miToken');
       if (existingToken) {
-        const userType = localStorage.getItem('userType');// Si ya hay un token almacenado, redirigir al usuario
+        const userType = localStorage.getItem('userType');
         if (userType === 'Administrador') {
           navigate(`/home-administrador`);
         } else if (userType === 'Inquilino') {
@@ -114,36 +111,46 @@ export const loginUser = (formData, closeModal, navigate) => {
         }
         return;
       }
+
+      //Solicitud post a la api para iniciar sesión
       const response = await axios.post('http://localhost:5000/auth/login', {
         rut: formData.rut,
         contrasena: formData.password,
       });
-      const userData = response.data || {}; // Asegurarse de que userData esté bien definido 
-      const miToken = userData.token; // Agregar el token a una variable separada
-      const expirationTimestamp = getJwtExpirationTimestamp(miToken); //Obtener la fecha de expiración del token
-      userData.tokenExpiration = expirationTimestamp; // Incluir la fecha de expiración en userData
-      sessionStorage.setItem('tokenExpiration', expirationTimestamp); // Almacena la fecha de expiración en sessionStorage 
-      console.log('Respuesta del servidor:', response.data); // Imprimir la data de la respuesta del servidor
-      sessionStorage.setItem('miToken', miToken); // Guardar el token en sessionStorage
-      const idUnidad = userData.id_unidad; // Acceder a id_unidad desde userData
-      console.log('Valor de id_unidad:', idUnidad);
-      const userType = userData.id_perfil === 1 ? 'Administrador' : 'Inquilino';  // Determinar el tipo de usuario 
-      userData.userType = userType; // Agregar el tipo de usuario a los datos del usuario
-      dispatch(saveUserData(userData)); // Guardar los datos del usuario en el estado global
+
+      const { data: userData } = response; // Desestructuración para obtener userData
+
+      const { token: miToken, id_perfil } = userData; // Desestructuración para obtener miToken e id_perfil
+
+      const expirationTimestamp = getJwtExpirationTimestamp(miToken); //Obtiene la marca de expiración del token
+      userData.tokenExpiration = expirationTimestamp; 
+
+      //Añade el token y su marca de expiración al sessionStorage
+      sessionStorage.setItem('tokenExpiration', expirationTimestamp);
+      sessionStorage.setItem('miToken', miToken);
+
+      //Determina el tipo de Usuario a partir de su id_perfil
+      const userType = id_perfil === 1 ? 'Administrador' : 'Inquilino';
+      userData.userType = userType;
+
+      dispatch(saveUserData(userData));
       localStorage.setItem('userType', userType);
-      saveToLocalStorage(userData); // Guardar los datos del usuario en localStorage
+      saveToLocalStorage(userData);
+
       closeModal();
-      // Redirigir a la página correspondiente según el tipo de usuario
+
       setTimeout(() => {
+        //Redirige al usuario a la vista correcta según el tipo de perfil
         if (userType === 'Administrador') {
           navigate(`/home-administrador`);
         } else if (userType === 'Inquilino') {
           navigate(`/home-inquilino`);
         }
       }, 100);
+
     } catch (error) {
-      console.error('Error durante el inicio de sesión:', error); // En caso de error, mostrar un mensaje 
       if (error.response && error.response.status === 401) {
+        //Propagación de errores posibles al componente
         throw new Error('Credenciales inválidas. Por favor, inténtalo de nuevo.');
       }
       throw new Error('Se produjo un error inesperado. Por favor, inténtalo de nuevo más tarde.');
@@ -160,6 +167,7 @@ export const getUserByRut = () => {
       if (!token) {
         return;
       }
+
       const rut = localStorage.getItem('rut');
       if (rut) {
         const config = {
@@ -167,6 +175,7 @@ export const getUserByRut = () => {
             Authorization: `Bearer ${token}`, // Incluir el token en la cabecera de la solicitud
           },
         };
+
         const response = await axios.get(`http://localhost:5000/get_persona_by_rut/${rut}`, config);
         if (response.status === 200) {
           const userData = response.data;
@@ -177,6 +186,7 @@ export const getUserByRut = () => {
             dispatch(saveUserData(userData));
             resolve();
           });
+          
         } else {
           const errorData = response.data;
           console.error(`Error: ${errorData.error}`);
@@ -198,8 +208,8 @@ export const updateEmail = (userId, newEmail) => {
       const response = await axios.put(`http://localhost:5000/update_email_persona/${userId}`, {
         email: newEmail,
       });
+
       if (response.status === 200) {
-        console.log('Correo electrónico actualizado exitosamente');  // Mensaje en caso de éxito
       } else {
         console.error('Error al actualizar el correo electrónico:', response.data.error); //Mensaje en caso de error
       }
@@ -213,6 +223,7 @@ export const updateEmail = (userId, newEmail) => {
 export const getUsersByUnit = (unitId) => {
   return (dispatch) => {
     return new Promise(async (resolve, reject) => {
+
       try {
         const response = await axios.get(`http://localhost:5000/get_person_by_unidad/${unitId}`);
         if (response.status === 200) {
@@ -220,11 +231,10 @@ export const getUsersByUnit = (unitId) => {
           dispatch(saveUsersData(response.data));
           resolve(response.data); // Resolver la Promesa con los datos
         } else {
-          console.error('Error en la respuesta del servidor:', response);
           reject({ error: `Error: ${response.data.error}` });  // Rechazar la Promesa con el error
         }
+
       } catch (error) {
-        console.error('Error en la solicitud:', error);
         reject({ error: `Error al obtener usuarios por unidad: ${error.message}` }); // Rechazar la Promesa con el error
       }
     });
@@ -235,17 +245,19 @@ export const getUsersByUnit = (unitId) => {
 export const deletePersonaByRut = (rut, id_unidad) => {
   return async (dispatch) => {
     try {
+
       // Realiza la solicitud DELETE al endpoint para eliminar la persona por su RUT
       const response = await axios.delete(`http://localhost:5000/delete_persona_by_rut/${rut}/${id_unidad}`);
       if (response.status === 200) {
-        console.log('Persona eliminada exitosamente'); // Mensaje de éxito si la persona fue eliminada correctamente
         // Despacha la acción para obtener y guardar los datos actualizados de usuarios
         const updatedUsers = await dispatch(getUsersByUnit(id_unidad));
         dispatch(saveUsersData(updatedUsers));
         return updatedUsers; // Devolvemos los datos actualizados de usuarios después de la eliminación
+
       } else {
         throw new Error(`Error al eliminar la persona: ${response.data.error}`); //manejo de error
       }
+
     } catch (error) {
       console.error('Error durante la eliminación de la persona:', error); //Mensaje de error
       return null; // Devolver null si la eliminación falló
@@ -272,6 +284,7 @@ export const logoutUser = () => {
       dispatch(clearUserData()); // Limpiar los datos del usuario en el estado global
       dispatch(clearEntireState()); // Limpiar los datos del usuario en el estado global
     } catch (error) {
+
       console.error('Error al cerrar sesión:', error);
     }
   };
@@ -281,17 +294,13 @@ export const logoutUser = () => {
 function getJwtExpirationTimestamp(token) {
   try {
     const payload = JSON.parse(atob(token.split('.')[1])); //Extraer la marca de tpo del objeto json
-    console.log('Payload:', payload); //console.log para el payload retornado por el servidor
 
     const expirationTimestamp = payload.exp * 1000; // Convertir la marca de tpo a milisegundos
-    const expirationDate = new Date(expirationTimestamp);
 
-    console.log('Expiration Date:', expirationDate.toLocaleString()); // Imprimir la fecha en formato legible
     return expirationTimestamp; //devuelve la marca de tpo en caso de exito
+
   } catch (error) {
-    //manejo de errores
-    console.error('Error al analizar el token JWT:', error);
-    return null;
+    return null; //Si hay un error devuelve nulo
   }
 }
 
@@ -299,23 +308,29 @@ function getJwtExpirationTimestamp(token) {
 export const updatePassword = (formData) => {
   return async () => {
     try {
-      const rut = localStorage.getItem('rut'); // Obtener el rut desde el localStorage
+      const rut = localStorage.getItem('rut'); // Obtiene el rut desde el localStorage
       if (!rut) {
-        console.error('Error: Rut no encontrado en el localStorage');//si no se encuentra el rut, imprimir el error
+        // Si no lo encuentra arroja un error
+        console.error('Error: Rut no encontrado en el localStorage');
         return;
       }
-      const url = `http://localhost:5000/contrasena/${rut}`; //construir la url antes de la solicitud para poder revisarla
-      console.log('URL de la solicitud:', url); // Mostrar la URL antes de la solicitud con motivos de depuracion
+
+      //Convierte las claves antes de enviar la solicitud
       const convertedFormData = {
-        contrasena: formData.nuevaContrasena,// Realizar la conversión de la clave
+        contrasena: formData.nuevaContrasena,
       };
-      const response = await axios.put(url, convertedFormData); //solicitud a la api para cambiar la contraseña en la BD
-      console.log('Contraseña actualizada:', response.data); //console.log con la respuesta
+
+      //Solicitud put a la api para actualizar la contraseña
+      await axios.put(`http://localhost:5000/contrasena/${rut}`, convertedFormData);
+
     } catch (error) {
-      console.error('Error al actualizar la contraseña:', error); //si hay un error, se imprime por consola
+      // Mensaje en caso de error en la actualización
+      console.error('Error al actualizar la contraseña:', error);
     }
   };
 };
+
+
 
 
 

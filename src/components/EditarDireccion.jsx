@@ -58,7 +58,7 @@ const EditarDireccion = () => {
                     if (direccionData.id_region) {
                         dispatch(fetchComunasByRegionId(direccionData.id_region))
                             .then((updatedComunas) => {
-                                console.log('Comunas actualizadas:', updatedComunas);
+                                return updatedComunas;
                             })
                             .catch((error) => {
                                 console.error('Error al obtener las comunas:', error);
@@ -76,10 +76,7 @@ const EditarDireccion = () => {
         const { name, value } = e.target;
 
         // Validaciones
-        console.log(`Validando ${name}: ${value}`);
         const isValid = validarRegistro[name](value);
-
-        console.log('isValid:', isValid);
 
         setFormErrors({
             ...formErrors,
@@ -110,7 +107,6 @@ const EditarDireccion = () => {
     const handleRegionChange = (e) => {
         // Manejar cambios para el select de las regiones
         const selectedRegionId = e.target.value;
-        console.log('Selected Region ID:', selectedRegionId);
 
         setFormData({
             ...formData,
@@ -124,22 +120,17 @@ const EditarDireccion = () => {
             dispatch(fetchComunasByRegionId(selectedRegionId))
                 // Actualiza el estado de comunas según la región seleccionada
                 .then((updatedComunas) => {
-                    console.log('Comunas actualizadas:', updatedComunas);
+                    return updatedComunas;
                 })
                 .catch((error) => {
                     console.error('Error al obtener las comunas:', error);
                 });
-
-            if (!direccionData.id_region || selectedRegionId !== '') {
-                setRegionDeComuna(selectedRegionId)
-            }
         }
     };
 
     const handleComunaChange = (e) => {
         // Manejar cambios para el select de comunas
         const selectedComunaId = e.target.value;
-        console.log('Selected Comuna ID:', selectedComunaId);
 
         setFormData({
             ...formData,
@@ -148,11 +139,11 @@ const EditarDireccion = () => {
 
         setSelectedComunaId(selectedComunaId); // Actualizar el estado de la comuna seleccionada
 
-        if (formData.idRegion) {
+        if (selectedRegionId) {
             // renderiza las comunas según la región seleccionada
-            dispatch(fetchComunasByRegionId(formData.idRegion))
+            dispatch(fetchComunasByRegionId(selectedRegionId))
                 .then((updatedComunas) => {
-                    console.log('Comunas actualizadas:', updatedComunas);
+                    return updatedComunas;
                 })
                 .catch((error) => {
                     console.error('Error al obtener las comunas:', error);
@@ -160,45 +151,79 @@ const EditarDireccion = () => {
         }
     };
 
+    const transformarNombresClaves = (datos) => {
+        const mapeoNombres = {
+            idUnidad: 'id_unidad',
+            idComuna: 'id_comuna',
+            idRegion: 'id_region',
+            deptoCasa: 'depto_casa',
+        };
+
+        const datosTransformados = {};
+
+        for (const [clave, valor] of Object.entries(datos)) {
+            const nuevaClave = mapeoNombres[clave] || clave;
+            datosTransformados[nuevaClave] = valor;
+        }
+
+        return datosTransformados;
+    };
+
     const handleSubmit = (e) => {
-        // No se enviará si algún campo obligatorio está vacío
         e.preventDefault();
-        console.log('Datos que se enviarán a la API:', formData);
 
         // Incluir Ids necesarios en formdata
         const formDataWithIds = {
-            ...formData,
             idUnidad: direccionData.id_unidad,
-            idRegion: selectedRegionId, // Utilizar el estado actualizado
-            idComuna: selectedComunaId, // Utilizar el estado actualizado
         };
 
-        // Actualizar la dirección en la base de datos
-        dispatch(updateDireccionDB(direccionData.id, formDataWithIds))
-            .then((direccionActualizada) => {
-                // Mostrar mensaje de actualización exitosa
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Actualización Exitosa!',
-                    text: 'La dirección ha sido actualizada correctamente.',
+        // Verificar si hay cambios en cada campo
+        if (formData.calle !== direccionData.calle) {
+            formDataWithIds.calle = formData.calle;
+        }
+
+        if (formData.numero !== direccionData.numero) {
+            formDataWithIds.numero = formData.numero;
+        }
+
+        if (formData.deptoCasa !== direccionData.depto_casa) {
+            formDataWithIds.deptoCasa = formData.deptoCasa;
+        }
+
+        if (selectedRegionId !== direccionData.id_region) {
+            formDataWithIds.idRegion = selectedRegionId;
+        }
+
+        if (selectedComunaId !== direccionData.id_comuna) {
+            formDataWithIds.idComuna = selectedComunaId;
+        }
+
+        // Transformar los nombres de las claves
+        const formDataTransformado = transformarNombresClaves(formDataWithIds);
+
+        // Solo enviar la solicitud si hay cambios
+        if (Object.keys(formDataWithIds).length > 1) {
+            dispatch(updateDireccionDB(direccionData.id, formDataTransformado))
+                .then((direccionActualizada) => {
+                    // Mostrar mensaje de actualización exitosa
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Actualización Exitosa!',
+                        text: 'La dirección ha sido actualizada correctamente.',
+                    });
+                    return direccionActualizada;
+                })
+                .catch((error) => {
+                    console.error('Error al actualizar la dirección:', error);
+
+                    // Mostrar mensaje de error en la actualización
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Ocurrió un error!',
+                        text: 'No se pudo actualizar la dirección. Por favor, inténtelo de nuevo.',
+                    });
                 });
-
-                //Console.log para la direccion actualizada
-                console.log('Dirección actualizada:', direccionActualizada);
-
-                // Console.log para la respuesta de la api
-                console.log('Respuesta de la API:', direccionActualizada);
-            })
-            .catch((error) => {
-                console.error('Error al actualizar la dirección:', error);
-
-                // Mostrar mensaje de error en la actualización
-                Swal.fire({
-                    icon: 'error',
-                    title: '¡Ocurrió un error!',
-                    text: 'No se pudo actualizar la dirección. Por favor, inténtelo de nuevo.',
-                });
-            });
+        }
     };
 
     const handleRegresarClick = () => {
@@ -331,5 +356,8 @@ const EditarDireccion = () => {
 };
 
 export default EditarDireccion;
+
+
+
 
 

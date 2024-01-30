@@ -38,11 +38,10 @@ export const fetchAllRegiones = () => {
 export const fetchComunasByRegionId = (regionId) => {
     return async (dispatch) => {
         try {
-            console.log('Region ID:', regionId); //mensaje para verificar el id de la region
             const response = await axios.get(`http://localhost:5000/get_comunas_by_region/${regionId}`);
-            console.log('Comunas Response:', response); //verificar la respuesta del servidor
             dispatch(saveComunasData(response.data.comunas)); //Guarda la data en el estado local
             return response.data.comunas; //retorna la data
+            
         } catch (error) {
             console.error('Error al obtener las comunas:', error); //mensaje en caso de error
             throw error; //Devuelve el error para que pueda ser usado en el componente
@@ -67,7 +66,7 @@ export const createDireccionDB = (direccionData) => {
 
 // Acción para obtener una dirección por ID de unidad
 export const fetchDireccionByUnidad = () => {
-    return async (dispatch, getState) => {
+    return async (dispatch) => {
         try {
             const id_unidad = localStorage.getItem('id_unidad');  // Obtener el id de la unidad desde localStorage
             if (!id_unidad) {
@@ -78,9 +77,8 @@ export const fetchDireccionByUnidad = () => {
             // Realiza la solicitud GET para obtener la dirección por ID de unidad
             const response = await axios.get(`http://localhost:5000/direccion/${id_unidad}`);
             dispatch(updateDireccion(response.data));  // Despacha la acción que actualiza la dirección en el estado global
-            console.log('Data obtenida desde la base de datos:', response.data);
-            console.log('Estado después de actualizar:', getState());
             return response.data;
+
         } catch (error) {
             console.error('Error al obtener la dirección:', error);
             throw error; // Propaga el error para que pueda ser manejado en el componente
@@ -91,18 +89,13 @@ export const fetchDireccionByUnidad = () => {
 // Acción para actualizar la dirección en la BD
 export const updateDireccionDB = (idDireccion, nuevaDireccionData) => async () => {
     try {
-        // Ajustar los nombres de las claves antes de realizar la solicitud
-        const datosParaEnviar = {
-            id_comuna: nuevaDireccionData.idComuna,
-            id_region: nuevaDireccionData.idRegion,
-            depto_casa: nuevaDireccionData.deptoCasa,
-            numero: nuevaDireccionData.numero,
-            calle: nuevaDireccionData.calle,
-        };
-        // Realizar la solicitud PUT a la API para actualizar la dirección
-        console.log('Realizando solicitud PUT a la API...');
-        console.log('Datos que se enviarán a la API:', datosParaEnviar);
+        // Filtrar solo las claves con valores definidos
+        const datosParaEnviar = Object.fromEntries(
+            Object.entries(nuevaDireccionData).filter(([_, value]) => value !== undefined && value !== '')
+        );
+        
         const response = await axios.put(`http://localhost:5000/direccion/${idDireccion}`, datosParaEnviar);
+
         // Devolver la dirección actualizada para su uso posterior 
         return response.data;
     } catch (error) {
@@ -110,7 +103,6 @@ export const updateDireccionDB = (idDireccion, nuevaDireccionData) => async () =
         throw error; // Propagación del error
     }
 };
-
 
 // Acción para actualizar la dirección en el estado global
 export const updateDireccion = (direccionBDData) => ({

@@ -25,8 +25,6 @@ const RegistroForm = () => {
     dispatch(fetchAllRegiones());
   }, [dispatch]);
 
-  console.log('Regiones:', regiones);
-
   // Declarar el estado del formulario, inicializarr las variables en null
   const [formData, setFormData] = useState({
     rut: '',
@@ -104,7 +102,6 @@ const RegistroForm = () => {
       idComuna: '',
     });
 
-    console.log('ID de Región:', selectedRegionId);
     // Cargar las comunas para la región seleccionada
     dispatch(fetchComunasByRegionId(selectedRegionId));
   };
@@ -116,9 +113,6 @@ const RegistroForm = () => {
       ...formData,
       idComuna: selectedComunaId,
     });
-
-    //Console.log para el id de la comuna seleccionada
-    console.log('ID de Comuna:', selectedComunaId);
   };
 
   // No enviar el formulario hasta que este completo
@@ -145,8 +139,6 @@ const RegistroForm = () => {
               depto_casa: formData.deptoCasa,
               id_unidad: unitId,
             };
-
-            console.log('Datos de la dirección:', direccionData);
 
             dispatch(createDireccionDB(direccionData))
               .then(() => {
