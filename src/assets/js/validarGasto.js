@@ -5,11 +5,13 @@ const validarFactura = (factura) => {
 };
 
 const validarMonto = (monto) => {
-    // Verificar si el monto es un entero válido
+    // Verificar si el monto es un entero válido mayor a 0
     const esEntero = /^\d+$/.test(monto);
+    const esMayorACero = parseInt(monto, 10) > 0;
 
-    return esEntero;
+    return esEntero && esMayorACero;
 };
+
 
 const validarDescripcion = (descripcion) => {
     //validar que factura tenga entre 4 y 20 caracteres

@@ -35,7 +35,7 @@ const AgregarGasto = () => {
       case 'factura':
         return 'Entre 1 y 10 caracteres.';
       case 'monto':
-        return 'Ingresa un número entero válido.';
+        return 'Ingresa un número entero mayor a cero.';
       case 'descripcion':
         return 'Entre 4 y 20 caracteres.';
       default:
@@ -154,10 +154,18 @@ const AgregarGasto = () => {
                 className={`form-control ${formErrors.monto ? 'is-invalid' : ''}`}
                 id="monto"
                 placeholder="Ingrese el monto del gasto"
-                value={monto}
-                onChange={(e) => handleChange('monto', e.target.value)}
+                value={monto !== null ? monto : ''}
+                onChange={(e) => {
+                  const parsedValue = parseInt(e.target.value, 10);
+                  if (!isNaN(parsedValue)) {
+                    handleChange('monto', parsedValue);
+                  } else {
+                    handleChange('monto', ''); 
+                  }
+                }}
                 required
               />
+
               <div className="invalid-feedback">
                 {formErrors.monto}
               </div>

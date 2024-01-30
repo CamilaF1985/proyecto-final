@@ -6,11 +6,12 @@ import { openModal, closeModal, closeModalAndRedirect } from './flux/modalAction
 import Modal from 'react-modal';
 import LoginForm from './components/LoginForm.jsx';
 import ContactForm from './components/ContactForm.jsx';
-import logo from './assets/img/logo.png';
-import loginImage from './assets/img/login.png';
-import contactoImage from './assets/img/contacto.png';
-import registroImage from './assets/img/registro.png';
-import Mapa from './components/Mapa.jsx';
+import RegistroForm from './components/RegistroForm.jsx';
+import logo from './assets/img/logo.png';  
+import loginImage from './assets/img/login.png';  
+import contactoImage from './assets/img/contacto.png'; 
+import registroImage from './assets/img/registro.png';  
+import Mapa from './components/Mapa.jsx';  
 
 // Componente funcional principal de la aplicación
 const App = () => {
@@ -109,16 +110,19 @@ const App = () => {
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={handleCloseModal}
-          contentLabel={location.pathname === '/login' ? 'LoginForm Modal' : location.pathname === '/contacto' ? 'ContactForm Modal' : null}
+          contentLabel={location.pathname === '/login' ? 'LoginForm Modal' : 'ContactForm Modal'}
           className="modal-content"
           overlayClassName="modal-overlay"
         >
-          {/* Contenido del modal (LoginForm, ContactForm según la ruta) */}
+          {/* Contenido del modal (LoginForm, ContactForm, o RegistroForm según la ruta) */}
           {location.pathname === '/login' ? (
             <LoginForm />
           ) : location.pathname === '/contacto' ? (
             <ContactForm />
+          ) : location.pathname === '/registro' ? (
+            <RegistroForm />
           ) : null}
+
         </Modal>,
         document.body
       )}
