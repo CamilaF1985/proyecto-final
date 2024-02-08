@@ -82,7 +82,7 @@ const ContactForm = () => {
                     <h2 className="form-titulo">Contacto</h2>
                     <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
                         <div className="col-md-12 mb-3">
-                            <label htmlFor="fullName" className="form-label">Nombre completo:</label>
+                            <label htmlFor="fullName" className="form-label"><strong>Nombre completo:</strong></label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -98,7 +98,7 @@ const ContactForm = () => {
                         </div>
 
                         <div className="col-md-12 mb-3">
-                            <label htmlFor="email" className="form-label">Correo electrónico:</label>
+                            <label htmlFor="email" className="form-label"><strong>Correo electrónico:</strong></label>
                             <input
                                 type="email"
                                 className="form-control"
@@ -114,7 +114,7 @@ const ContactForm = () => {
                         </div>
 
                         <div className="col-md-12 mb-3">
-                            <label htmlFor="message" className="form-label">Mensaje:</label>
+                            <label htmlFor="message" className="form-label"><strong>Mensaje:</strong></label>
                             <textarea
                                 className="form-control"
                                 id="message"

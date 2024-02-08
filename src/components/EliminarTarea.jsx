@@ -89,11 +89,11 @@ const EliminarTarea = () => {
             <div className="mt-4">
               {tasksList.length > 0 ? (
                 <>
-                  <h3>Lista de Tareas por Unidad:</h3>
+                  <h3><strong>Lista de Tareas por Unidad:</strong></h3>
                   <ul>
                     {tasksList.map((task) => (
                       <li key={task.id}>
-                        {task.nombre}
+                        <strong>{task.nombre}</strong>
                         <button
                           className="btn btn-danger ms-3 mt-2 mb-3"
                           onClick={() => handleEliminarTarea(task.id)}
@@ -105,7 +105,7 @@ const EliminarTarea = () => {
                   </ul>
                 </>
               ) : (
-                <p>No hay tareas de momento</p>
+                <p><strong>No hay tareas de momento</strong></p>
               )}
             </div>
           )}

@@ -153,44 +153,44 @@ const Perfil = () => {
                         <div className="row mb-3">
                             <div className="col-6">
                                 <label htmlFor="username" className="form-label">
-                                    Nombre:
+                                   <strong>Nombre:</strong> 
                                 </label>
                             </div>
                             <div className="col-6">
-                                <p className="form-text">{userData.nombre}</p>
+                                <p className="form-text"><strong>{userData.nombre}</strong></p>
                             </div>
                         </div>
 
                         <div className="row mb-3">
                             <div className="col-md-6">
                                 <label htmlFor="unidad" className="form-label">
-                                    Unidad:
+                                    <strong>Unidad:</strong>
                                 </label>
                             </div>
                             <div className="col-md-6">
-                                <p className="form-text">{unit && unit.nombre ? unit.nombre : 'No asignada'}</p>
+                                <p className="form-text"><strong>{unit && unit.nombre ? unit.nombre : 'No asignada'}</strong></p>
                             </div>
                         </div>
 
                         <div className="row mb-3">
                             <div className="col-md-6">
                                 <label htmlFor="rut" className="form-label">
-                                    RUT:
+                                    <strong>RUT:</strong>
                                 </label>
                             </div>
                             <div className="col-md-6">
-                                <p className="form-text">{userData.rut}</p>
+                                <p className="form-text"><strong>{userData.rut}</strong></p>
                             </div>
                         </div>
 
                         <div className="row mb-3">
                             <div className="col-md-6">
                                 <label htmlFor="email" className="form-label">
-                                    E-mail:
+                                    <strong>E-mail:</strong>
                                 </label>
                             </div>
                             <div className="col-md-6">
-                                <p className="form-text">{userData.email}</p>
+                                <p className="form-text"><strong>{userData.email}</strong></p>
                             </div>
                         </div>
 
@@ -198,7 +198,7 @@ const Perfil = () => {
                             <div className="col-md-12 offset-md-3">
                                 {!isEditing ? (
                                     <button className="btn btn-secondary" type="button" onClick={handleEditEmail}>
-                                        Editar correo
+                                        <strong>Editar correo</strong>
                                     </button>
                                 ) : (
                                     <>
@@ -230,7 +230,7 @@ const Perfil = () => {
 
                                 <div onClick={handleLogout} style={{ cursor: 'pointer' }}>
                                     <img src={logoutIcon} alt="Cerrar sesión" className="img-fluid ms-5" style={{ width: '30px', height: '30px' }} />
-                                    <p className="form-text img-fluid ms-5">Cerrar sesión</p>
+                                    <p className="form-text img-fluid ms-5"><strong>Cerrar sesión</strong></p>
                                 </div>
                             </div>
                         </div>

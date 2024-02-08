@@ -124,7 +124,7 @@ const EliminarInquilino = () => {
                   .filter((user) => user.id_perfil === 2)
                   .map((inquilino) => (
                     <div key={inquilino.id} className="col-md-12 mb-3">
-                      <p>{`Nombre: ${inquilino.nombre}, Rut: ${inquilino.rut}`}</p>
+                      <p><strong>{`Nombre: ${inquilino.nombre}, Rut: ${inquilino.rut}`}</strong></p>
                       <button
                         type="button"
                         className="btn btn-danger"
@@ -135,7 +135,7 @@ const EliminarInquilino = () => {
                     </div>
                   ))
               ) : (
-                <p>No hay inquilinos disponibles.</p>
+                <p><strong>No hay inquilinos disponibles.</strong></p>
               )}
             </div>
           )}

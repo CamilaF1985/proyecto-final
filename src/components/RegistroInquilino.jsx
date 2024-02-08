@@ -139,7 +139,7 @@ const RegistroInquilino = () => {
           <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
             {/* Campo de RUT */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="rut" className="form-label">RUT:</label>
+              <label htmlFor="rut" className="form-label"><strong>RUT:</strong></label>
               <input
                 type="text"
                 className={`form-control ${formErrors.rut ? 'is-invalid' : ''}`}
@@ -155,7 +155,7 @@ const RegistroInquilino = () => {
 
             {/* Campo de Correo Electrónico */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="email" className="form-label">Correo Electrónico:</label>
+              <label htmlFor="email" className="form-label"><strong>Correo Electrónico:</strong></label>
               <input
                 type="email"
                 className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
@@ -171,7 +171,7 @@ const RegistroInquilino = () => {
 
             {/* Campo de Nombre */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="nombre" className="form-label">Nombre:</label>
+              <label htmlFor="nombre" className="form-label"><strong>Nombre:</strong></label>
               <input
                 type="text"
                 className={`form-control ${formErrors.nombre ? 'is-invalid' : ''}`}
@@ -187,7 +187,7 @@ const RegistroInquilino = () => {
 
             {/* Campo de Contraseña */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="contrasena" className="form-label">Contraseña:</label>
+              <label htmlFor="contrasena" className="form-label"><strong>Contraseña:</strong></label>
               <input
                 type="password"
                 className={`form-control ${formErrors.contrasena ? 'is-invalid' : ''}`}

@@ -236,7 +236,7 @@ const EditarDireccion = () => {
             {/* Componente CronometroSesion */}
             <CronometroSesion />
             <div className="row">
-                <div className="col-10 text-center">
+                <div className="col-12 ms-5 text-center">
                     <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
                 </div>
             </div>
@@ -251,7 +251,7 @@ const EditarDireccion = () => {
                 <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
                     <div className="col-md-3 mb-3">
                         <label htmlFor="idRegion" className="form-label">
-                            Región:
+                            <strong>Región:</strong>
                         </label>
                         <select
                             className="form-select"
@@ -272,7 +272,7 @@ const EditarDireccion = () => {
 
                     <div className="col-md-3 mb-3">
                         <label htmlFor="idComuna" className="form-label">
-                            Comuna:
+                            <strong>Comuna:</strong>
                         </label>
                         <select
                             className="form-select"
@@ -296,7 +296,7 @@ const EditarDireccion = () => {
 
                     <div className="col-md-3 mb-3">
                         <label htmlFor="calle" className="form-label">
-                            Calle:
+                            <strong>Calle:</strong>
                         </label>
                         <input type="text"
                             className={`form-control ${formErrors.calle ? 'is-invalid' : ''}`}
@@ -311,7 +311,7 @@ const EditarDireccion = () => {
 
                     <div className="col-md-3 mb-3">
                         <label htmlFor="numero" className="form-label">
-                            Número:
+                            <strong>Número:</strong>
                         </label>
                         <input type="text"
                             className={`form-control ${formErrors.numero ? 'is-invalid' : ''}`}
@@ -326,7 +326,7 @@ const EditarDireccion = () => {
 
                     <div className="col-md-3 mb-3">
                         <label htmlFor="deptoCasa" className="form-label">
-                            Depto/Casa:
+                            <strong>Depto/Casa:</strong>
                         </label>
                         <input type="text"
                             className={`form-control ${formErrors.deptoCasa ? 'is-invalid' : ''}`}

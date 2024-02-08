@@ -108,47 +108,53 @@ const GastosPendientes = () => {
                     {/* Componente CronometroSesion */}
                     <CronometroSesion />
                     <h2 className="form-titulo">Gastos Pendientes</h2>
-                    <p className="subtitulo">Marca los pagos que ya hayas realizado</p>
-                    <div className="row g-3">
+                    <p className="subtitulo"> <strong>Marca los pagos que ya hayas realizado</strong></p>
+                    <div className="row">
                         {gastosPersonaListAsync && gastosPersonaListAsync.length > 0 ? (
                             <>
                                 {gastosPersonaListAsync.every((gastoPersona) => gastoPersona.estado) ? (
                                     <div key="noGastosPendientes" className="col-md-12 mb-3">
-                                        <p>No hay gastos pendientes.</p>
+                                        <p><strong>No hay gastos pendientes.</strong></p>
                                     </div>
                                 ) : (
                                     gastosPersonaListAsync
                                         .filter((gastoPersona) => !gastoPersona.estado)
                                         .map((gastoPersona) => (
                                             <div key={gastoPersona.id_gasto} className="col-md-12 mb-3">
-                                                <label>
-                                                    {`Concepto: ${gastoPersona.descripcion_gasto || 'Sin nombre'} `}
-                                                    {`| Monto a pagar: ${gastoPersona.monto_prorrateado || 0}`}
-                                                    <input
-                                                        type="checkbox"
-                                                        onChange={() => handlePagoClick(gastoPersona)}
-                                                        checked={selectedGastos.includes(gastoPersona.id_gasto)}
-                                                    />
-                                                </label>
+                                                <div className="row align-items-center">
+                                                    <div className="col-md-10">
+                                                        <strong>{`Concepto: ${gastoPersona.descripcion_gasto || 'Sin nombre'} | Monto a pagar: ${gastoPersona.monto_prorrateado || 0}`}</strong>
+                                                    </div>
+                                                    <div className="col-md-2">
+                                                        <label>
+                                                            <input
+                                                                type="checkbox"
+                                                                onChange={() => handlePagoClick(gastoPersona)}
+                                                                checked={selectedGastos.includes(gastoPersona.id_gasto)}
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         ))
                                 )}
                             </>
                         ) : (
                             <div key="noGastosAsignados" className="col-md-12 mb-3">
-                                <p>No hay gastos asignados al usuario.</p>
+                                <p><strong>No hay gastos asignados al usuario.</strong></p>
                             </div>
                         )}
-                        {/* Botón siempre visible para enviar gastos seleccionados */}
-                        <div className="col-md-12 mb-3">
-                            <button
-                                className="btn btn-primary"
-                                onClick={handleEnviarGastosSeleccionados}
-                                disabled={selectedGastos.length === 0}
-                            >
-                                Enviar Gastos Seleccionados
-                            </button>
-                        </div>
+                    </div>
+
+                    {/* Botón siempre visible para enviar gastos seleccionados */}
+                    <div className="col-md-12 mb-3">
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleEnviarGastosSeleccionados}
+                            disabled={selectedGastos.length === 0}
+                        >
+                            Enviar Gastos Seleccionados
+                        </button>
                     </div>
                 </div>
             </div>

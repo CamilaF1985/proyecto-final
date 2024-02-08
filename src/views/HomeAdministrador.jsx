@@ -81,11 +81,8 @@ const HomeAdministrador = () => {
         {/* Sección del logo y nombre de usuario */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">
           <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo" />
-          <div className="d-md-flex flex-column align-items-center ms-md-3">
-            <p className="bienvenido-texto">Bienvenido,</p>
-            <div className="nombre-apellido-container">
-              <p className="nombre-apellido-texto nombre-texto">{username}</p>
-            </div>
+          <div className="d-md-flex align-items-center ms-3">
+            <p className="bienvenido-texto">Bienvenido, {username}</p>
           </div>
         </div>
 
@@ -116,7 +113,7 @@ const HomeAdministrador = () => {
           </div>
 
           {/* Icono "Administración" */}
-          <div className="col-6 col-md-4 mb-md-3" onClick={handleNavigateToAdminPanel} style={{ cursor: 'pointer' }}>
+          <div className="col-6 col-md-4 mb-3" onClick={handleNavigateToAdminPanel} style={{ cursor: 'pointer' }}>
             <div className="contenedor-imagen contenedor-imagen-debajo">
               <img src={configuracionImage} alt="Administración" className="img-fluid icono-administracion" />
               <p className="texto-debajo-imagen">Administración</p>

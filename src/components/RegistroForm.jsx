@@ -196,7 +196,7 @@ const RegistroForm = () => {
   return (
     <div className="contenedor mt-4 mb-1 p-3 formulario-registro">
       <div className="row">
-        <div className="col-10 text-center">
+        <div className="col-12 ms-5 text-center">
           <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
         </div>
         <div className="row col-12 justify-content-center">
@@ -208,7 +208,7 @@ const RegistroForm = () => {
               <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="rut" className="form-label">
-                    RUT:
+                    <strong>RUT:</strong>
                   </label>
                   <input
                     type="text"
@@ -224,7 +224,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="nombreUnidad" className="form-label">
-                    Nombre de la Unidad:
+                    <strong>Nombre de la Unidad:</strong>
                   </label>
                   <input
                     type="text"
@@ -242,7 +242,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="idRegion" className="form-label">
-                    Región:
+                    <strong>Región:</strong>
                   </label>
                   <select
                     className={`form-select ${formErrors.idRegion ? 'is-invalid' : ''}`}
@@ -268,7 +268,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="idComuna" className="form-label">
-                    Comuna:
+                    <strong>Comuna:</strong>
                   </label>
                   <select
                     className={`form-select ${formErrors.idComuna ? 'is-invalid' : ''}`}
@@ -294,7 +294,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="calle" className="form-label">
-                    Calle:
+                    <strong>Calle:</strong>
                   </label>
                   <input
                     type="text"
@@ -310,7 +310,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="numero" className="form-label">
-                    Número:
+                    <strong>Número:</strong>
                   </label>
                   <input
                     type="text"
@@ -326,7 +326,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="deptoCasa" className="form-label">
-                    Depto/Casa:
+                    <strong>Depto/Casa:</strong>
                   </label>
                   <input
                     type="text"
@@ -344,7 +344,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="email" className="form-label">
-                    Correo Electrónico:
+                    <strong>Correo Electrónico:</strong>
                   </label>
                   <input
                     type="email"
@@ -360,7 +360,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="nombre" className="form-label">
-                    Nombre:
+                    <strong>Nombre:</strong>
                   </label>
                   <input
                     type="text"
@@ -376,7 +376,7 @@ const RegistroForm = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="contrasena" className="form-label">
-                    Contraseña:
+                    <strong>Contraseña:</strong>
                   </label>
                   <input
                     type="password"

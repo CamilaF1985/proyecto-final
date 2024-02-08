@@ -98,7 +98,7 @@ const LoginForm = () => {
             {/* Campo para el rut */}
             <div className="col-md-12 mb-3">
               <label htmlFor="rut" className="form-label">
-                RUT:
+                <strong>RUT:</strong>
               </label>
               <input
                 type="text"
@@ -115,7 +115,7 @@ const LoginForm = () => {
             {/* Campo para la contraseña */}
             <div className="col-md-12 mb-3">
               <label htmlFor="password" className="form-label">
-                Contraseña:
+                <strong>Contraseña:</strong>
               </label>
               <input
                 type="password"

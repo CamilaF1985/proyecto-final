@@ -129,7 +129,7 @@ const AgregarGasto = () => {
           <form className="row g-3 needs-validation" noValidate>
             <div className="col-md-12 mb-3">
               <label htmlFor="factura" className="form-label">
-                Número de Factura:
+                <strong>Número de Factura:</strong>
               </label>
               <input
                 type="text"
@@ -147,7 +147,7 @@ const AgregarGasto = () => {
 
             <div className="col-md-12 mb-3">
               <label htmlFor="monto" className="form-label">
-                Monto del Gasto:
+                <strong>Monto del Gasto:</strong>
               </label>
               <input
                 type="number"
@@ -173,7 +173,7 @@ const AgregarGasto = () => {
 
             <div className="col-md-12 mb-3">
               <label htmlFor="descripcion" className="form-label">
-                Descripción del Gasto:
+                <strong>Descripción del Gasto:</strong>
               </label>
               <input
                 type="text"

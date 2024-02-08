@@ -99,7 +99,7 @@ const EliminarGasto = () => {
               {updatedExpenses && updatedExpenses.length > 0 ? (
                 updatedExpenses.map((expense) => (
                   <div key={expense.id} className="col-md-12" style={{ marginRight: '10px !important' }}>
-                    <p>{`Monto: ${expense.monto || 'No disponible'}, Descripción: ${expense.descripcion || 'No disponible'}`}</p>
+                    <p><strong>{`Monto: ${expense.monto || 'No disponible'}, Descripción: ${expense.descripcion || 'No disponible'}`}</strong></p>
                     <button
                       type="button"
                       className="btn btn-danger"

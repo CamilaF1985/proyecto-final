@@ -116,36 +116,36 @@ const PanelAdministracion = () => {
       <div className="row">
         {/* Sección del icono de configuración */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">
-          <img src={configuracionIcon} alt="Panel de configuración" className="contenedor-logo img-fluid img-logo" />
-          <div className="d-md-flex flex-column align-items-center ms-md-3">
-            <p className="bienvenido-texto">Panel de configuración</p>
+          <img src={configuracionIcon} alt="Panel de configuración" className="contenedor-administracion img-fluid img-configuracion" />
+          <div className="d-md-flex flex-column align-items-center">
+            <p className="bienvenido-texto mt-1">Panel de configuración</p>
           </div>
         </div>
 
         {/* Sección de iconos y acciones de administración */}
         <div className="col-12 col-md-8 text-center fila-imagen-personalizada d-flex flex-wrap">
           {/* Icono "Administrar gastos" */}
-          <div className="col-6 col-md-4 mb-md-3" style={{ cursor: 'pointer' }}>
+          <div className="col-6 col-md-4 mb-md-3 mt-1" style={{ cursor: 'pointer' }}>
             <div className="contenedor-imagen contenedor-imagen-debajo">
-              <img src={gastosIcon} alt="Administrar gastos" className="img-fluid" />
+              <img src={gastosIcon} alt="Administrar gastos" className="img-fluid gastos-icon" />
             </div>
             <p className="texto-debajo-imagen">Administrar gastos</p>
-            <p className="texto-debajo-imagen-sub" onClick={handleOpenAgregarGastoModal} style={{ cursor: 'pointer' }}>
-              Agregar factura</p>
+            <p className="texto-debajo-imagen-sub" onClick={handleOpenAgregarGastoModal} style={{ cursor: 'pointer' }}><strong>
+              Agregar factura</strong></p>
             <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarGastoModal} style={{ cursor: 'pointer' }}>
-              Eliminar factura</p>
+             <strong> Eliminar factura</strong></p>
           </div>
 
           {/* Icono "Administrar tareas" */}
-          <div className="col-6 col-md-4 mb-md-3" style={{ cursor: 'pointer' }}>
+          <div className="col-6 col-md-4" style={{ cursor: 'pointer' }}>
             <div className="contenedor-imagen contenedor-imagen-debajo">
-              <img src={tareasIcon} alt="Administrar tareas" className="img-fluid" />
+              <img src={tareasIcon} alt="Administrar tareas" className="img-fluid administracion" />
             </div>
             <p className="texto-debajo-imagen">Administrar tareas</p>
             <p className="texto-debajo-imagen-sub" onClick={handleOpenAgregarTareaModal} style={{ cursor: 'pointer' }}>
-              Agregar tarea</p>
+              <strong>Agregar tarea</strong></p>
             <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarTareaModal} style={{ cursor: 'pointer' }}>
-              Eliminar tarea</p>
+              <strong>Eliminar tarea</strong></p>
           </div>
 
           {/* Icono y texto "Administrar Inquilinos" */}
@@ -155,10 +155,10 @@ const PanelAdministracion = () => {
             </div>
             <p className="texto-debajo-imagen">Administrar Inquilinos</p>
             <p className="texto-debajo-imagen-sub" onClick={handleOpenRegistroInquilinoModal} style={{ cursor: 'pointer' }}>
-              Agregar Inquilino
+              <strong>Agregar Inquilino</strong>
             </p>
             <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarInquilinoModal} style={{ cursor: 'pointer' }}>
-              Eliminar Inquilino</p>
+              <strong>Eliminar Inquilino</strong></p>
           </div>
 
           {/* Icono y texto "Editar dirección" */}

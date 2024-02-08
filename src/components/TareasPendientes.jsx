@@ -86,7 +86,7 @@ const TareasPendientes = () => {
                     {/* Componente CronometroSesion */}
                     <CronometroSesion />
                     <h2 className="form-titulo">Tareas Pendientes</h2>
-                    <p className="subtitulo"> Marca las tareas que ya has realizado </p>
+                    <p className="subtitulo"> <strong>Marca las tareas que ya has realizado</strong> </p>
                     {loading ? (
                         <p>Cargando...</p>
                     ) : (
@@ -95,14 +95,14 @@ const TareasPendientes = () => {
                                 <>
                                     {todasTienenFechaTermino ? (
                                         <div className="col-md-12 mb-3">
-                                            <p>No hay tareas pendientes.</p>
+                                            <p><strong>No hay tareas pendientes.</strong></p>
                                         </div>
                                     ) : (
                                         tareasAsignadas.map((tarea) => (
                                             !tarea.fecha_termino && (
                                                 <div key={tarea.id_tarea_persona} className="col-md-12 mb-3">
                                                     <label>
-                                                        {` ${tarea.nombre_tarea || "Sin nombre"}`}
+                                                        <strong>{`${tarea.nombre_tarea || "Sin nombre"}`}</strong>
                                                         <input
                                                             type="checkbox"
                                                             onChange={() => handleUpdateFechaTermino(tarea.id_tarea_persona)}
@@ -125,7 +125,7 @@ const TareasPendientes = () => {
                                 </>
                             ) : (
                                 <div className="col-md-12 mb-3">
-                                    <p>No hay tareas asignadas.</p>
+                                    <p><strong>No hay tareas asignadas.</strong></p>
                                 </div>
                             )}
                         </div>

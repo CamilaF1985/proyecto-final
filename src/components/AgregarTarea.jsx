@@ -81,7 +81,7 @@ const AgregarTarea = () => {
                     <form className="row g-3 needs-validation" noValidate>
                         <div className="col-md-12 mb-3">
                             <label htmlFor="nombreTarea" className="form-label">
-                                Nombre de la Tarea:
+                                <strong>Nombre de la Tarea:</strong>
                             </label>
                             <input
                                 type="text"

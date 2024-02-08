@@ -100,7 +100,7 @@ const EditarPassword = () => {
                 <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
                     <div className="col-md-6 mb-3">
                         <label htmlFor="nuevaContrasena" className="form-label">
-                            Nueva Contraseña:
+                            <strong>Nueva Contraseña:</strong>
                         </label>
                         <input
                             type="password"
@@ -116,7 +116,7 @@ const EditarPassword = () => {
 
                     <div className="col-md-6 mb-3">
                         <label htmlFor="confirmarContrasena" className="form-label">
-                            Confirmar Contraseña:
+                            <strong>Confirmar Contraseña:</strong>
                         </label>
                         <input
                             type="password"
