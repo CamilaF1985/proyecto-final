@@ -14,6 +14,7 @@ import Perfil from '../components/Perfil.jsx';
 import TareasPendientes from '../components/TareasPendientes.jsx';
 import GastosPendientes from '../components/GastosPendientes.jsx';
 import CronometroSesion from '../components/CronometroSesion.jsx';
+import MaquinaEscribirAdmin from '../assets/js/maquinaEscribirAdmin.js';
 
 // Importar los selectores desde el archivo selectors.js
 import selectors from '../flux/selectors';
@@ -80,9 +81,12 @@ const HomeAdministrador = () => {
       <div className="row">
         {/* Sección del logo y nombre de usuario */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">
-          <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo" />
-          <div className="d-md-flex align-items-center ms-3">
-            <p className="bienvenido-texto">Bienvenido, {username}</p>
+          <img src={logo} alt="Logo" className="contenedor-logo-administrador img-fluid img-logo-administrador" />
+          <div className="d-md-flex align-items-center ms-2">
+            <p className="bienvenido-texto">Hola, {username}</p>
+          </div>
+          <div className = "row mb-4 ms-2">
+          <MaquinaEscribirAdmin />
           </div>
         </div>
 

@@ -26,6 +26,11 @@ body {
     text-align: center;
 }
 
+/* Reglas para el contenedor del logo */
+.contenedor-logo-administrador {
+    text-align: center;
+}
+
 .contenedor-administracion {
     text-align: center;
 }
@@ -78,7 +83,6 @@ img {
 /* Estilos para el contenedor "Quiénes somos" y "Nuestra Ubicación" */
 .quienes-somos-contenedor,
 .google-maps-contenedor {
-    border: 2px solid #d9d9d9;
     background-color: white;
     border-radius: 10px;
     padding: 20px;
@@ -259,6 +263,16 @@ input[type="checkbox"] {
     font-weight: bold;
 }
 
+.bienvenido-texto-inquilino {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+.bienvenido-texto-administracion {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
 .subtitulo {
     font-size: 20px;
 }
@@ -267,7 +281,7 @@ input[type="checkbox"] {
     font-size: 20px;
 }
 
-.img-configuracion{
+.img-configuracion {
     margin-bottom: 10px;
     text-align: center;
 }
@@ -279,6 +293,12 @@ input[type="checkbox"] {
 /* Media Querys para pantallas pequeñas (Hasta 740px) */
 @media (max-width: 740px) {
     .contenedor-logo {
+        max-width: 70%;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .contenedor-logo-administrador {
         max-width: 70%;
         margin-bottom: 20px;
         margin-top: 20px;
@@ -353,11 +373,18 @@ input[type="checkbox"] {
 
     .img-configuracion {
         max-width: auto;
-        max-height: 50%;
+        max-height: 90px;
+        margin-bottom: 20px;
     }
 
     .bienvenido-texto {
         margin-bottom: 30px;
+        margin-left: 0;
+    }
+
+    .bienvenido-texto-inquilino {
+        margin-bottom: 30px;
+        margin-left: 0;
     }
 }
 
@@ -373,9 +400,14 @@ input[type="checkbox"] {
         max-height: 50%;
     }
 
-    .img-configuracion {
+    .img-logo-administrador {
         max-width: auto;
         max-height: 50%;
+    }
+
+    .img-configuracion {
+        max-width: auto;
+        max-height: 150px;
     }
 
     .contenedor-logo {
@@ -384,10 +416,13 @@ input[type="checkbox"] {
         margin-left: 60px;
     }
 
+    .contenedor-logo-administrador {
+        text-align: center;
+        margin-left: 60px;
+    }
+
     .contenedor-administracion {
         text-align: center;
-        margin-top: 70px;
-        margin-left: 60px;
     }
 
     .fila-imagen-personalizada>div:nth-child(2),
@@ -417,13 +452,19 @@ input[type="checkbox"] {
     }
 
     .bienvenido-texto {
+        margin-left: 60px;
+        flex-direction: row !important;
         font-size: 24px;
     }
 
-    .bienvenido-texto {
-        margin-top: 50px;
-        margin-left: 80px;
+    .bienvenido-texto-inquilino {
         flex-direction: row !important;
+        font-size: 24px;
+    }
+
+    .bienvenido-texto-administracion {
+        flex-direction: row !important;
+        font-size: 24px;
     }
 
     .icono-administracion {
@@ -433,8 +474,12 @@ input[type="checkbox"] {
     .gastos-icon {
         margin-top: 60px;
     }
-    
+
     .quienes-somos-parrafo {
         font-size: 16px;
+    }
+
+    .img-editar-direccion {
+        margin-top:20px;
     }
 }

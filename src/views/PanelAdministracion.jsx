@@ -14,6 +14,7 @@ import tareasIcon from '../assets/img/administracion-tareas.png';
 import direccionIcon from '../assets/img/direccion.png';
 import perfilImage from '../assets/img/perfil.png';
 import CronometroSesion from '../components/CronometroSesion.jsx';
+import MaquinaEscribirPanelAdmin from '../assets/js/maquinaEscribirPanelAdmin.js';
 
 // Importar los selectores desde el archivo selectors.js
 import selectors from '../flux/selectors';
@@ -118,7 +119,10 @@ const PanelAdministracion = () => {
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">
           <img src={configuracionIcon} alt="Panel de configuración" className="contenedor-administracion img-fluid img-configuracion" />
           <div className="d-md-flex flex-column align-items-center">
-            <p className="bienvenido-texto mt-1">Panel de configuración</p>
+            <p className="bienvenido-texto-administracion mt-1 mb-4">Panel de configuración</p>
+          </div>
+          <div className = "row mb-4 ms-2">
+          <MaquinaEscribirPanelAdmin />
           </div>
         </div>
 
@@ -164,7 +168,7 @@ const PanelAdministracion = () => {
           {/* Icono y texto "Editar dirección" */}
           <div className="col-6 col-md-4 mb-md-3" style={{ cursor: 'pointer' }} onClick={handleEditarDireccionClick}>
             <div className="contenedor-imagen contenedor-imagen-debajo">
-              <img src={direccionIcon} alt="Editar dirección" className="img-fluid" />
+              <img src={direccionIcon} alt="Editar dirección" className="img-fluid img-editar-direccion" />
             </div>
             <p className="texto-debajo-imagen">Editar dirección</p>
           </div>

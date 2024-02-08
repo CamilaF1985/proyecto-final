@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 import ReactDOM from 'react-dom';
+import { getUserByRut } from '../flux/userActions';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/img/logo.png';
 import perfilImage from '../assets/img/perfil.png';
@@ -12,6 +13,7 @@ import { openModal, closeModal } from '../flux/modalActions';
 import TareasPendientes from '../components/TareasPendientes.jsx';
 import GastosPendientes from '../components/GastosPendientes.jsx';
 import CronometroSesion from '../components/CronometroSesion.jsx';
+import MaquinaEscribirInquilino from '../assets/js/maquinaEscribirInquilino.js';
 
 // Importar los selectores desde el archivo selectors.js
 import selectors from '../flux/selectors';
@@ -24,6 +26,11 @@ const HomeInquilino = () => {
   const dispatch = useDispatch(); // Obtener la función de despacho de acciones
   const navigate = useNavigate(); // Obtener la función de navegación
   const location = useLocation(); // Obtener la ubicación actual de la ruta
+
+  // Obtener datos del usuario por su Rut al cargar el componente
+  useEffect(() => {
+    dispatch(getUserByRut());
+  }, [dispatch]);
 
   // Función para abrir el modal y redirigir a una ruta específica
   const openModalAndRedirect = (path) => {
@@ -64,9 +71,12 @@ const HomeInquilino = () => {
       <div className="row">
         {/* Sección del logo y nombre de usuario */}
         <div className="col-12 col-md-4 d-flex flex-column align-items-center">
-          <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo" />
-          <div className="d-md-flex align-items-center ms-3">
-            <p className="bienvenido-texto">Bienvenido, {username}</p>
+          <img src={logo} alt="Logo" className="contenedor-administrador img-fluid img-logo-administrador" />
+          <div className="d-md-flex align-items-center">
+            <p className="bienvenido-texto-inquilino">Bienvenido, {username}</p>
+          </div>
+          <div className="row mb-4 ms-2">
+            <MaquinaEscribirInquilino />
           </div>
         </div>
 
