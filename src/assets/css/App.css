@@ -482,4 +482,8 @@ input[type="checkbox"] {
     .img-editar-direccion {
         margin-top: 20px;
     }
+    
+    .contenedor {
+        height: 670px;
+    }
 }

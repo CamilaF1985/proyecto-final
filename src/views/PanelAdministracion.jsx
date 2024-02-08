@@ -6,6 +6,7 @@ import AgregarTarea from '../components/AgregarTarea.jsx';
 import EliminarTarea from '../components/EliminarTarea.jsx';
 import AgregarGasto from '../components/AgregarGasto.jsx';
 import EliminarGasto from '../components/EliminarGasto.jsx';
+import fondo3 from '../assets/img/fondo3.png';
 import { setModalState, openModal } from '../flux/modalActions';
 import { useNavigate } from 'react-router-dom';
 import configuracionIcon from '../assets/img/configuracion.png';
@@ -111,82 +112,98 @@ const PanelAdministracion = () => {
 
   // Estructura JSX para la vista del panel de administración
   return (
-    <div className="contenedor mt-4 mb-4 p-4">
-      {/* Componente CronometroSesion */}
-      <CronometroSesion />
-      <div className="row">
-        {/* Sección del icono de configuración */}
-        <div className="col-12 col-md-4 d-flex flex-column align-items-center">
-          <img src={configuracionIcon} alt="Panel de configuración" className="contenedor-administracion img-fluid img-configuracion" />
-          <div className="d-md-flex flex-column align-items-center">
-            <p className="bienvenido-texto-administracion mt-1 mb-4">Panel de configuración</p>
+    <div className="contenedor-principal">
+      <div className="contenedor mt-4 mb-4 p-4" style={{ position: 'relative' }}>
+        {/* Pseudoelemento para desaturar la imagen de fondo */}
+        <div
+          className="imagen-fondo-desaturada"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundImage: `linear-gradient(rgba(0, 200, 100, 0.5), rgba(0, 200, 100, 0.5)), url(${fondo3})`, 
+            filter: 'opacity(0.2)',
+            zIndex: -1,
+          }}
+        ></div>
+        {/* Componente CronometroSesion */}
+        <CronometroSesion />
+        <div className="row">
+          {/* Sección del icono de configuración */}
+          <div className="col-12 col-md-4 d-flex flex-column align-items-center">
+            <img src={configuracionIcon} alt="Panel de configuración" className="contenedor-administracion img-fluid img-configuracion" />
+            <div className="d-md-flex flex-column align-items-center">
+              <p className="bienvenido-texto-administracion mt-1 mb-4">Panel de configuración</p>
+            </div>
+            <div className="row mb-4 ms-2">
+              <MaquinaEscribirPanelAdmin />
+            </div>
           </div>
-          <div className = "row mb-4 ms-2">
-          <MaquinaEscribirPanelAdmin />
+
+          {/* Sección de iconos y acciones de administración */}
+          <div className="col-12 col-md-8 text-center fila-imagen-personalizada d-flex flex-wrap">
+            {/* Icono "Administrar gastos" */}
+            <div className="col-6 col-md-4 mb-md-3 mt-1" style={{ cursor: 'pointer' }}>
+              <div className="contenedor-imagen contenedor-imagen-debajo">
+                <img src={gastosIcon} alt="Administrar gastos" className="img-fluid gastos-icon" />
+              </div>
+              <p className="texto-debajo-imagen">Administrar gastos</p>
+              <p className="texto-debajo-imagen-sub" onClick={handleOpenAgregarGastoModal} style={{ cursor: 'pointer' }}><strong>
+                Agregar factura</strong></p>
+              <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarGastoModal} style={{ cursor: 'pointer' }}>
+                <strong> Eliminar factura</strong></p>
+            </div>
+
+            {/* Icono "Administrar tareas" */}
+            <div className="col-6 col-md-4" style={{ cursor: 'pointer' }}>
+              <div className="contenedor-imagen contenedor-imagen-debajo">
+                <img src={tareasIcon} alt="Administrar tareas" className="img-fluid administracion" />
+              </div>
+              <p className="texto-debajo-imagen">Administrar tareas</p>
+              <p className="texto-debajo-imagen-sub" onClick={handleOpenAgregarTareaModal} style={{ cursor: 'pointer' }}>
+                <strong>Agregar tarea</strong></p>
+              <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarTareaModal} style={{ cursor: 'pointer' }}>
+                <strong>Eliminar tarea</strong></p>
+            </div>
+
+            {/* Icono y texto "Administrar Inquilinos" */}
+            <div className="col-6 col-md-4 mb-md-3">
+              <div className="contenedor-imagen contenedor-imagen-debajo">
+                <img src={perfilImage} alt="Administrar Inquilinos" className="img-fluid" />
+              </div>
+              <p className="texto-debajo-imagen">Administrar Inquilinos</p>
+              <p className="texto-debajo-imagen-sub" onClick={handleOpenRegistroInquilinoModal} style={{ cursor: 'pointer' }}>
+                <strong>Agregar Inquilino</strong>
+              </p>
+              <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarInquilinoModal} style={{ cursor: 'pointer' }}>
+                <strong>Eliminar Inquilino</strong></p>
+            </div>
+
+            {/* Icono y texto "Editar dirección" */}
+            <div className="col-6 col-md-4 mb-md-3" style={{ cursor: 'pointer' }} onClick={handleEditarDireccionClick}>
+              <div className="contenedor-imagen contenedor-imagen-debajo">
+                <img src={direccionIcon} alt="Editar dirección" className="img-fluid img-editar-direccion" />
+              </div>
+              <p className="texto-debajo-imagen">Editar dirección</p>
+            </div>
+
           </div>
         </div>
 
-        {/* Sección de iconos y acciones de administración */}
-        <div className="col-12 col-md-8 text-center fila-imagen-personalizada d-flex flex-wrap">
-          {/* Icono "Administrar gastos" */}
-          <div className="col-6 col-md-4 mb-md-3 mt-1" style={{ cursor: 'pointer' }}>
-            <div className="contenedor-imagen contenedor-imagen-debajo">
-              <img src={gastosIcon} alt="Administrar gastos" className="img-fluid gastos-icon" />
-            </div>
-            <p className="texto-debajo-imagen">Administrar gastos</p>
-            <p className="texto-debajo-imagen-sub" onClick={handleOpenAgregarGastoModal} style={{ cursor: 'pointer' }}><strong>
-              Agregar factura</strong></p>
-            <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarGastoModal} style={{ cursor: 'pointer' }}>
-             <strong> Eliminar factura</strong></p>
-          </div>
-
-          {/* Icono "Administrar tareas" */}
-          <div className="col-6 col-md-4" style={{ cursor: 'pointer' }}>
-            <div className="contenedor-imagen contenedor-imagen-debajo">
-              <img src={tareasIcon} alt="Administrar tareas" className="img-fluid administracion" />
-            </div>
-            <p className="texto-debajo-imagen">Administrar tareas</p>
-            <p className="texto-debajo-imagen-sub" onClick={handleOpenAgregarTareaModal} style={{ cursor: 'pointer' }}>
-              <strong>Agregar tarea</strong></p>
-            <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarTareaModal} style={{ cursor: 'pointer' }}>
-              <strong>Eliminar tarea</strong></p>
-          </div>
-
-          {/* Icono y texto "Administrar Inquilinos" */}
-          <div className="col-6 col-md-4 mb-md-3">
-            <div className="contenedor-imagen contenedor-imagen-debajo">
-              <img src={perfilImage} alt="Administrar Inquilinos" className="img-fluid" />
-            </div>
-            <p className="texto-debajo-imagen">Administrar Inquilinos</p>
-            <p className="texto-debajo-imagen-sub" onClick={handleOpenRegistroInquilinoModal} style={{ cursor: 'pointer' }}>
-              <strong>Agregar Inquilino</strong>
-            </p>
-            <p className="texto-debajo-imagen-sub" onClick={handleOpenEliminarInquilinoModal} style={{ cursor: 'pointer' }}>
-              <strong>Eliminar Inquilino</strong></p>
-          </div>
-
-          {/* Icono y texto "Editar dirección" */}
-          <div className="col-6 col-md-4 mb-md-3" style={{ cursor: 'pointer' }} onClick={handleEditarDireccionClick}>
-            <div className="contenedor-imagen contenedor-imagen-debajo">
-              <img src={direccionIcon} alt="Editar dirección" className="img-fluid img-editar-direccion" />
-            </div>
-            <p className="texto-debajo-imagen">Editar dirección</p>
-          </div>
-
+        {/* Botón para volver al Home del inquilino */}
+        <div className="d-flex justify-content-end mt-3">
+          <button className="btn btn-primary" onClick={handleVolverAlHome}>
+            Volver al Home
+          </button>
         </div>
-      </div>
 
-      {/* Botón para volver al Home del inquilino */}
-      <div className="d-flex justify-content-end mt-3">
-        <button className="btn btn-primary" onClick={handleVolverAlHome}>
-          Volver al Home
-        </button>
+        {/* Renderizar los modales según la ruta actual */}
+        {renderInquilinoModal()}
+        {renderTareaModal()}
+        {renderGastoModal()}
       </div>
-
-      {/* Renderizar los modales según la ruta actual */}
-      {renderInquilinoModal()}
-      {renderTareaModal()}
-      {renderGastoModal()}
     </div>
   );
 };

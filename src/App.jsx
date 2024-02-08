@@ -9,7 +9,7 @@ import ContactForm from './components/ContactForm.jsx';
 import RegistroForm from './components/RegistroForm.jsx';
 import ImageCarousel from './components/ImageCarousel.jsx';
 import logo from './assets/img/logo.png';
-import fondo1 from './assets/img/fondo1.png'; // Importa la imagen de fondo
+import fondo1 from './assets/img/fondo1.png'; 
 import loginImage from './assets/img/login.png';
 import contactoImage from './assets/img/contacto.png';
 import registroImage from './assets/img/registro.png';
