@@ -10,65 +10,42 @@ import perfilImage from '../assets/img/perfil.png';
 import gastosImage from '../assets/img/gastos.png';
 import tareasImage from '../assets/img/tareas.png';
 import Perfil from '../components/Perfil.jsx';
-import { openModal, closeModal } from '../flux/modalActions';
 import TareasPendientes from '../components/TareasPendientes.jsx';
 import GastosPendientes from '../components/GastosPendientes.jsx';
 import CronometroSesion from '../components/CronometroSesion.jsx';
 import MaquinaEscribirInquilino from '../assets/js/maquinaEscribirInquilino.js';
 
-// Importar los selectores desde el archivo selectors.js
+import { openModal, closeModal } from '../flux/modalActions';
 import selectors from '../flux/selectors';
 
 const HomeInquilino = () => {
-  // Utilizar selectores para obtener datos del estado
   const user = useSelector(selectors.selectUser);
   const modalIsOpen = useSelector(selectors.selectModalIsOpen);
-  const username = user.nombre; // Obtener el nombre del usuario desde el estado
-  const dispatch = useDispatch(); // Obtener la función de despacho de acciones
-  const navigate = useNavigate(); // Obtener la función de navegación
-  const location = useLocation(); // Obtener la ubicación actual de la ruta
+  const username = user.nombre;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Obtener datos del usuario por su Rut al cargar el componente
   useEffect(() => {
     dispatch(getUserByRut());
   }, [dispatch]);
 
-  // Función para abrir el modal y redirigir a una ruta específica
   const openModalAndRedirect = (path) => {
-    dispatch(openModal()); // Despachar la acción para abrir el modal
-    navigate(path); // Navegar a la ruta especificada
+    dispatch(openModal());
+    navigate(path);
   };
 
-  // Función para abrir el modal del perfil
-  const handleOpenPerfilModal = () => {
-    openModalAndRedirect('/perfil');
-  };
-
-  // Función para abrir el modal de tareas
-  const handleOpenTareasModal = () => {
-    openModalAndRedirect('/tareas-pendientes');
-  };
-
-  // Función para abrir el modal de gastos
-  const handleOpenGastosModal = () => {
-    openModalAndRedirect('/gastos-pendientes');
-  };
-
-  // Función para cerrar el modal
   const handleCloseModal = () => {
-    dispatch(closeModal()); // Despachar la acción para cerrar el modal
+    dispatch(closeModal());
   };
 
-  // Efecto para cerrar el modal en la primera renderización
   useEffect(() => {
-    dispatch(closeModal()); // Despachar la acción para cerrar el modal
+    dispatch(closeModal());
   }, [dispatch]);
 
-  // Estructura JSX para la vista del usuario Inquilino
   return (
     <div className="contenedor-principal">
       <div className="contenedor mt-4 mb-4 p-4" style={{ position: 'relative' }}>
-        {/* Pseudoelemento para desaturar la imagen de fondo */}
         <div
           className="imagen-fondo-desaturada"
           style={{
@@ -82,10 +59,8 @@ const HomeInquilino = () => {
             zIndex: -1,
           }}
         ></div>
-        {/* Componente CronometroSesion */}
         <CronometroSesion />
         <div className="row">
-          {/* Sección del logo y nombre de usuario */}
           <div className="col-12 col-md-4 d-flex flex-column align-items-center">
             <img src={logo} alt="Logo" className="contenedor-administrador img-fluid img-logo-administrador" />
             <div className="d-md-flex align-items-center">
@@ -96,27 +71,21 @@ const HomeInquilino = () => {
             </div>
           </div>
 
-          {/* Sección de iconos y acciones */}
           <div className="col-12 col-md-8 text-center fila-imagen-personalizada d-flex flex-wrap">
-            {/* Icono "Mi perfil" */}
             <div className="col-6 col-md-6 mb-3" style={{ cursor: 'pointer' }}>
-              <div className="contenedor-imagen contenedor-imagen-debajo contenedor-imagen-primera" onClick={handleOpenPerfilModal}>
+              <div className="contenedor-imagen contenedor-imagen-debajo contenedor-imagen-primera" onClick={() => openModalAndRedirect('/perfil-inquilino')}>
                 <img src={perfilImage} alt="Mi perfil" className="img-fluid" />
               </div>
               <p className="texto-debajo-imagen">Mi perfil</p>
             </div>
-
-            {/* Icono "Cuentas pendientes" */}
             <div className="col-6 col-md-4 mb-md-3">
-              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={handleOpenGastosModal}>
+              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={() => openModalAndRedirect('/gastos-pendientes-inquilino')}>
                 <img src={gastosImage} alt="Cuentas pendientes" className="img-fluid" />
               </div>
               <p className="texto-debajo-imagen">Cuentas pendientes</p>
             </div>
-
-            {/* Icono "Tareas pendientes" */}
             <div className="col-6 col-md-6 mb-3">
-              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={handleOpenTareasModal}>
+              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={() => openModalAndRedirect('/tareas-pendientes-inquilino')}>
                 <img src={tareasImage} alt="Tareas pendientes" className="img-fluid" />
               </div>
               <p className="texto-debajo-imagen">Tareas pendientes</p>
@@ -124,25 +93,23 @@ const HomeInquilino = () => {
           </div>
         </div>
 
-        {/* Modal de perfil, tareas pendientes o gastos pendientes */}
         {ReactDOM.createPortal(
           <Modal
             isOpen={modalIsOpen}
             onRequestClose={handleCloseModal}
             contentLabel={
-              location.pathname === '/perfil' ? 'Perfil Modal' :
-                location.pathname === '/tareas-pendientes' ? 'Tareas Pendientes Modal' :
-                  location.pathname === '/gastos-pendientes' ? 'Gastos Pendientes Modal' : ''
+              location.pathname === '/perfil-inquilino' ? 'PerfilInquilinoModal' :
+                location.pathname === '/tareas-pendientes-inquilino' ? 'TareasPendientesInquilinoModal' :
+                  location.pathname === '/gastos-pendientes-inquilino' ? 'GastosPendientesInquilinoModal' : ''
             }
             className="modal-content"
             overlayClassName="modal-overlay"
           >
-            {/* Contenido del modal (Perfil, TareasPendientes o GastosPendientes) */}
-            {location.pathname === '/perfil' ? (
+            {location.pathname === '/perfil-inquilino' ? (
               <Perfil />
-            ) : location.pathname === '/tareas-pendientes' ? (
+            ) : location.pathname === '/tareas-pendientes-inquilino' ? (
               <TareasPendientes />
-            ) : location.pathname === '/gastos-pendientes' ? (
+            ) : location.pathname === '/gastos-pendientes-inquilino' ? (
               <GastosPendientes />
             ) : null}
           </Modal>,
@@ -154,6 +121,7 @@ const HomeInquilino = () => {
 };
 
 export default HomeInquilino;
+
 
 
 

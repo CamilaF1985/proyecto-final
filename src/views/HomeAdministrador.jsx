@@ -16,69 +16,40 @@ import TareasPendientes from '../components/TareasPendientes.jsx';
 import GastosPendientes from '../components/GastosPendientes.jsx';
 import CronometroSesion from '../components/CronometroSesion.jsx';
 import MaquinaEscribirAdmin from '../assets/js/maquinaEscribirAdmin.js';
-
-// Importar los selectores desde el archivo selectors.js
 import selectors from '../flux/selectors';
 
 const HomeAdministrador = () => {
-  // Utilizar los selectores para obtener datos del estado global
   const user = useSelector(selectors.selectUser);
   const modalIsOpen = useSelector(selectors.selectModalIsOpen);
-
-  // Obtener el despachador y funciones de navegación desde React Redux y React Router
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const username = user.nombre;
 
-  // Obtener datos del usuario por su Rut al cargar el componente
   useEffect(() => {
     dispatch(getUserByRut());
   }, [dispatch]);
 
-  // Extraer el nombre de usuario del estado
-  const username = user.nombre;
+  useEffect(() => {
+    dispatch(closeModal());
+  }, [dispatch]);
 
-  // Función para abrir el modal y redirigir a una ruta específica
   const openModalAndRedirect = (path) => {
     dispatch(openModal());
     navigate(path);
   };
 
-  // Función para abrir el modal de perfil
-  const handleOpenPerfilModal = () => {
-    openModalAndRedirect('/perfil');
-  };
-
-  // Función para abrir el modal de tareas
-  const handleOpenTareasModal = () => {
-    openModalAndRedirect('/tareas-pendientes');
-  };
-
-  // Función para abrir el modal de gastos
-  const handleOpenGastosModal = () => {
-    openModalAndRedirect('/gastos-pendientes');
-  };
-
-  // Función para navegar a la página de administración
-  const handleNavigateToAdminPanel = () => {
-    navigate('/administrar-panel');
-  };
-
-  // Función para cerrar el modal
   const handleCloseModal = () => {
     dispatch(closeModal());
   };
 
-  // Cerrar el modal en la primera renderización
   useEffect(() => {
     dispatch(closeModal());
   }, [dispatch]);
 
-  // Estructura JSX para la vista del administrador
   return (
     <div className="contenedor-principal">
       <div className="contenedor mt-4 p-3" style={{ position: 'relative' }}>
-        {/* Pseudoelemento para desaturar la imagen de fondo */}
         <div
           className="imagen-fondo-desaturada"
           style={{
@@ -87,15 +58,13 @@ const HomeAdministrador = () => {
             left: 0,
             width: '100%',
             height: '100%',
-            backgroundImage: `linear-gradient(rgba(100,0,200,0.5), rgba(100,0,200,0.5)), url(${fondo2})`, 
-            filter: 'opacity(0.2)', 
+            backgroundImage: `linear-gradient(rgba(100,0,200,0.5), rgba(100,0,200,0.5)), url(${fondo2})`,
+            filter: 'opacity(0.2)',
             zIndex: -1,
-          }}          
+          }}
         ></div>
-        {/* Componente CronometroSesion */}
         <CronometroSesion />
         <div className="row">
-          {/* Sección del logo y nombre de usuario */}
           <div className="col-12 col-md-4 d-flex flex-column align-items-center">
             <img src={logo} alt="Logo" className="contenedor-logo-administrador img-fluid img-logo-administrador" />
             <div className="d-md-flex align-items-center ms-2">
@@ -106,35 +75,27 @@ const HomeAdministrador = () => {
             </div>
           </div>
 
-          {/* Sección de iconos y acciones */}
           <div className="col-12 col-md-8 text-center fila-imagen-personalizada d-flex flex-wrap">
-            {/* Icono "Mi perfil" */}
             <div className="col-6 col-md-6 mb-3" style={{ cursor: 'pointer' }}>
-              <div className="contenedor-imagen contenedor-imagen-debajo contenedor-imagen-primera" onClick={handleOpenPerfilModal}>
+              <div className="contenedor-imagen contenedor-imagen-debajo contenedor-imagen-primera" onClick={() => openModalAndRedirect('/perfil')}>
                 <img src={perfilImage} alt="Mi perfil" className="img-fluid" />
               </div>
               <p className="texto-debajo-imagen">Mi perfil</p>
             </div>
-
-            {/* Icono "Cuentas pendientes" */}
             <div className="col-6 col-md-4 mb-md-3">
-              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={handleOpenGastosModal}>
+              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={() => openModalAndRedirect('/gastos-pendientes')}>
                 <img src={gastosImage} alt="Cuentas pendientes" className="img-fluid" />
               </div>
               <p className="texto-debajo-imagen">Cuentas pendientes</p>
             </div>
-
-            {/* Icono "Tareas pendientes" */}
             <div className="col-6 col-md-6 mb-3">
-              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={handleOpenTareasModal}>
+              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={() => openModalAndRedirect('/tareas-pendientes')}>
                 <img src={tareasImage} alt="Tareas pendientes" className="img-fluid" />
               </div>
               <p className="texto-debajo-imagen">Tareas pendientes</p>
             </div>
-
-            {/* Icono "Administración" */}
-            <div className="col-6 col-md-4 mb-3" onClick={handleNavigateToAdminPanel} style={{ cursor: 'pointer' }}>
-              <div className="contenedor-imagen contenedor-imagen-debajo">
+            <div className="col-6 col-md-4 mb-3" style={{ cursor: 'pointer' }}>
+              <div className="contenedor-imagen contenedor-imagen-debajo" onClick={() => navigate('/administrar-panel')}>
                 <img src={configuracionImage} alt="Administración" className="img-fluid icono-administracion" />
                 <p className="texto-debajo-imagen">Administración</p>
               </div>
@@ -142,20 +103,18 @@ const HomeAdministrador = () => {
           </div>
         </div>
 
-        {/* Modal de perfil, tareas pendientes o gastos pendientes */}
         {ReactDOM.createPortal(
           <Modal
             isOpen={modalIsOpen}
             onRequestClose={handleCloseModal}
             contentLabel={
-              location.pathname === '/perfil' ? 'Perfil Modal' :
-                location.pathname === '/tareas-pendientes' ? 'Tareas Pendientes Modal' :
-                  location.pathname === '/gastos-pendientes' ? 'Gastos Pendientes Modal' : ''
+              location.pathname === '/perfil' ? 'PerfilModal' :
+                location.pathname === '/tareas-pendientes' ? 'TareasPendientesModal' :
+                  location.pathname === '/gastos-pendientes' ? 'GastosPendientesModal' : ''
             }
             className="modal-content"
             overlayClassName="modal-overlay"
           >
-            {/* Contenido del modal (Perfil, TareasPendientes o GastosPendientes) */}
             {location.pathname === '/perfil' ? (
               <Perfil />
             ) : location.pathname === '/tareas-pendientes' ? (
@@ -172,6 +131,7 @@ const HomeAdministrador = () => {
 };
 
 export default HomeAdministrador;
+
 
 
 
