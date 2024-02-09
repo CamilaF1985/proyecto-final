@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { closeModalAndRedirect } from '../flux/modalActions';
 import { getTareasAsignadas, updateFechaTermino } from '../flux/personTaskActions';
 import Swal from 'sweetalert2';
 import '../assets/css/App.css';
@@ -11,7 +12,8 @@ const TareasPendientes = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const tareasAsignadas = useSelector((state) => state.tareasAsignadas);
-    const isOpen = useSelector((state) => state.modalIsOpen);
+    const modalIsOpen = useSelector((state) => state.modalIsOpen);
+    const user = useSelector((state) => state.user);
     const [loading, setLoading] = useState(true);
     const [tareasSeleccionadas, setTareasSeleccionadas] = useState([]);
 
@@ -33,7 +35,9 @@ const TareasPendientes = () => {
     }, [dispatch]);
 
     const handleCloseModal = () => {
-        navigate('/');
+        //Cerrar el modal y redirigir al home correspodiente al tipo de usuario
+        const path = user.userType === 'Administrador' ? '/home-administrador' : '/home-inquilino';
+        dispatch(closeModalAndRedirect(path, navigate));
     };
 
     const handleUpdateFechaTermino = (tareaPersonaId) => {
@@ -69,7 +73,7 @@ const TareasPendientes = () => {
 
     return (
         <Modal
-            isOpen={isOpen ?? false}
+            isOpen={modalIsOpen}
             onRequestClose={handleCloseModal}
             contentLabel="TareasPendientes Modal"
             className="modal-content"

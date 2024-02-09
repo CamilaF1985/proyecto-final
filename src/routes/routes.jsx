@@ -5,13 +5,7 @@ import App from '../App.jsx';
 import HomeAdministrador from '../views/HomeAdministrador.jsx';
 import HomeInquilino from '../views/HomeInquilino.jsx';
 import PanelAdministracion from '../views/PanelAdministracion.jsx';
-import RegistroInquilino from '../components/RegistroInquilino.jsx';
 import RegistroForm from '../components/RegistroForm.jsx';
-import EliminarInquilino from '../components/EliminarInquilino.jsx';
-import AgregarTarea from '../components/AgregarTarea.jsx';
-import EliminarTarea from '../components/EliminarTarea.jsx';
-import AgregarGasto from '../components/AgregarGasto.jsx';
-import EliminarGasto from '../components/EliminarGasto.jsx';
 import EditarDireccion from '../components/EditarDireccion.jsx';
 import EditarPassword from '../components/EditarPassword.jsx';
 
@@ -133,12 +127,30 @@ const AppRoutes = () => {
         element={<HomeInquilino onEnter={checkTokenExpiration} showModal={true} gastosPendientesInquilinoModal={true} />}
       />
       <Route path="/administrar-panel" element={<PanelAdministracion onEnter={checkTokenExpiration} />} />
-      <Route path="/registro-inquilino" element={<RegistroInquilino onEnter={checkTokenExpiration} />} />
-      <Route path="/eliminar-inquilino" element={<EliminarInquilino onEnter={checkTokenExpiration} />} />
-      <Route path="/agregar-tarea" element={<AgregarTarea onEnter={checkTokenExpiration} />} />
-      <Route path="/eliminar-tarea" element={<EliminarTarea onEnter={checkTokenExpiration} />} />
-      <Route path="/agregar-gasto" element={<AgregarGasto onEnter={checkTokenExpiration} />} />
-      <Route path="/eliminar-gasto" element={<EliminarGasto onEnter={checkTokenExpiration} />} />
+      <Route
+        path="/registro-inquilino"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} registroInquilinoModal={true} />}
+      />
+      <Route
+        path="/eliminar-inquilino"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} eliminarInquilinoModal={true} />}
+      />
+      <Route
+        path="/agregar-tarea"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} agregarTareaModal={true} />}
+      />
+      <Route
+        path="/eliminar-tarea"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} eliminarTareaModal={true} />}
+      />
+      <Route
+        path="/agregar-gasto"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} agregarGastoModal={true} />}
+      />
+      <Route
+        path="/eliminar-gasto"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} eliminarGastoModal={true} />}
+      />
       <Route path="/editar-direccion" element={<EditarDireccion onEnter={checkTokenExpiration} />} />
       <Route path="/editar-password" element={<EditarPassword onEnter={checkTokenExpiration} />} />
 

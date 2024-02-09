@@ -194,7 +194,7 @@ const RegistroForm = () => {
   };
 
   return (
-    <div className="contenedor mt-4 mb-1 p-3 formulario-registro">
+    <div className="contenedor mt-4 mb-1 p-3 formulario-registro registro-usuario">
       <div className="row">
         <div className="col-12 ms-5 text-center">
           <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />

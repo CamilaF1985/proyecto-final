@@ -232,126 +232,126 @@ const EditarDireccion = () => {
     };
 
     return (
-        <div className="contenedor mt-4 mb-1 p-3 formulario-registro">
-            {/* Componente CronometroSesion */}
-            <CronometroSesion />
-            <div className="row">
-                <div className="col-12 ms-5 text-center">
-                    <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
-                </div>
-            </div>
-
-            <div className="row col-12 justify-content-center">
+            <div className="contenedor mt-4 mb-1 p-3 formulario-registro editar-direccion">
+                {/* Componente CronometroSesion */}
+                <CronometroSesion />
                 <div className="row">
-                    <div className="col-md-12 mb-3">
-                        <h2 className="form-titulo-registro">Editar dirección</h2>
+                    <div className="col-12 ms-5 text-center">
+                        <img src={logo} alt="Logo" className="contenedor-logo img-fluid img-logo mb-2" />
                     </div>
                 </div>
 
-                <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
-                    <div className="col-md-3 mb-3">
-                        <label htmlFor="idRegion" className="form-label">
-                            <strong>Región:</strong>
-                        </label>
-                        <select
-                            className="form-select"
-                            id="idRegion"
-                            name="idRegion"
-                            value={selectedRegionId || formData.idRegion}
-                            onChange={handleRegionChange}
-                            required
-                        >
-                            {regiones.map((region) => (
-                                <option key={region.id} value={region.id}>
-                                    {region.nombre}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="invalid-feedback">Por favor, selecciona una región.</div>
-                    </div>
-
-                    <div className="col-md-3 mb-3">
-                        <label htmlFor="idComuna" className="form-label">
-                            <strong>Comuna:</strong>
-                        </label>
-                        <select
-                            className="form-select"
-                            id="idComuna"
-                            name="idComuna"
-                            value={formData.idComuna}
-                            onChange={handleComunaChange}
-                            required
-                        >
-                            <option value="" disabled>
-                                Selecciona una comuna
-                            </option>
-                            {comunas.map((comuna) => (
-                                <option key={comuna.id} value={comuna.id}>
-                                    {comuna.nombre}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="invalid-feedback">Por favor, selecciona una comuna.</div>
-                    </div>
-
-                    <div className="col-md-3 mb-3">
-                        <label htmlFor="calle" className="form-label">
-                            <strong>Calle:</strong>
-                        </label>
-                        <input type="text"
-                            className={`form-control ${formErrors.calle ? 'is-invalid' : ''}`}
-                            id="calle"
-                            name="calle"
-                            value={formData.calle}
-                            onChange={handleChange}
-                            placeholder="Ingresa la calle"
-                            required />
-                        {formErrors.calle && <div className="invalid-feedback">{formErrors.calle}</div>}
-                    </div>
-
-                    <div className="col-md-3 mb-3">
-                        <label htmlFor="numero" className="form-label">
-                            <strong>Número:</strong>
-                        </label>
-                        <input type="text"
-                            className={`form-control ${formErrors.numero ? 'is-invalid' : ''}`}
-                            id="numero"
-                            name="numero"
-                            value={formData.numero}
-                            onChange={handleChange}
-                            placeholder="Ingresa el número"
-                            required />
-                        {formErrors.numero && <div className="invalid-feedback">{formErrors.numero}</div>}
-                    </div>
-
-                    <div className="col-md-3 mb-3">
-                        <label htmlFor="deptoCasa" className="form-label">
-                            <strong>Depto/Casa:</strong>
-                        </label>
-                        <input type="text"
-                            className={`form-control ${formErrors.deptoCasa ? 'is-invalid' : ''}`}
-                            id="deptoCasa"
-                            name="deptoCasa"
-                            value={formData.deptoCasa}
-                            onChange={handleChange}
-                            placeholder="Ingresa el departamento/casa"
-                            required />
-                        <div className="invalid-feedback">{formErrors.deptoCasa}</div>
-                    </div>
-
-                    <div className="col-md-12 mt-2">
-                        <div className="d-flex justify-content-between">
-                            <button className="btn btn-primary" type="button" onClick={handleRegresarClick}>
-                                Regresar
-                            </button>
-                            <button className="btn btn-primary" type="submit">
-                                Actualizar Dirección
-                            </button>
+                <div className="row col-12 justify-content-center">
+                    <div className="row">
+                        <div className="col-md-12 mb-3">
+                            <h2 className="form-titulo-registro">Editar dirección</h2>
                         </div>
                     </div>
-                </form>
+
+                    <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
+                        <div className="col-md-3 mb-3">
+                            <label htmlFor="idRegion" className="form-label">
+                                <strong>Región:</strong>
+                            </label>
+                            <select
+                                className="form-select"
+                                id="idRegion"
+                                name="idRegion"
+                                value={selectedRegionId || formData.idRegion}
+                                onChange={handleRegionChange}
+                                required
+                            >
+                                {regiones.map((region) => (
+                                    <option key={region.id} value={region.id}>
+                                        {region.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="invalid-feedback">Por favor, selecciona una región.</div>
+                        </div>
+
+                        <div className="col-md-3 mb-3">
+                            <label htmlFor="idComuna" className="form-label">
+                                <strong>Comuna:</strong>
+                            </label>
+                            <select
+                                className="form-select"
+                                id="idComuna"
+                                name="idComuna"
+                                value={formData.idComuna}
+                                onChange={handleComunaChange}
+                                required
+                            >
+                                <option value="" disabled>
+                                    Selecciona una comuna
+                                </option>
+                                {comunas.map((comuna) => (
+                                    <option key={comuna.id} value={comuna.id}>
+                                        {comuna.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="invalid-feedback">Por favor, selecciona una comuna.</div>
+                        </div>
+
+                        <div className="col-md-3 mb-3">
+                            <label htmlFor="calle" className="form-label">
+                                <strong>Calle:</strong>
+                            </label>
+                            <input type="text"
+                                className={`form-control ${formErrors.calle ? 'is-invalid' : ''}`}
+                                id="calle"
+                                name="calle"
+                                value={formData.calle}
+                                onChange={handleChange}
+                                placeholder="Ingresa la calle"
+                                required />
+                            {formErrors.calle && <div className="invalid-feedback">{formErrors.calle}</div>}
+                        </div>
+
+                        <div className="col-md-3 mb-3">
+                            <label htmlFor="numero" className="form-label">
+                                <strong>Número:</strong>
+                            </label>
+                            <input type="text"
+                                className={`form-control ${formErrors.numero ? 'is-invalid' : ''}`}
+                                id="numero"
+                                name="numero"
+                                value={formData.numero}
+                                onChange={handleChange}
+                                placeholder="Ingresa el número"
+                                required />
+                            {formErrors.numero && <div className="invalid-feedback">{formErrors.numero}</div>}
+                        </div>
+
+                        <div className="col-md-3 mb-3">
+                            <label htmlFor="deptoCasa" className="form-label">
+                                <strong>Depto/Casa:</strong>
+                            </label>
+                            <input type="text"
+                                className={`form-control ${formErrors.deptoCasa ? 'is-invalid' : ''}`}
+                                id="deptoCasa"
+                                name="deptoCasa"
+                                value={formData.deptoCasa}
+                                onChange={handleChange}
+                                placeholder="Ingresa el departamento/casa"
+                                required />
+                            <div className="invalid-feedback">{formErrors.deptoCasa}</div>
+                        </div>
+
+                        <div className="col-md-12 mt-2">
+                            <div className="d-flex justify-content-between botones-direccion">
+                                <button className="btn btn-primary" type="button" onClick={handleRegresarClick}>
+                                    Regresar
+                                </button>
+                                <button className="btn btn-primary" type="submit">
+                                    Actualizar Dirección
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
     );
 };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { closeModalAndRedirect } from '../flux/modalActions';
 import { getGastosPersona, updateEstadoGastoPersona, updateEstadoGastoPersonaEnBD } from '../flux/personExpenseActions';
 import Swal from 'sweetalert2';
 import '../assets/css/App.css';
@@ -10,7 +11,8 @@ import CronometroSesion from '../components/CronometroSesion.jsx';
 const GastosPendientes = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const isOpen = useSelector((state) => state.modalIsOpen);
+    const modalIsOpen = useSelector((state) => state.modalIsOpen);
+    const user = useSelector((state) => state.user);
     const gastosPersonaListAsync = useSelector((state) => state.gastosPersonaListAsync);
     const gastosPersonaListActualizado = useSelector((state) => state.gastosPersonaListActualizado);
     const [selectedGastos, setSelectedGastos] = useState([]);
@@ -30,7 +32,9 @@ const GastosPendientes = () => {
     }, [dispatch]);
 
     const handleCloseModal = () => {
-        navigate('/');
+        //Cerrar el modal y redirigir al home correspodiente al tipo de usuario
+        const path = user.userType === 'Administrador' ? '/home-administrador' : '/home-inquilino';
+        dispatch(closeModalAndRedirect(path, navigate));
     };
 
     const handlePagoClick = async (gastoPersona) => {
@@ -91,7 +95,7 @@ const GastosPendientes = () => {
 
     return (
         <Modal
-            isOpen={isOpen ?? false}
+            isOpen={modalIsOpen}
             onRequestClose={handleCloseModal}
             contentLabel="GastosPendientes Modal"
             className="modal-content"

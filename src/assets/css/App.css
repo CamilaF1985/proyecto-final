@@ -20,7 +20,7 @@ body {
     margin: 10px;
     padding: 10px;
 }
-  
+
 /* Reglas para el contenedor del logo */
 .contenedor-logo {
     text-align: center;
@@ -313,6 +313,27 @@ input[type="checkbox"] {
         max-width: 30%;
     }
 
+    .registro-usuario {
+        max-width: 85%;
+        position: relative;
+    }
+
+    .editar-direccion {
+        max-width: 85%;
+        position: relative;
+    }
+
+    .botones-direccion button {
+        font-size: 0.8rem;
+        /* Tamaño de fuente más pequeño */
+        padding: 0.5rem 1rem;
+        /* Espaciado interno más pequeño */
+    }
+
+    .botones-direccion button:not(:last-child) {
+        margin-right: 0.5rem;
+        /* Espaciado entre los botones */
+    }
 
     .quienes-somos-contenedor,
     .google-maps-contenedor {
@@ -482,8 +503,17 @@ input[type="checkbox"] {
     .img-editar-direccion {
         margin-top: 20px;
     }
-    
+
     .contenedor {
         height: 670px;
+    }
+
+
+    .editar-direccion {
+        min-height: 720px;
+    }
+
+    .registro-usuario {
+        min-height: 750px;
     }
 }
