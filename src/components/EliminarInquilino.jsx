@@ -123,7 +123,7 @@ const EliminarInquilino = () => {
                 localUsersData
                   .filter((user) => user.id_perfil === 2)
                   .map((inquilino) => (
-                    <div key={inquilino.id} className="col-md-12 mb-3">
+                    <div key={inquilino.id} className="col-md-12 d-flex justify-content-between mb-3">
                       <p><strong>{`Nombre: ${inquilino.nombre}, Rut: ${inquilino.rut}`}</strong></p>
                       <button
                         type="button"

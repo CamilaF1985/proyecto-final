@@ -126,10 +126,10 @@ const GastosPendientes = () => {
                                         .map((gastoPersona) => (
                                             <div key={gastoPersona.id_gasto} className="col-md-12 mb-3">
                                                 <div className="row align-items-center">
-                                                    <div className="col-md-10">
+                                                    <div className="col-md-11">
                                                         <strong>{`Concepto: ${gastoPersona.descripcion_gasto || 'Sin nombre'} | Monto a pagar: ${gastoPersona.monto_prorrateado || 0}`}</strong>
                                                     </div>
-                                                    <div className="col-md-2">
+                                                    <div className="col-md-1">
                                                         <label>
                                                             <input
                                                                 type="checkbox"

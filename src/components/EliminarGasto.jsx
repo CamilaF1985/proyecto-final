@@ -94,11 +94,11 @@ const EliminarGasto = () => {
           {loading ? (
             <p>Cargando...</p>
           ) : (
-            <div className="row g-3">
+            <div className="row md-12 eliminar-gasto">
               {/* Muestra la lista de gastos */}
               {updatedExpenses && updatedExpenses.length > 0 ? (
                 updatedExpenses.map((expense) => (
-                  <div key={expense.id} className="col-md-12" style={{ marginRight: '10px !important' }}>
+                  <div key={expense.id} className="col-md-12 d-flex justify-content-between mb-3" style={{ marginRight: '10px !important' }}>
                     <p><strong>{`Monto: ${expense.monto || 'No disponible'}, Descripción: ${expense.descripcion || 'No disponible'}`}</strong></p>
                     <button
                       type="button"
