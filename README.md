@@ -35,7 +35,7 @@ Este repositorio sirve como espacio de desarrollo para el Front End del proyecto
 1. Crear base de datos en local.
    Base de datos: cuentas_claras_db
    Usuario: Postgres
-   Contraseña: 10644
+   Contraseña: 12345
    Puerto: 4534
 2. Configuración del backend:
    -  cd src/backend
