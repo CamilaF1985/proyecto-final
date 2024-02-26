@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { saveUserData } from './flux/userActions.js';
 import { Provider } from 'react-redux';
@@ -18,18 +18,22 @@ if (userType && username) {
   store.dispatch(saveUserData({ userType, username }));
 }
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      {/* Envuelve la aplicación con el componente Provider de Redux para proporcionar el store */}
-      <Router>
-        <AppRoutes />
-        {/* Componente principal que contiene las rutas de la aplicación */}
-      </Router>
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+// Utiliza createRoot desde "react-dom/client"
+const root = createRoot(document.getElementById('root'));
+
+root.render(
+  <Provider store={store}>
+    {/* Envuelve la aplicación con el componente Provider de Redux para proporcionar el store */}
+    <Router>
+      <AppRoutes />
+      {/* Componente principal que contiene las rutas de la aplicación */}
+    </Router>
+  </Provider>
 );
+
+
+
+
 
 
 

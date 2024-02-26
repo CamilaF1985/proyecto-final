@@ -1,58 +1,87 @@
-// Importaciones de módulos y componentes
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import App from '../App.jsx';  
-import HomeAdministrador from '../views/HomeAdministrador.jsx';  
-import HomeInquilino from '../views/HomeInquilino.jsx';  
-import Perfil from '../components/Perfil.jsx';  
-import PanelAdministracion from '../views/PanelAdministracion.jsx';  
-import RegistroInquilino from '../components/RegistroInquilino.jsx';  
-import EliminarInquilino from '../components/EliminarInquilino.jsx';  
-import AgregarTarea from '../components/AgregarTarea.jsx';
-import EliminarTarea from '../components/EliminarTarea.jsx'; 
-import AgregarGasto from '../components/AgregarGasto.jsx'; 
-import EliminarGasto from '../components/EliminarGasto.jsx'; 
+import { isTokenExpired, handleLogout } from '../services/tokenService';
+import App from '../App.jsx';
+import HomeAdministrador from '../views/HomeAdministrador.jsx';
+import HomeInquilino from '../views/HomeInquilino.jsx';
+import PanelAdministracion from '../views/PanelAdministracion.jsx';
+import RegistroForm from '../components/RegistroForm.jsx';
+import EditarDireccion from '../components/EditarDireccion.jsx';
+import EditarPassword from '../components/EditarPassword.jsx';
 
-// Componente funcional para manejar las rutas de la aplicación
 const AppRoutes = () => {
-  // Obtiene la función de navegación mediante el hook useNavigate
   const navigate = useNavigate();
 
-  // Efecto que se ejecuta al cargar el componente para gestionar las rutas según el tipo de usuario almacenado
   useEffect(() => {
-    // Obtiene el tipo de usuario almacenado en el localStorage
+    // Verificaciones de tipo de usuario y token para las vistas protegidas
     const storedUserType = localStorage.getItem('userType');
+    const existingToken = sessionStorage.getItem('miToken');
+    const currentPath = window.location.pathname;
 
-    // Verifica si el tipo de usuario está presente
-    if (storedUserType) {
-      // Define las rutas permitidas para el usuario administrador
+    if (storedUserType && existingToken && currentPath !== '/login') {
       const allowedPathsForAdministrador = [
         '/administrar-panel',
         '/registro-inquilino',
         '/eliminar-inquilino',
         '/agregar-tarea',
         '/eliminar-tarea',
+        '/tareas-pendientes',
+        '/gastos-pendientes',
         '/agregar-gasto',
         '/eliminar-gasto',
-        '/perfil'
+        '/editar-direccion',
+        '/perfil',
+        '/editar-password'
       ];
 
-      // Verifica el tipo de usuario y redirige según las rutas permitidas
+      const allowedPathsForInquilino = [
+        '/tareas-pendientes-inquilino',
+        '/gastos-pendientes-inquilino',
+        '/perfil-inquilino',
+        '/editar-password'
+      ];
+
       if (storedUserType.toLowerCase() === 'administrador') {
-        // Permite el acceso a /registro-inquilino para usuarios administradores
-        if (allowedPathsForAdministrador.some(path => window.location.pathname.includes(path))) {
+        if (!allowedPathsForAdministrador.some(path => currentPath.includes(path))) {
+          navigate(`/home-administrador`, { replace: true });
           return;
+
+        } else if (currentPath.includes('/perfil-inquilino')) {
+          navigate(`/perfil`, { replace: true });
+          return;
+
+        } else if (currentPath.includes('/tareas-pendientes-inquilino')) {
+          navigate(`/tareas-pendientes`, { replace: true });
+          return;
+
+        } else if (currentPath.includes('/gastos-pendientes-inquilino')) {
+          navigate(`/gastos-pendientes`, { replace: true });
+          return;
+
         }
-        navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
       } else if (storedUserType.toLowerCase() === 'inquilino') {
-        // Permite el acceso a /perfil para usuarios inquilinos
-        if (window.location.pathname.includes('/perfil')) {
+        if (!allowedPathsForInquilino.some(path => currentPath.includes(path))) {
+          navigate(`/home-inquilino`, { replace: true });
+          return;
+
+        } else if (currentPath.includes('/home-administrador')) {
+          navigate(`/home-inquilino`, { replace: true });
           return;
         }
-        navigate(`/home-${storedUserType.toLowerCase()}`, { replace: true });
       }
+
+      // Verifica el token antes de cargar la página protegida
+      checkTokenExpiration();
     }
   }, [navigate]);
+
+  // Función para verificar el token al cargar una ruta protegida
+  const checkTokenExpiration = () => {
+    if (isTokenExpired()) {
+      // Token expirado, realiza acciones de cierre de sesión
+      handleLogout(navigate);
+    }
+  };
 
   // Estructura JSX para definir las rutas de la aplicación
   return (
@@ -61,29 +90,80 @@ const AppRoutes = () => {
       <Route path="/" element={<App showModal={true} loginModal={true} />} />
       <Route path="/login" element={<App showModal={true} loginModal={true} />} />
       <Route path="/contacto" element={<App showModal={true} contactModal={true} />} />
-      <Route path="/registro" element={<App showModal={true} registroModal={true} />} />
+      <Route path="/registro" element={<RegistroForm />} />
 
       {/* Rutas para vistas y componentes específicos */}
-      <Route path="/home-administrador" element={<HomeAdministrador />} />
-      <Route path="/home-inquilino" element={<HomeInquilino />} />
-      <Route path="/perfil" element={<Perfil />} />
-      <Route path="/administrar-panel" element={<PanelAdministracion />} />
-      <Route path="/registro-inquilino" element={<RegistroInquilino />} />
-      <Route path="/eliminar-inquilino" element={<EliminarInquilino />} />
-      <Route path="/agregar-tarea" element={<AgregarTarea />} />
-      <Route path="/eliminar-tarea" element={<EliminarTarea />} />
-      <Route path="/agregar-gasto" element={<AgregarGasto />} />
-      <Route path="/eliminar-gasto" element={<EliminarGasto />} />
+      <Route
+        path="/home-administrador"
+        element={<HomeAdministrador onEnter={checkTokenExpiration} />}
+      />
+      <Route
+        path="/perfil"
+        element={<HomeAdministrador onEnter={checkTokenExpiration} showModal={true} perfilModal={true} />}
+      />
+      <Route
+        path="/tareas-pendientes"
+        element={<HomeAdministrador onEnter={checkTokenExpiration} showModal={true} tareasPendientesModal={true} />}
+      />
+      <Route
+        path="/gastos-pendientes"
+        element={<HomeAdministrador onEnter={checkTokenExpiration} showModal={true} gastosPendientesModal={true} />}
+      />
+      {/* Rutas para vistas y componentes específicos del inquilino */}
+      <Route
+        path="/home-inquilino"
+        element={<HomeInquilino onEnter={checkTokenExpiration} />}
+      />
+      <Route
+        path="/perfil-inquilino"
+        element={<HomeInquilino onEnter={checkTokenExpiration} showModal={true} perfilInquilinoModal={true} />}
+      />
+      <Route
+        path="/tareas-pendientes-inquilino"
+        element={<HomeInquilino onEnter={checkTokenExpiration} showModal={true} tareasPendientesInquilinoModal={true} />}
+      />
+      <Route
+        path="/gastos-pendientes-inquilino"
+        element={<HomeInquilino onEnter={checkTokenExpiration} showModal={true} gastosPendientesInquilinoModal={true} />}
+      />
+      <Route path="/administrar-panel" element={<PanelAdministracion onEnter={checkTokenExpiration} />} />
+      <Route
+        path="/registro-inquilino"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} registroInquilinoModal={true} />}
+      />
+      <Route
+        path="/eliminar-inquilino"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} eliminarInquilinoModal={true} />}
+      />
+      <Route
+        path="/agregar-tarea"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} agregarTareaModal={true} />}
+      />
+      <Route
+        path="/eliminar-tarea"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} eliminarTareaModal={true} />}
+      />
+      <Route
+        path="/agregar-gasto"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} agregarGastoModal={true} />}
+      />
+      <Route
+        path="/eliminar-gasto"
+        element={<PanelAdministracion onEnter={checkTokenExpiration} showModal={true} eliminarGastoModal={true} />}
+      />
+      <Route path="/editar-direccion" element={<EditarDireccion onEnter={checkTokenExpiration} />} />
+      <Route path="/editar-password" element={<EditarPassword onEnter={checkTokenExpiration} />} />
 
       {/* Ruta para cerrar sesión */}
       <Route path="/logout" element={<Navigate to="/" replace={true} state={{ from: '/' }} />} />
-
     </Routes>
   );
 };
 
-// Exporta el componente AppRoutes para su uso en la aplicación
 export default AppRoutes;
+
+
+
 
 
 

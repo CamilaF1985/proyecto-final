@@ -5,11 +5,20 @@ body {
 
 /* Reglas para el contenedor principal */
 .contenedor {
-    background-color: white;
+    background-color: transparent;
     border: 2px solid #d9d9d9;
     border-radius: 10px;
     margin: 10px;
     padding: 20px;
+}
+
+/* Reglas para el contenedor principal */
+.contenedor-inicio {
+    background-color: transparent;
+    border: 2px solid #d9d9d9;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
 }
 
 /* Reglas para el contenedor del logo */
@@ -17,9 +26,45 @@ body {
     text-align: center;
 }
 
+/* Reglas para el contenedor del logo */
+.contenedor-logo-administrador {
+    text-align: center;
+}
+
+.contenedor-administracion {
+    text-align: center;
+}
+
 .contenedor-imagen img {
     max-width: 50%;
     height: auto;
+}
+
+.carousel-inner {
+    margin-left: 70px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+}
+
+.carousel-item img {
+    max-width: 30%;
+    height: auto;
+}
+
+.carousel-item .row {
+    justify-content: space-around;
+}
+
+.carousel-item .col-md-4 img {
+    max-width: 80%;
+    /* Tamaño máximo del 80% para las imágenes */
+    transition: transform 0.3s ease;
+    /* Transición suave para el zoom */
+}
+
+.carousel-item.active .col-md-4:nth-child(2) img {
+    transform: scale(1.2);
+    /* Aumentar el tamaño de la imagen central */
 }
 
 /* Reglas para las imágenes en general */
@@ -38,10 +83,9 @@ img {
 /* Estilos para el contenedor "Quiénes somos" y "Nuestra Ubicación" */
 .quienes-somos-contenedor,
 .google-maps-contenedor {
-    border: 2px solid #d9d9d9;
-    background-color: lemonchiffon;
+    background-color: transparent;
     border-radius: 10px;
-    padding: 10px;
+    padding: 20px;
     margin-top: 20px;
 }
 
@@ -51,14 +95,14 @@ img {
     font-family: 'Roboto Medium', 'Roboto', sans-serif;
     font-weight: bold;
     font-size: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     text-align: center;
 }
 
 /* Estilos para el párrafo debajo del encabezado */
 .quienes-somos-parrafo {
     font-family: 'Roboto', sans-serif;
-    font-weight: 100;
+    font-weight: bold;
     font-size: 16px;
     line-height: 1.5;
     color: #333;
@@ -70,6 +114,11 @@ img {
     font-weight: 100;
 }
 
+.form-titulo-registro {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
 
 /* Estilos para el mapa de Google */
 .google-maps-iframe {
@@ -102,9 +151,54 @@ img {
     margin-bottom: 5px;
 }
 
+/* Fonts para los listados de tareas y pagos pendientes */
+p,
+input,
+label,
+h3,
+ul {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+    font-size: 16px;
+}
+
+.contenedor {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
+}
+
+.formulario-registro img.img-logo {
+    margin-right: 200px;
+    /* Ajusta la cantidad de margen derecho según tus necesidades */
+}
+
+/* Estilos para las checkboxes */
+input[type="checkbox"] {
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+}
+
 /* Estilos para los campos de entrada del formulario */
 .form-control {
     margin-bottom: 5px;
+}
+
+/* Estilos para .error-message */
+.error-message {
+    text-align: left;
+    margin-top: 5px;
+}
+
+/* Estilos para .invalid-feedback */
+.invalid-feedback {
+    text-align: left;
+    margin-top: 5px;
+}
+
+.cronometro-container {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    color: red;
 }
 
 /* Estilos para el botón del formulario */
@@ -164,26 +258,154 @@ img {
 }
 
 /* Estilos para los textos de bienvenida y nombre/apellido en HomeAdministrador */
-.bienvenido-texto,
-.nombre-apellido-texto {
+.bienvenido-texto {
     font-family: 'Roboto Medium', 'Roboto', sans-serif;
     font-weight: bold;
+}
+
+.bienvenido-texto-inquilino {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+.bienvenido-texto-administracion {
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+.subtitulo {
+    font-size: 20px;
+}
+
+.subtitulo strong {
+    font-size: 20px;
+}
+
+.img-configuracion {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.logo-direccion {
+    margin-left: 50px;
 }
 
 /* Media Querys para pantallas pequeñas (Hasta 740px) */
 @media (max-width: 740px) {
     .contenedor-logo {
-        max-width: 50%;
-        margin: auto;
+        max-width: 70%;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .contenedor-logo-administrador {
+        max-width: 70%;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .contenedor-administracion {
+        max-width: 70%;
+        margin-top: 20px;
+    }
+
+    .contenedor-registro img {
+        max-width: 30%;
+    }
+
+    .registro-usuario {
+        max-width: 85%;
+        position: relative;
+    }
+
+    .editar-direccion {
+        max-width: 85%;
+        position: relative;
+    }
+
+    .botones-direccion button {
+        font-size: 0.8rem;
+        /* Tamaño de fuente más pequeño */
+        padding: 0.5rem 1rem;
+        /* Espaciado interno más pequeño */
+    }
+
+    .botones-direccion button:not(:last-child) {
+        margin-right: 0.5rem;
+        /* Espaciado entre los botones */
     }
 
     .quienes-somos-contenedor,
     .google-maps-contenedor {
         margin-bottom: 20px;
+        margin-right: 10px;
+        margin-left: 5px;
     }
 
     .icono-administracion {
+        margin-top: 30px;
+    }
+
+    .carousel-item {
+        display: none;
+        /* Oculta todos los items del carrusel en pantallas extra pequeñas */
+    }
+
+    .carousel-item.active {
+        display: block;
+        /* Muestra solo el item activo en pantallas extra pequeñas */
+    }
+
+    .carousel-item.active .row {
+        display: flex;
+        /* Utiliza flexbox para colocar las imágenes en una fila */
+        justify-content: center;
+        /* Centra horizontalmente las imágenes */
+    }
+
+    .carousel-item.active .col-md-4 {
+        display: none;
+        /* Oculta las columnas en pantallas extra pequeñas */
+    }
+
+    .carousel-item.active .col-md-4:first-child {
+        display: block;
+        /* Muestra solo la primera columna en pantallas extra pequeñas */
+    }
+
+    .carousel-item.active img {
+        max-width: 100%;
+        /* Ajusta el ancho de la imagen para que ocupe todo el espacio disponible */
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        display: block;
+        /* Muestra los controles del carrusel */
+    }
+
+    .carousel-inner {
+        margin-left: 10px;
+    }
+
+    .administracion {
         margin-top: 10px;
+    }
+
+    .img-configuracion {
+        max-width: auto;
+        max-height: 90px;
+        margin-bottom: 20px;
+    }
+
+    .bienvenido-texto {
+        margin-bottom: 30px;
+        margin-left: 0;
+    }
+
+    .bienvenido-texto-inquilino {
+        margin-bottom: 30px;
+        margin-left: 0;
     }
 }
 
@@ -199,16 +421,45 @@ img {
         max-height: 50%;
     }
 
+    .img-logo-administrador {
+        max-width: auto;
+        max-height: 50%;
+    }
+
+    .img-configuracion {
+        max-width: auto;
+        max-height: 150px;
+    }
+
     .contenedor-logo {
         text-align: center;
-        margin-top: 50px;
-        margin-left: 450px;
+        margin-top: 70px;
+        margin-left: 60px;
+    }
+
+    .contenedor-logo-administrador {
+        text-align: center;
+        margin-left: 60px;
+    }
+
+    .contenedor-administracion {
+        text-align: center;
+    }
+
+    .fila-imagen-personalizada>div:nth-child(2),
+    .fila-imagen-personalizada>div:nth-child(3) {
+        margin-top: 60px;
+        /* Ajusta el valor según sea necesario */
     }
 
     .fila-imagen-personalizada {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
+    }
+
+    .quienes-somos-contenedor {
+        margin-right: 50px;
     }
 
     .contenedor-imagen-debajo {
@@ -221,24 +472,48 @@ img {
         margin-top: 50px;
     }
 
-    .bienvenido-texto,
-    .nombre-apellido-texto {
+    .bienvenido-texto {
+        margin-left: 60px;
+        flex-direction: row !important;
         font-size: 24px;
     }
 
-    .apellido-texto {
-        margin-left: 5px;
-    }
-
-    .bienvenido-texto {
-        margin-top: 50px;
-        margin-left: 450px;
-    }
-
-    .nombre-apellido-container {
-        display: flex;
+    .bienvenido-texto-inquilino {
         flex-direction: row !important;
-        align-items: center;
-        margin-left: 450px;
+        font-size: 24px;
+    }
+
+    .bienvenido-texto-administracion {
+        flex-direction: row !important;
+        font-size: 24px;
+    }
+
+    .icono-administracion {
+        margin-top: 100px;
+    }
+
+    .gastos-icon {
+        margin-top: 60px;
+    }
+
+    .quienes-somos-parrafo {
+        font-size: 16px;
+    }
+
+    .img-editar-direccion {
+        margin-top: 20px;
+    }
+
+    .contenedor {
+        height: 670px;
+    }
+
+
+    .editar-direccion {
+        min-height: 720px;
+    }
+
+    .registro-usuario {
+        min-height: 750px;
     }
 }

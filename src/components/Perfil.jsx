@@ -1,34 +1,132 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useSelector, useDispatch } from 'react-redux';
-import { closeModalAndRedirect } from '../flux/modalActions';  
-import { clearUserData } from '../flux/userActions';
+import { closeModalAndRedirect } from '../flux/modalActions';
+import { getUserByRut, updateEmail, logoutUser } from '../flux/userActions';
+import { fetchUnitById } from '../flux/unitActions';
 import { useNavigate } from 'react-router-dom';
-import '../assets/css/App.css';  
-import perfilImage from '../assets/img/perfil.png';  
-import logoutIcon from '../assets/img/logout.png';  
+import '../assets/css/App.css';
+import logoutIcon from '../assets/img/logout.png';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
-// Componente funcional para la ventana modal del perfil
 const Perfil = () => {
-    // Hooks y redux
+    // Componente funcional para gestionar data personal del usuario
     const dispatch = useDispatch();
     const modalIsOpen = useSelector((state) => state.modalIsOpen);
     const user = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const userData = user || {};
+    const unit = useSelector((state) => state.unit);
+    // Estado local para controlar la visibilidad del input y el botón para editar el email
+    const [isEditing, setIsEditing] = useState(false);
+    const [newEmail, setNewEmail] = useState('');
+    const [emailError, setEmailError] = useState(''); // Estado para validación en tpo real
 
-    // Función para cerrar la ventana modal y redirigir según el tipo de usuario
+    useEffect(() => {
+        // Obtiene la data actualizada del usuario desde el servidor despachando getUserByRut
+        const fetchData = () => {
+            dispatch(getUserByRut())
+                .then(() => {
+                    if (userData.id_unidad) {
+                        return dispatch(fetchUnitById(userData.id_unidad)); //Si la promesa se resuelve trae la data
+                    } else {
+                        return Promise.resolve(null); //Sino devuelve nuloS
+                    }
+                })
+                
+                .then((unitData) => {
+                    if (unitData) {
+                    } else {
+                        console.log('No se encontraron datos de unidad');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error en useEffect:', error);
+                });
+        };
+
+        fetchData();
+    }, [dispatch, userData.id_unidad]);
+
     const handleCloseModal = () => {
+        //Cerrar el modal y redirigir al home correspodiente al tipo de usuario
         const path = user.userType === 'Administrador' ? '/home-administrador' : '/home-inquilino';
         dispatch(closeModalAndRedirect(path, navigate));
     };
 
-    // Función para gestionar el cierre de sesión
+    const handleEditarPasswordClick = () => {
+        // Redirige a la ruta /editar-direccion cuando se hace clic en "Editar dirección"
+        navigate('/editar-password');
+    };
+
     const handleLogout = () => {
-        dispatch(clearUserData());
+        //Dispatch para el cierre de la sesión
+        dispatch(logoutUser());
         navigate('/logout');
     };
 
-    // Estructura JSX del componente modal de perfil
+    const handleEditEmail = () => {
+        //Función para activar la edición del mail
+        setIsEditing(true);
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false); //Si el usuario cancela la edición del mail, desactiva el modo de edición
+        setNewEmail(''); //Limpia el input para el nuevo mail
+        setEmailError(''); // Limpiar el mensaje de error al cancelar la edición
+    };
+
+    const handleUpdateEmail = async () => {
+        try {
+            // Verificar si hay un error antes de enviar la actualización
+            if (emailError) {
+                return;
+            }
+
+            // Dispatch de la acción para actualizar el email
+            const updateEmailResult = dispatch(updateEmail(userData.id, newEmail));
+
+            // Asegurarte de que updateEmailResult es una promesa si es necesario
+            if (updateEmailResult instanceof Promise) {
+                await updateEmailResult;
+            }
+
+            // Actualizar el estado local con el nuevo valor de correo electrónico
+            setNewEmail('');
+
+            // Refrescar los datos del usuario para obtener el nuevo valor
+            const getUserResult = dispatch(getUserByRut());
+
+            // Asegurarte de que getUserResult es una promesa si es necesario
+            if (getUserResult instanceof Promise) {
+                await getUserResult;
+            }
+        } catch (error) {
+            console.error('Error durante la actualización del correo electrónico:', error);
+        } finally {
+            // Salir del modo de edición
+            setIsEditing(false);
+            setEmailError(''); // Limpiar el mensaje de error después de la actualización
+        }
+    };
+
+    const handleEmailChange = (value) => {
+        // Validar el nuevo correo electrónico en tiempo real
+        if (!validateEmail(value)) {
+            setEmailError('Por favor, ingresa un correo electrónico válido.');
+        } else {
+            setEmailError('');
+        }
+
+        // Actualizar el estado del correo electrónico
+        setNewEmail(value);
+    };
+
+    const validateEmail = (email) => {
+        // Validar que el correo tenga @ y un dominio
+        return email.includes('@') && email.split('@')[1].includes('.');
+    };
+
     return (
         <Modal
             isOpen={modalIsOpen}
@@ -37,61 +135,104 @@ const Perfil = () => {
             className="modal-content"
             overlayClassName="modal-overlay"
         >
-            {/* Encabezado de la ventana modal */}
             <div className="modal-header d-flex justify-content-end mb-2">
                 <button className="btn btn-danger" onClick={handleCloseModal}>
                     X
                 </button>
             </div>
 
-            {/* Cuerpo de la ventana modal */}
             <div className="modal-body">
                 <div className="perfil-container row">
-                    {/* Sección de imagen de perfil */}
-                    <div className="col-md-4 mb-3 text-center">
-                        <img src={perfilImage} alt="Perfil" className="img-fluid img-perfil" />
+                    {/* Componente CronometroSesion */}
+                    <CronometroSesion />
+                    <div className="col-md-12 mb-3 text-center">
+                        <h1>Mi Perfil</h1>
                     </div>
 
-                    {/* Sección de detalles de usuario */}
-                    <div className="col-md-8 mb-3">
+                    <div className="col-md-8 offset-md-2 mb-3">
+                        <div className="row mb-3">
+                            <div className="col-6">
+                                <label htmlFor="username" className="form-label">
+                                   <strong>Nombre:</strong> 
+                                </label>
+                            </div>
+                            <div className="col-6">
+                                <p className="form-text"><strong>{userData.nombre}</strong></p>
+                            </div>
+                        </div>
+
+                        <div className="row mb-3">
+                            <div className="col-md-6">
+                                <label htmlFor="unidad" className="form-label">
+                                    <strong>Unidad:</strong>
+                                </label>
+                            </div>
+                            <div className="col-md-6">
+                                <p className="form-text"><strong>{unit && unit.nombre ? unit.nombre : 'No asignada'}</strong></p>
+                            </div>
+                        </div>
+
+                        <div className="row mb-3">
+                            <div className="col-md-6">
+                                <label htmlFor="rut" className="form-label">
+                                    <strong>RUT:</strong>
+                                </label>
+                            </div>
+                            <div className="col-md-6">
+                                <p className="form-text"><strong>{userData.rut}</strong></p>
+                            </div>
+                        </div>
+
+                        <div className="row mb-3">
+                            <div className="col-md-6">
+                                <label htmlFor="email" className="form-label">
+                                    <strong>E-mail:</strong>
+                                </label>
+                            </div>
+                            <div className="col-md-6">
+                                <p className="form-text"><strong>{userData.email}</strong></p>
+                            </div>
+                        </div>
+
                         <div className="row">
-                            {/* Nombre de usuario */}
-                            <label htmlFor="username" className="form-label col-md-3">
-                                Nombre de usuario:
-                            </label>
-                            <div className="col-md-9">
-                                <p className="form-text">{user.username}</p>
+                            <div className="col-md-12 offset-md-3">
+                                {!isEditing ? (
+                                    <button className="btn btn-secondary" type="button" onClick={handleEditEmail}>
+                                        <strong>Editar correo</strong>
+                                    </button>
+                                ) : (
+                                    <>
+                                        <input
+                                            type="text"
+                                            className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                                            value={newEmail}
+                                            onChange={(e) => handleEmailChange(e.target.value)}
+                                        />
+                                        {emailError && <div className="invalid-feedback mb-2">{emailError}</div>}
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <button className="btn btn-success" type="button" onClick={handleUpdateEmail}>
+                                                Guardar
+                                            </button>
+                                            <button className="btn btn-danger" type="button" onClick={handleCancelEdit}>
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 
-                        {/* RUT (por ejemplo) */}
-                        <div className="row">
-                            <label htmlFor="rut" className="form-label col-md-3">RUT:</label>
-                            <div className="col-md-9">
-                                <p className="form-text">123456789</p>
-                            </div>
-                        </div>
+                        <div className="row mt-4">
+                            <div className="d-flex justify-content-between align-items-center">
+                                <button className="btn btn-primary me-2" type="button" onClick={handleEditarPasswordClick}>
+                                    Cambiar contraseña
+                                </button>
 
-                        {/* Correo electrónico (por ejemplo) */}
-                        <div className="row">
-                            <label htmlFor="email" className="form-label col-md-3">Correo electrónico:</label>
-                            <div className="col-md-9 d-flex justify-content-between align-items-center">
-                                <p className="form-text">correo@example.com</p>
-                                <button className="btn btn-secondary" type="button">Editar</button>
+                                <div onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                                    <img src={logoutIcon} alt="Cerrar sesión" className="img-fluid ms-5" style={{ width: '30px', height: '30px' }} />
+                                    <p className="form-text img-fluid ms-5"><strong>Cerrar sesión</strong></p>
+                                </div>
                             </div>
-                        </div>
-
-                        {/* Sección de cambio de contraseña */}
-                        <div className="row mt-3">
-                            <div className="col-md-9 offset-md-3 d-flex justify-content-end">
-                                <button className="btn btn-primary" type="button">Cambiar contraseña</button>
-                            </div>
-                        </div>
-
-                        {/* Icono de cerrar sesión y texto */}
-                        <div className="mt-3 d-flex justify-content-end" onClick={handleLogout} style={{ cursor: 'pointer' }}>
-                            <img src={logoutIcon} alt="Cerrar sesión" className="img-fluid" style={{ width: '30px', height: '30px' }} />
-                            <p className="form-text">Cerrar sesión</p>
                         </div>
                     </div>
                 </div>
@@ -100,8 +241,11 @@ const Perfil = () => {
     );
 };
 
-// Exporta el componente Perfil para su uso en la aplicación
 export default Perfil;
+
+
+
+
 
 
 

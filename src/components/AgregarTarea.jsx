@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { addTask } from '../flux/taskActions';
+import { saveNewTaskData } from '../flux/taskActions';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 // Componente funcional para agregar una tarea
 const AgregarTarea = () => {
@@ -11,7 +13,6 @@ const AgregarTarea = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [nombreTarea, setNombreTarea] = useState('');
-    const [nombreUnidad, setNombreUnidad] = useState('');
 
     // Función para cerrar el modal y redirigir a la ruta principal
     const handleCloseModal = () => {
@@ -21,19 +22,42 @@ const AgregarTarea = () => {
 
     // Función para agregar una nueva tarea
     const handleAgregarTarea = () => {
-        // Validar que se hayan ingresado ambos valores
-        if (nombreTarea && nombreUnidad) {
-            // Dispatch de la acción para agregar tarea
-            dispatch(addTask({ nombre: nombreTarea, unidad: nombreUnidad }));
+        // Validar que se haya ingresado el valor de la tarea
+        if (nombreTarea) {
+            // Obtener id_unidad del localStorage
+            const idUnidad = localStorage.getItem('id_unidad');
 
-            // Cerrar el modal y redirigir
-            handleCloseModal();
+            // Dispatch de la acción para agregar tarea con id_unidad
+            dispatch(saveNewTaskData({ nombre: nombreTarea, id_unidad: idUnidad }))
+                .then(() => {
+                    // Cerrar el modal y redirigir después de que la acción sea completada
+                    handleCloseModal();
+
+                    // Mostrar mensaje de éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Tarea Agregada!',
+                        text: 'La nueva tarea se ha agregado correctamente.',
+                    });
+                })
+                .catch((error) => {
+                    // Mostrar mensaje de error
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error al Agregar Tarea!',
+                        text: error.message || 'Ocurrió un error al agregar la tarea.',
+                    });
+                    console.error('Error al agregar la tarea:', error);
+                });
         } else {
-            // Manejar caso donde no se ingresaron ambos valores
-            alert('Por favor, ingrese el nombre de la tarea y el nombre de la unidad.');
+            // Mostrar mensaje en caso de que no se ingrese el nombre de la tarea
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error al Agregar Tarea!',
+                text: 'Por favor, ingrese el nombre de la tarea.',
+            });
         }
     };
-
 
     return (
         <Modal
@@ -51,11 +75,13 @@ const AgregarTarea = () => {
 
             <div className="modal-body">
                 <div className="form-container">
+                    {/* Componente CronometroSesion */}
+                    <CronometroSesion />
                     <h2 className="form-titulo">Agregar Tarea</h2>
                     <form className="row g-3 needs-validation" noValidate>
                         <div className="col-md-12 mb-3">
                             <label htmlFor="nombreTarea" className="form-label">
-                                Nombre de la Tarea:
+                                <strong>Nombre de la Tarea:</strong>
                             </label>
                             <input
                                 type="text"
@@ -68,24 +94,6 @@ const AgregarTarea = () => {
                             />
                             <div className="invalid-feedback">
                                 Por favor, ingrese el nombre de la tarea.
-                            </div>
-                        </div>
-
-                        <div className="col-md-12 mb-3">
-                            <label htmlFor="nombreUnidad" className="form-label">
-                                Nombre de la Unidad:
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="nombreUnidad"
-                                placeholder="Ingrese el nombre de la unidad"
-                                value={nombreUnidad}
-                                onChange={(e) => setNombreUnidad(e.target.value)}
-                                required
-                            />
-                            <div className="invalid-feedback">
-                                Por favor, ingrese el nombre de la unidad.
                             </div>
                         </div>
 
@@ -102,3 +110,4 @@ const AgregarTarea = () => {
 };
 
 export default AgregarTarea;
+

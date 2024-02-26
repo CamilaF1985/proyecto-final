@@ -2,42 +2,112 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { addExpense } from '../flux/expenseActions';
+import { saveNewExpenseData } from '../flux/expenseActions';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { validarGasto } from '../assets/js/validarGasto';
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 const AgregarGasto = () => {
-  // Hooks y Redux
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // Estados locales para almacenar valores del formulario
+
   const [factura, setFactura] = useState('');
-  const [nombreUnidad, setNombreUnidad] = useState('');
   const [monto, setMonto] = useState('');
   const [descripcion, setDescripcion] = useState('');
 
-  // Función para cerrar el modal y redirigir a la ruta principal
+  const [formErrors, setFormErrors] = useState({
+    factura: '',
+    monto: '',
+    descripcion: '',
+  });
+
+  const validateField = (fieldName, value, validationFunction) => {
+    const errorMessage = validationFunction(value);
+    setFormErrors({
+      ...formErrors,
+      [fieldName]: errorMessage || getErrorMessage(fieldName),
+    });
+  };
+
+  const getErrorMessage = (fieldName) => {
+    switch (fieldName) {
+      case 'factura':
+        return 'Entre 1 y 10 caracteres.';
+      case 'monto':
+        return 'Ingresa un número entero mayor a cero.';
+      case 'descripcion':
+        return 'Entre 4 y 20 caracteres.';
+      default:
+        return 'Campo inválido.';
+    }
+  };
+
   const handleCloseModal = () => {
     const path = '/administrar-panel';
     dispatch(closeModalAndRedirect(path, navigate));
   };
 
-  // Función para agregar un nuevo gasto
   const handleAgregarGasto = () => {
-    // Validar que se hayan ingresado todos los valores
-    if (factura && nombreUnidad && monto && descripcion) {
-      // Dispatch de la acción para agregar gasto
-      dispatch(addExpense({ factura, unidad: nombreUnidad, monto, descripcion }));
+    if (factura && monto && descripcion) {
+      const idUnidad = localStorage.getItem('id_unidad');
 
-      // Cerrar el modal y redirigir
-      handleCloseModal();
+      dispatch(
+        saveNewExpenseData({
+          factura: factura,
+          monto_original: monto,
+          descripcion: descripcion,
+          id_unidad: idUnidad,
+        })
+      ).then(() => {
+        handleCloseModal();
+        Swal.fire({
+          icon: 'success',
+          title: '¡Gasto Agregado!',
+          text: 'El nuevo gasto se ha agregado correctamente.',
+        });
+      }).catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: '¡Error al Agregar Gasto!',
+          text: error.message || 'Ocurrió un error al agregar el gasto.',
+        });
+        console.error('Error al agregar el gasto:', error);
+      });
     } else {
-      // Manejar caso donde no se ingresaron todos los valores
-      alert('Por favor, ingrese todos los detalles del gasto.');
+      Swal.fire({
+        icon: 'error',
+        title: '¡Valores faltantes!',
+        text: 'Por favor revise los campos.',
+      });
+    }
+  };
+
+  const handleChange = (fieldName, value) => {
+    setFormErrors({
+      ...formErrors,
+      [fieldName]: '', // Limpiar el mensaje de error al cambiar el valor del campo
+    });
+
+    switch (fieldName) {
+      case 'factura':
+        setFactura(value);
+        validateField('factura', value, validarGasto.factura);
+        break;
+      case 'monto':
+        setMonto(value);
+        validateField('monto', value, validarGasto.monto);
+        break;
+      case 'descripcion':
+        setDescripcion(value);
+        validateField('descripcion', value, validarGasto.descripcion);
+        break;
+      default:
+        break;
     }
   };
 
   return (
-    // Modal para agregar gasto
     <Modal
       isOpen={true}
       onRequestClose={handleCloseModal}
@@ -46,7 +116,6 @@ const AgregarGasto = () => {
       overlayClassName="modal-overlay"
     >
       <div className="modal-header d-flex justify-content-end mb-2">
-        {/* Botón para cerrar el modal */}
         <button className="btn btn-danger" onClick={handleCloseModal}>
           X
         </button>
@@ -54,95 +123,72 @@ const AgregarGasto = () => {
 
       <div className="modal-body">
         <div className="form-container">
-          {/* Título del formulario */}
+          {/* Componente CronometroSesion */}
+          <CronometroSesion />
           <h2 className="form-titulo">Agregar Gasto</h2>
-          {/* Formulario con clases de Bootstrap para la responsividad */}
           <form className="row g-3 needs-validation" noValidate>
-            {/* Campo para el número de factura */}
             <div className="col-md-12 mb-3">
               <label htmlFor="factura" className="form-label">
-                Número de Factura:
+                <strong>Número de Factura:</strong>
               </label>
-              {/* Entrada para el número de factura */}
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${formErrors.factura ? 'is-invalid' : ''}`}
                 id="factura"
                 placeholder="Ingrese el número de factura"
                 value={factura}
-                onChange={(e) => setFactura(e.target.value)}
+                onChange={(e) => handleChange('factura', e.target.value)}
                 required
               />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
               <div className="invalid-feedback">
-                Por favor, ingrese el número de factura.
+                {formErrors.factura}
               </div>
             </div>
 
-            {/* Campo para el nombre de la unidad */}
-            <div className="col-md-12 mb-3">
-              <label htmlFor="nombreUnidad" className="form-label">
-                Nombre de la Unidad:
-              </label>
-              {/* Entrada para el nombre de la unidad */}
-              <input
-                type="text"
-                className="form-control"
-                id="nombreUnidad"
-                placeholder="Ingrese el nombre de la unidad"
-                value={nombreUnidad}
-                onChange={(e) => setNombreUnidad(e.target.value)}
-                required
-              />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
-              <div className="invalid-feedback">
-                Por favor, ingrese el nombre de la unidad.
-              </div>
-            </div>
-
-            {/* Campo para el monto del gasto */}
             <div className="col-md-12 mb-3">
               <label htmlFor="monto" className="form-label">
-                Monto del Gasto:
+                <strong>Monto del Gasto:</strong>
               </label>
-              {/* Entrada para el monto del gasto */}
               <input
                 type="number"
-                className="form-control"
+                className={`form-control ${formErrors.monto ? 'is-invalid' : ''}`}
                 id="monto"
                 placeholder="Ingrese el monto del gasto"
-                value={monto}
-                onChange={(e) => setMonto(e.target.value)}
+                value={monto !== null ? monto : ''}
+                onChange={(e) => {
+                  const parsedValue = parseInt(e.target.value, 10);
+                  if (!isNaN(parsedValue)) {
+                    handleChange('monto', parsedValue);
+                  } else {
+                    handleChange('monto', ''); 
+                  }
+                }}
                 required
               />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
+
               <div className="invalid-feedback">
-                Por favor, ingrese el monto del gasto.
+                {formErrors.monto}
               </div>
             </div>
 
-            {/* Campo para la descripción del gasto */}
             <div className="col-md-12 mb-3">
               <label htmlFor="descripcion" className="form-label">
-                Descripción del Gasto:
+                <strong>Descripción del Gasto:</strong>
               </label>
-              {/* Entrada para la descripción del gasto */}
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${formErrors.descripcion ? 'is-invalid' : ''}`}
                 id="descripcion"
                 placeholder="Ingrese la descripción del gasto"
                 value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
+                onChange={(e) => handleChange('descripcion', e.target.value)}
                 required
               />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
               <div className="invalid-feedback">
-                Por favor, ingrese la descripción del gasto.
+                {formErrors.descripcion}
               </div>
             </div>
 
-            {/* Botón para agregar el gasto */}
             <div className="col-md-12 d-flex justify-content-end">
               <button
                 className="btn btn-primary"
@@ -160,4 +206,6 @@ const AgregarGasto = () => {
 };
 
 export default AgregarGasto;
+
+
 

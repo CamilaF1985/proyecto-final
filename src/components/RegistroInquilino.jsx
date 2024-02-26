@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import { closeModalAndRedirect } from '../flux/modalActions';
-import { saveUserData } from '../flux/userActions';
+import { saveNewInquilinoData } from '../flux/userActions';
 import { useNavigate } from 'react-router-dom';
-import '../assets/css/App.css';  
+import Swal from 'sweetalert2';
+import { validarRegistro } from '../assets/js/validarRegistro';//importar el js de validaciones
+import CronometroSesion from '../components/CronometroSesion.jsx';
 
 // Componente funcional para el formulario de registro de inquilinos
 const RegistroInquilino = () => {
@@ -17,18 +19,59 @@ const RegistroInquilino = () => {
   // Estado local para manejar los datos del formulario
   const [formData, setFormData] = useState({
     rut: '',
-    nombreUnidad: '',
     email: '',
     nombre: '',
     contrasena: '',
+    id_unidad: '',
   });
+  const [formErrors, setFormErrors] = useState({
+    rut: '',
+    contrasena: '',
+    email: '',
+    nombre: '',
+    nombreUnidad: '',
+    calle: '',
+    numero: '',
+    deptoCasa: '',
+  });
+
+  // Obtener el id_unidad desde el localStorage
+  const idUnidad = localStorage.getItem('id_unidad');
 
   // Función para manejar cambios en los campos del formulario
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Validaciones
+    const isValid = validarRegistro[name](value);
+
+    setFormErrors({
+      ...formErrors,
+      [name]: isValid ? '' : getErrorMessage(name),
+    });
+
+    // Manejo de cambios en el formulario
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+  };
+
+  const getErrorMessage = (fieldName) => {
+    // Mensajes de error personalizados para cada campo, como es un formulario largo usamos un switch
+    switch (fieldName) {
+      case 'rut':
+        return 'Por favor, ingresa un RUT válido.';
+      case 'contrasena':
+        return 'Mínimo 8 caracteres, al menos una letra, un número y un carácter especial.';
+      case 'email':
+        return 'Por favor, ingresa un correo electrónico válido.';
+      case 'nombre':
+        return 'Minimo 4 caracteres, máximo 15.';
+
+      default:
+        return 'Campo inválido.';
+    }
   };
 
   // Función para manejar el envío del formulario
@@ -37,23 +80,36 @@ const RegistroInquilino = () => {
 
     // Guardar todos los datos del inquilino en el estado global
     const inquilinoData = {
-      userType: 'Inquilino',  
-      username: formData.nombre,
-      rut: formData.rut,
-      nombreUnidad: formData.nombreUnidad,
-      email: formData.email,
-      contrasena: formData.contrasena,
+      ...formData, // Incluye todos los campos del formulario
+      id_unidad: idUnidad,
     };
 
-    dispatch(saveUserData(inquilinoData));
-
-    // Cierra el modal después de enviar la solicitud
-    handleCloseModal();
+    // Usar la acción saveNewInquilinoData
+    dispatch(saveNewInquilinoData(inquilinoData))
+      .then(() => {
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          icon: 'success',
+          title: '¡Registro Exitoso!',
+          text: 'Nuevo inquilino registrado correctamente.',
+        });
+        // Cierra el modal después de enviar la solicitud
+        handleCloseModal();
+      })
+      .catch((error) => {
+        console.error('Error al registrar inquilino:', error);
+        // Mostrar mensaje de error
+        Swal.fire({
+          icon: 'error',
+          title: '¡Ocurrió un error!',
+          text: 'Por favor revisa los campos.',
+        });
+      });
   };
 
   // Función para cerrar la ventana modal y redirigir
   const handleCloseModal = () => {
-    const path = '/administrar-panel';  
+    const path = '/administrar-panel';
     dispatch(closeModalAndRedirect(path, navigate));
   };
 
@@ -76,97 +132,74 @@ const RegistroInquilino = () => {
       {/* Cuerpo de la ventana modal */}
       <div className="modal-body">
         <div className="form-container">
+          {/* Componente CronometroSesion */}
+          <CronometroSesion />
           <h2 className="form-titulo">Registro de Inquilino</h2>
           {/* Formulario de registro */}
           <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
             {/* Campo de RUT */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="rut" className="form-label">RUT:</label>
+              <label htmlFor="rut" className="form-label"><strong>RUT:</strong></label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${formErrors.rut ? 'is-invalid' : ''}`}
                 id="rut"
                 name="rut"
                 value={formData.rut}
                 onChange={handleChange}
-                placeholder="Ingresa tu RUT"
+                placeholder="Ingresa el rut del inquilino"
                 required
               />
-              <div className="invalid-feedback">
-                Por favor, ingresa tu RUT.
-              </div>
-            </div>
-
-            {/* Campo de Nombre de la Unidad */}
-            <div className="col-md-12 mb-3">
-              <label htmlFor="nombreUnidad" className="form-label">Nombre de la Unidad:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="nombreUnidad"
-                name="nombreUnidad"
-                value={formData.nombreUnidad}
-                onChange={handleChange}
-                placeholder="Ingresa el nombre de la Unidad"
-                required
-              />
-              <div className="invalid-feedback">
-                Por favor, ingresa el nombre de la Unidad.
-              </div>
+              {formErrors.rut && <div className="invalid-feedback">{formErrors.rut}</div>}
             </div>
 
             {/* Campo de Correo Electrónico */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="email" className="form-label">Correo Electrónico:</label>
+              <label htmlFor="email" className="form-label"><strong>Correo Electrónico:</strong></label>
               <input
                 type="email"
-                className="form-control"
+                className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Ingresa tu correo electrónico"
+                placeholder="Ingresa el correo del inquilino"
                 required
               />
-              <div className="invalid-feedback">
-                Por favor, ingresa un correo electrónico válido.
-              </div>
+              {formErrors.email && <div className="invalid-feedback">{formErrors.email}</div>}
             </div>
 
             {/* Campo de Nombre */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="nombre" className="form-label">Nombre:</label>
+              <label htmlFor="nombre" className="form-label"><strong>Nombre:</strong></label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${formErrors.nombre ? 'is-invalid' : ''}`}
                 id="nombre"
                 name="nombre"
                 value={formData.nombre}
                 onChange={handleChange}
-                placeholder="Ingresa tu nombre"
+                placeholder="Ingresa el nombre del inquilino"
                 required
               />
-              <div className="invalid-feedback">
-                Por favor, ingresa tu nombre.
-              </div>
+              {formErrors.nombre && <div className="invalid-feedback">{formErrors.nombre}</div>}
             </div>
 
             {/* Campo de Contraseña */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="contrasena" className="form-label">Contraseña:</label>
+              <label htmlFor="contrasena" className="form-label"><strong>Contraseña:</strong></label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control ${formErrors.contrasena ? 'is-invalid' : ''}`}
                 id="contrasena"
                 name="contrasena"
                 value={formData.contrasena}
                 onChange={handleChange}
-                placeholder="Ingresa tu contraseña"
+                placeholder="Ingresa una contraseña para el inquilino"
                 required
               />
-              <div className="invalid-feedback">
-                Por favor, ingresa tu contraseña.
-              </div>
+              {formErrors.contrasena && <div className="invalid-feedback">{formErrors.contrasena}</div>}
+
             </div>
 
             {/* Botón de registro */}
@@ -182,5 +215,7 @@ const RegistroInquilino = () => {
 
 // Exporta el componente RegistroInquilino para su uso en la aplicación
 export default RegistroInquilino;
+
+
 
 

@@ -1,41 +1,81 @@
-// LoginForm.jsx
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 import { loginUser } from '../flux/userActions';
 import { closeModal, closeModalAndRedirect } from '../flux/modalActions';
-import { useNavigate } from 'react-router-dom'; // Agregar importación
-import '../assets/css/App.css';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { validarLogin } from '../assets/js/validarLogin'; //importar el js de validaciones
 
 const LoginForm = () => {
-  // Hooks y redux
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Agregar hook de navegación
-
-  // Estado para almacenar los datos del formulario (nombre de usuario y contraseña)
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
+    rut: '',
     password: '',
   });
+  const [rutError, setRutError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
-  // Función para manejar los cambios en los campos de entrada
   const handleInputChange = (e) => {
+    const { id, value } = e.target;
+  
+    // Manejo de cambios en el formulario
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value,
+      [id]: value,
     });
+  
+    // Validar el RUT y la contraseña en tiempo real, muestra mensajes de error
+    if (id === 'rut') {
+      const isRutValid = validarLogin.rut(value);
+      setRutError(isRutValid ? '' : 'El RUT no es válido');
+    } else if (id === 'password') {
+      const isPasswordValid = validarLogin.password(value);
+      setPasswordError(isPasswordValid ? '' : 'La contraseña no puede quedar nula');
+    }
   };
-
-  // Función para manejar el proceso de inicio de sesión
+    
   const handleLogin = (e) => {
-    e.preventDefault(); // Evita la recarga de la página por defecto del formulario
-    dispatch(loginUser(formData, closeModal, navigate)); // Pasa navigate como argumento
+    // No enviar el formulario hasta que esté completo
+    e.preventDefault();
+
+    // Validar el RUT antes de enviar el formulario
+    if (rutError) {
+      // mensaje de error por consola para el rut
+      console.error('El RUT no es válido');
+      return;
+    }
+
+    dispatch(loginUser(formData, closeModal, navigate))
+      .then(() => {
+        // Autenticación exitosa
+        Swal.fire({
+          icon: 'success',
+          title: '¡Inicio de sesión exitoso!',
+          text: 'Bienvenido de nuevo.',
+        });
+
+        // Cierra el modal después de un breve tiempo 
+        setTimeout(() => {
+          handleCloseModal();
+        }, 3000);
+      })
+      .catch((error) => {
+        // Mensaje de error
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: '¡Credenciales incorrectas!',
+          text: 'Por favor revisa tus credenciales.',
+        });
+      });
   };
 
-  // Función para cerrar el modal y redirigir al inicio
   const handleCloseModal = () => {
+    // Cierre de modal y redirección
     dispatch(closeModal());
-    dispatch(closeModalAndRedirect('/', navigate)); // Redirigir al inicio al cerrar el modal
+    dispatch(closeModalAndRedirect('/', navigate));
   };
 
   return (
@@ -46,53 +86,46 @@ const LoginForm = () => {
       className="modal-content"
       overlayClassName="modal-overlay"
     >
-      {/* Encabezado del modal con botón para cerrar */}
       <div className="modal-header d-flex justify-content-end mb-2">
         <button className="btn btn-danger" onClick={handleCloseModal}>
           X
         </button>
       </div>
-
       <div className="modal-body">
         <div className="form-container">
-          {/* Título del formulario */}
           <h2 className="form-titulo">Ingresa a tu cuenta</h2>
-
-          {/* Formulario con clases de Bootstrap para la responsividad */}
           <form className="row g-3 needs-validation" noValidate onSubmit={handleLogin}>
-            {/* Campo para el nombre de usuario */}
+            {/* Campo para el rut */}
             <div className="col-md-12 mb-3">
-              <label htmlFor="username" className="form-label">
-                Nombre de usuario:
+              <label htmlFor="rut" className="form-label">
+                <strong>RUT:</strong>
               </label>
               <input
                 type="text"
-                className="form-control"
-                id="username"
-                placeholder="Ingresa tu nombre de usuario"
+                className={`form-control ${rutError ? 'is-invalid' : ''}`}
+                id="rut"
+                placeholder="Ingresa tu RUT"
                 required
                 onChange={handleInputChange}
-                autoComplete="current-password"
+                autoComplete="off"
               />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
-              <div className="invalid-feedback">Por favor, ingresa tu nombre de usuario.</div>
+              {rutError && <div className="invalid-feedback error-message">{rutError}</div>}
             </div>
 
             {/* Campo para la contraseña */}
             <div className="col-md-12 mb-3">
               <label htmlFor="password" className="form-label">
-                Contraseña:
+                <strong>Contraseña:</strong>
               </label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control ${passwordError ? 'is-invalid' : ''}`}
                 id="password"
                 placeholder="Ingresa tu contraseña"
                 required
                 onChange={handleInputChange}
               />
-              {/* Mensaje de retroalimentación en caso de entrada no válida */}
-              <div className="invalid-feedback">Por favor, ingresa tu contraseña.</div>
+              {passwordError && <div className="invalid-feedback error-message">{passwordError}</div>}
             </div>
 
             {/* Botón "Ingresar" */}
@@ -109,6 +142,10 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
+
+
+
 
 
 

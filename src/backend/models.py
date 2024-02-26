@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy 
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Boolean, UniqueConstraint
 
 
 db = SQLAlchemy()
@@ -34,8 +34,8 @@ class Direccion(db.Model):
     id_comuna  = Column(Integer, ForeignKey('comuna.id'), nullable=False)
     comuna = relationship('Comuna', back_populates='direcciones')  # Relación con la tabla Comuna
     calle = Column(String(100), nullable=False)
-    numero = Column(String(10), nullable=False)
-    depto_casa = Column(String(10), nullable=False)
+    numero = Column(String(10), nullable=True)
+    depto_casa = Column(String(10), nullable=True)
     id_unidad = Column(Integer, ForeignKey('unidad.id'), nullable=False)
     unidad = relationship('Unidad', back_populates='direcciones')
 
@@ -54,8 +54,8 @@ class Persona(db.Model):
     id_perfil = Column(Integer, ForeignKey('perfil.id'), nullable=False)
     perfil = relationship('Perfil', back_populates='personas')
     contrasena = Column(String(250), nullable=False)
-    tareas = relationship('TareaPersona', back_populates='persona')
-    gastos = relationship('GastoPersona', back_populates='persona')
+    tareas = relationship('TareaPersona', back_populates='persona',cascade="all, delete-orphan" )
+    gastos = relationship('GastoPersona', back_populates='persona', overlaps='gastos' ,cascade="all, delete-orphan")
 
 class Tarea(db.Model):
     __tablename__ = 'tarea'
@@ -74,8 +74,13 @@ class TareaPersona(db.Model):
     unidad = relationship('Unidad', back_populates='tareas_personas')
     id_tarea = Column(Integer, ForeignKey('tarea.id'), nullable=False)
     tarea = relationship('Tarea', back_populates='personas')
-    fecha_inicio = Column(Date, nullable=False)
-    fecha_termino = Column(Date, nullable=False)
+    fecha_inicio = Column(Date, nullable=True)
+    fecha_termino = Column(Date, nullable=True)
+
+      # Definir la combinación única de los campos id_unidad, id_persona e id_tarea
+    __table_args__ = (
+        UniqueConstraint('id_unidad', 'id_persona', 'id_tarea', name='uq_id_unidad_id_persona_id_tarea'),
+    )
 
 class Gasto(db.Model):
     __tablename__ = 'gasto'
@@ -83,11 +88,10 @@ class Gasto(db.Model):
     factura = Column(String(100), nullable=False, unique=True)
     id_unidad = Column(Integer, ForeignKey('unidad.id'), nullable=False)
     unidad = relationship('Unidad', back_populates='gastos')
-    monto = Column(Integer, nullable=False)
+    monto_original = Column(Integer, nullable=False)
     descripcion = Column(String(100), nullable=False)
-    gastos_relacionados = relationship('GastoPersona', back_populates='gasto')
-    
-
+    gastos_relacionados = relationship('GastoPersona', back_populates='gasto', cascade="all, delete-orphan")
+     
 class GastoPersona(db.Model):
     __tablename__ = 'gasto_persona'
     id_persona = Column(Integer, ForeignKey('persona.id'), nullable=False, primary_key=True)
@@ -95,6 +99,7 @@ class GastoPersona(db.Model):
     id_gasto = Column(Integer, ForeignKey('gasto.id'), nullable=False, primary_key=True)
     gasto = relationship('Gasto', back_populates='gastos_relacionados')
     monto_prorrateado = Column(Integer, nullable=False)
+    estado = Column(Boolean, nullable=False, server_default='f', default=False)
 
   
 
