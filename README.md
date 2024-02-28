@@ -44,7 +44,7 @@ Este repositorio sirve como espacio de desarrollo para el Front End del proyecto
    - pip install flask_sqlalchemy
    - pip install flask_cors
    - pip install psycopg2
-   - pip install pip install flask_migrate
+   - pip install flask_migrate
    - pip install rut_chile
    - flask db init
    - flask db migrate
