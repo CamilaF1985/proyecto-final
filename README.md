@@ -34,20 +34,24 @@ Este repositorio sirve como espacio de desarrollo para el Front End del proyecto
 ## Instrucciones de instalación
 
 1. Crea la base de datos en local.
-   Base de datos: cuentas_claras_db
-   Usuario: Postgres
-   Contraseña: 12345
-   Puerto: 4534
+   - Base de datos: cuentas_claras_db
+   - Usuario: Postgres
+   - Contraseña: 12345
+   - Puerto: 4534
    
 3. Clona el proyecto:
-   $ git clone https://github.com/CamilaF1985/proyecto-final.git
+   - $ git clone https://github.com/CamilaF1985/proyecto-final.git
    
 4. Navega al directorio raíz del proyecto:
-   cd proyecto-final
+   - cd proyecto-final
 
 5. Ejecuta el comando para instalar las dependencias npm:
-   npm install
+   - npm install
 
 6. Ejecuta el proyecto (este comando instalará las dependencias del backend, creará las tablas de la base de datos,
    e iniciará paralelamente el frontend y el backend:
-   npm start
+   - npm start
+  
+## Desarrolladores: 
+  - Camila Fabbroni | GitHub: CamilaF1985 | Correo: camila.fabbroni1985@gmail.com
+  - Daniel Guevara | GitHub: octmidi | Correo: octmidi@hotmail.com
