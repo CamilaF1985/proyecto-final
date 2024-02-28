@@ -5,7 +5,9 @@
   "main": "index.jsx",
   "type": "module",
   "scripts": {
-    "start": "webpack serve --config webpack.config.cjs --mode development",
+    "start": "npm-run-all --parallel start-backend start-frontend",
+    "start-backend": "cd src/backend && pipenv shell && pip install flask_jwt_extended flask_sqlalchemy flask_cors psycopg2 flask_migrate rut_chile && flask db init && flask db migrate && flask db upgrade && python inserts.py && python app.py",
+    "start-frontend": "cd .. && npm install && npm start",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
