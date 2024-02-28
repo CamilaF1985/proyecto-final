@@ -49,6 +49,7 @@ Este repositorio sirve como espacio de desarrollo para el Front End del proyecto
    - flask db init
    - flask db migrate
    - flask db upgrade
+   - python inserts.py
    - python app.py
 
 3. Configuración del frontend:
