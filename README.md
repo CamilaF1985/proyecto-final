@@ -11,25 +11,25 @@ Este repositorio sirve como espacio de desarrollo para el Front End del proyecto
   - Redux /Flux
 
 2. Backend
-  -Flask
-  -JWT Extended
-  -Flask SQLAlchemy
-  -Werkzeug
-  -Flask Migrate
-  -Flask CORS
-  -Psycopg2
-  -Functools
+  - Flask
+  - JWT Extended
+  - Flask SQLAlchemy
+  - Werkzeug
+  - Flask Migrate
+  - Flask CORS
+  - Psycopg2
+  - Functools
 
 ## Lenguajes
-  -Javascript
-  -lenguaje de etiquetas (HTML)
-  -Python
+  - Javascript
+  - lenguaje de etiquetas (HTML)
+  - Python
 
 ## Requerimientos de sistema
-  -Python v3.10
-  -PostgreSQL 
-  -DBeaver
-  -IDE (VSCode)
+  - Python v3.10
+  - PostgreSQL 
+  - DBeaver
+  - IDE (VSCode)
 
 ## Instrucciones de instalación
 
