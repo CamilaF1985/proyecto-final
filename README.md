@@ -1,4 +1,4 @@
-# Proyecto Final - Cuentas Claras (Front End)
+# Proyecto Final - Cuentas Claras 
 
 Este repositorio sirve como espacio de desarrollo para el Front End del proyecto final 'Cuentas Claras'.
 
